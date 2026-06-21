@@ -113,6 +113,8 @@ class BillingStorage {
   }
 
   Future<void> clearAll() async {
-    await StorageService.instance.prefs.remove(BillingConstants.billingPrefsKey);
+    await StorageService.instance.prefs.remove(
+      BillingConstants.billingPrefsKey,
+    );
   }
 }

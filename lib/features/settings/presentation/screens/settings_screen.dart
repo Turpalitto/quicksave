@@ -891,9 +891,9 @@ class _CloudBackupSectionState extends State<_CloudBackupSection> {
     try {
       await CloudBackupService.instance.testConnection(_draft);
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(s.settingsCloudBackupTestOk)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(s.settingsCloudBackupTestOk)));
     } on CloudBackupUnavailableException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -949,7 +949,9 @@ class _CloudBackupSectionState extends State<_CloudBackupSection> {
             ),
             DropdownButtonFormField<CloudBackupProvider>(
               value: _draft.provider,
-              decoration: InputDecoration(labelText: s.settingsCloudBackupProvider),
+              decoration: InputDecoration(
+                labelText: s.settingsCloudBackupProvider,
+              ),
               items: [
                 DropdownMenuItem(
                   value: CloudBackupProvider.none,
@@ -1032,10 +1034,7 @@ class _CloudBackupSectionState extends State<_CloudBackupSection> {
               ),
             ],
             if (_draft.provider == CloudBackupProvider.googleDrive)
-              _NoteCard(
-                scheme: scheme,
-                text: s.settingsCloudBackupDriveNote,
-              ),
+              _NoteCard(scheme: scheme, text: s.settingsCloudBackupDriveNote),
             if (_draft.provider != CloudBackupProvider.none &&
                 _draft.provider != CloudBackupProvider.googleDrive) ...[
               const SizedBox(height: 8),

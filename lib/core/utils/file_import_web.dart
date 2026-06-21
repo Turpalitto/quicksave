@@ -3,7 +3,8 @@ import 'dart:async';
 import 'dart:html' as html;
 
 Future<String?> pickJsonFileText() async {
-  final input = html.FileUploadInputElement()..accept = '.json,application/json';
+  final input = html.FileUploadInputElement()
+    ..accept = '.json,application/json';
   input.click();
   await input.onChange.first;
   final file = input.files?.first;

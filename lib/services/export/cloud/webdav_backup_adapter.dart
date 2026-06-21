@@ -111,10 +111,7 @@ class WebDavBackupAdapter implements CloudBackupAdapter {
   }
 
   String _joinUrl(String base, String remotePath) {
-    final encoded = remotePath
-        .split('/')
-        .map(Uri.encodeComponent)
-        .join('/');
+    final encoded = remotePath.split('/').map(Uri.encodeComponent).join('/');
     return '$base/$encoded';
   }
 

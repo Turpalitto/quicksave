@@ -512,16 +512,17 @@ class _BulkActionBar extends ConsumerWidget {
                             .where((i) => selectedIds.contains(i.id))
                             .toList();
                         try {
-                          final backup =
-                              await ExportService.instance
-                                  .exportZipWithOptionalCloudBackup(
-                            items,
-                            settings.cloudBackup,
-                          );
+                          final backup = await ExportService.instance
+                              .exportZipWithOptionalCloudBackup(
+                                items,
+                                settings.cloudBackup,
+                              );
                           if (!context.mounted) return;
                           if (backup != null && backup.success) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(s.historyBulkCloudBackupOk)),
+                              SnackBar(
+                                content: Text(s.historyBulkCloudBackupOk),
+                              ),
                             );
                           } else if (backup != null && !backup.success) {
                             ScaffoldMessenger.of(context).showSnackBar(

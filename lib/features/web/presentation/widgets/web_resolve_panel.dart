@@ -49,9 +49,9 @@ class _WebResolvePanelState extends ConsumerState<WebResolvePanel> {
       children: [
         Text(
           s.webResolveTitle,
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.w700,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: 8),
         Text(
@@ -66,13 +66,11 @@ class _WebResolvePanelState extends ConsumerState<WebResolvePanel> {
             border: const OutlineInputBorder(),
             suffixIcon: IconButton(
               icon: const Icon(Icons.search),
-              onPressed: () => ref
-                  .read(webResolveProvider.notifier)
-                  .resolve(_urlCtrl.text),
+              onPressed: () =>
+                  ref.read(webResolveProvider.notifier).resolve(_urlCtrl.text),
             ),
           ),
-          onSubmitted: (v) =>
-              ref.read(webResolveProvider.notifier).resolve(v),
+          onSubmitted: (v) => ref.read(webResolveProvider.notifier).resolve(v),
         ),
         const SizedBox(height: 16),
         switch (state) {
@@ -93,15 +91,14 @@ class _WebResolvePanelState extends ConsumerState<WebResolvePanel> {
             scheme: scheme,
             isError: true,
           ),
-          WebResolveReady(:final result, :final sourceUrl) =>
-            _ResolveResults(
-              result: result,
-              sourceUrl: sourceUrl,
-              onClear: () {
-                ref.read(webResolveProvider.notifier).reset();
-                _urlCtrl.clear();
-              },
-            ),
+          WebResolveReady(:final result, :final sourceUrl) => _ResolveResults(
+            result: result,
+            sourceUrl: sourceUrl,
+            onClear: () {
+              ref.read(webResolveProvider.notifier).reset();
+              _urlCtrl.clear();
+            },
+          ),
         },
       ],
     );
@@ -131,8 +128,15 @@ class _ResolveResults extends StatelessWidget {
           child: ListTile(
             leading: Icon(Icons.check_circle, color: scheme.primary),
             title: Text(s.webResolveSuccess(result.items.length)),
-            subtitle: Text(sourceUrl, maxLines: 2, overflow: TextOverflow.ellipsis),
-            trailing: TextButton(onPressed: onClear, child: Text(s.previewCancel)),
+            subtitle: Text(
+              sourceUrl,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            trailing: TextButton(
+              onPressed: onClear,
+              child: Text(s.previewCancel),
+            ),
           ),
         ),
         const SizedBox(height: 12),

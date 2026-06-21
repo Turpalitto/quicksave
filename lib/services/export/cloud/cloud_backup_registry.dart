@@ -27,5 +27,4 @@ String cloudBackupArchiveName() {
 }
 
 /// Extracts basename from a local export path.
-String cloudBackupFileNameFromPath(String localPath) =>
-    p.basename(localPath);
+String cloudBackupFileNameFromPath(String localPath) => p.basename(localPath);

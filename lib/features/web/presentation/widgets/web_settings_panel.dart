@@ -51,12 +51,15 @@ class _WebSettingsPanelState extends ConsumerState<WebSettingsPanel> {
       children: [
         Text(
           s.webSettingsTitle,
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.w700,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: 8),
-        Text(s.webSettingsSubtitle, style: TextStyle(color: scheme.onSurfaceVariant)),
+        Text(
+          s.webSettingsSubtitle,
+          style: TextStyle(color: scheme.onSurfaceVariant),
+        ),
         const SizedBox(height: 20),
         SegmentedButton<BackendMode>(
           segments: [

@@ -58,7 +58,9 @@ class PlayBillingService {
   Future<void> _loadProducts() async {
     final store = _iap;
     if (!storeAvailable || store == null) return;
-    final response = await store.queryProductDetails(BillingConstants.proProductIds);
+    final response = await store.queryProductDetails(
+      BillingConstants.proProductIds,
+    );
     if (response.error != null) {
       lastErrorCode = response.error!.code;
       return;

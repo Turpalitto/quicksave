@@ -32,14 +32,14 @@ class _WebLibraryPanelState extends ConsumerState<WebLibraryPanel> {
       );
       ref.invalidate(webLibraryProvider);
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(s.webLibraryImported(count))),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(s.webLibraryImported(count))));
     } catch (_) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(s.webLibraryImportFailed)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(s.webLibraryImportFailed)));
     }
   }
 
@@ -54,12 +54,15 @@ class _WebLibraryPanelState extends ConsumerState<WebLibraryPanel> {
       children: [
         Text(
           s.webLibraryTitle,
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.w700,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: 8),
-        Text(s.webLibrarySubtitle, style: TextStyle(color: scheme.onSurfaceVariant)),
+        Text(
+          s.webLibrarySubtitle,
+          style: TextStyle(color: scheme.onSurfaceVariant),
+        ),
         const SizedBox(height: 16),
         TextField(
           decoration: InputDecoration(

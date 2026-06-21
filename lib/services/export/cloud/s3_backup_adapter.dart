@@ -121,10 +121,11 @@ class S3BackupAdapter implements CloudBackupAdapter {
       if (contentType != null) 'content-type': contentType,
     };
 
-    final canonicalHeaders = headers.entries
-        .map((e) => '${e.key.toLowerCase()}:${e.value.trim()}')
-        .toList()
-      ..sort();
+    final canonicalHeaders =
+        headers.entries
+            .map((e) => '${e.key.toLowerCase()}:${e.value.trim()}')
+            .toList()
+          ..sort();
     final signedHeaders = headers.keys.map((k) => k.toLowerCase()).toList()
       ..sort();
 
@@ -161,10 +162,7 @@ class S3BackupAdapter implements CloudBackupAdapter {
 
     return _SignedRequest(
       url: uri.toString(),
-      headers: {
-        ...headers,
-        'Authorization': authorization,
-      },
+      headers: {...headers, 'Authorization': authorization},
     );
   }
 

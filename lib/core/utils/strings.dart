@@ -345,28 +345,20 @@ class Strings {
       _s((l) => l.settingsCloudBackupS3AccessKey, 'Access key');
   String get settingsCloudBackupS3SecretKey =>
       _s((l) => l.settingsCloudBackupS3SecretKey, 'Secret key');
-  String get settingsCloudBackupDriveNote => _s(
-    (l) => l.settingsCloudBackupDriveNote,
-    'Google Drive — скоро.',
-  );
+  String get settingsCloudBackupDriveNote =>
+      _s((l) => l.settingsCloudBackupDriveNote, 'Google Drive — скоро.');
   String get settingsCloudBackupTest =>
       _s((l) => l.settingsCloudBackupTest, 'Проверить');
   String get settingsCloudBackupTestOk =>
       _s((l) => l.settingsCloudBackupTestOk, 'Подключение OK');
-  String settingsCloudBackupTestFailed(String reason) => _s(
-    (l) => l.settingsCloudBackupTestFailed(reason),
-    'Ошибка: $reason',
-  );
-  String settingsCloudBackupComingSoon(String feature) => _s(
-    (l) => l.settingsCloudBackupComingSoon(feature),
-    '$feature — скоро',
-  );
+  String settingsCloudBackupTestFailed(String reason) =>
+      _s((l) => l.settingsCloudBackupTestFailed(reason), 'Ошибка: $reason');
+  String settingsCloudBackupComingSoon(String feature) =>
+      _s((l) => l.settingsCloudBackupComingSoon(feature), '$feature — скоро');
   String get historyBulkCloudBackupOk =>
       _s((l) => l.historyBulkCloudBackupOk, 'Загружено в облако');
-  String get historyBulkCloudBackupFailed => _s(
-    (l) => l.historyBulkCloudBackupFailed,
-    'Ошибка облачного бэкапа',
-  );
+  String get historyBulkCloudBackupFailed =>
+      _s((l) => l.historyBulkCloudBackupFailed, 'Ошибка облачного бэкапа');
   String get webDashboardTitle =>
       _s((l) => l.webDashboardTitle, 'QuickSave Web');
   String get webNavResolve => _s((l) => l.webNavResolve, 'Resolve');
@@ -378,16 +370,11 @@ class Strings {
     (l) => l.webResolveSubtitle,
     'Вставьте URL — на web только предпросмотр.',
   );
-  String get webResolveHint => _s(
-    (l) => l.webResolveHint,
-    'Сохранение файлов — в Android-приложении.',
-  );
-  String webResolveSuccess(int count) => _s(
-    (l) => l.webResolveSuccess(count),
-    'Найдено: $count',
-  );
-  String get webResolveMediaItem =>
-      _s((l) => l.webResolveMediaItem, 'Медиа');
+  String get webResolveHint =>
+      _s((l) => l.webResolveHint, 'Сохранение файлов — в Android-приложении.');
+  String webResolveSuccess(int count) =>
+      _s((l) => l.webResolveSuccess(count), 'Найдено: $count');
+  String get webResolveMediaItem => _s((l) => l.webResolveMediaItem, 'Медиа');
   String get webOpenMedia => _s((l) => l.webOpenMedia, 'Открыть URL');
   String get webResolveMobileNote => _s(
     (l) => l.webResolveMobileNote,
@@ -411,19 +398,15 @@ class Strings {
   String get webLibraryPasteHint =>
       _s((l) => l.webLibraryPasteHint, 'metadata.json');
   String get webLibraryImport => _s((l) => l.webLibraryImport, 'Импорт');
-  String webLibraryImported(int count) => _s(
-    (l) => l.webLibraryImported(count),
-    'Импортировано: $count',
-  );
+  String webLibraryImported(int count) =>
+      _s((l) => l.webLibraryImported(count), 'Импортировано: $count');
   String get webLibraryImportFailed =>
       _s((l) => l.webLibraryImportFailed, 'Неверный JSON');
   String get webLibraryEmpty =>
       _s((l) => l.webLibraryEmpty, 'Библиотека пуста');
   String get webSettingsTitle => _s((l) => l.webSettingsTitle, 'Backend');
-  String get webSettingsSubtitle => _s(
-    (l) => l.webSettingsSubtitle,
-    'Cloud или self-hosted resolver.',
-  );
+  String get webSettingsSubtitle =>
+      _s((l) => l.webSettingsSubtitle, 'Cloud или self-hosted resolver.');
   String get webSettingsCheckBackend =>
       _s((l) => l.webSettingsCheckBackend, 'Проверить');
   String get webSettingsBackendOk =>
@@ -525,38 +508,27 @@ class Strings {
       _s((l) => l.settingsProInvalidKey, 'Неверный ключ');
   String get settingsProSubscribe =>
       _s((l) => l.settingsProSubscribe, 'Подписка Google Play');
-  String settingsProSubscribePrice(String price) => _s(
-    (l) => l.settingsProSubscribePrice(price),
-    'Pro — $price',
-  );
+  String settingsProSubscribePrice(String price) =>
+      _s((l) => l.settingsProSubscribePrice(price), 'Pro — $price');
   String get settingsProRestore =>
       _s((l) => l.settingsProRestore, 'Восстановить покупки');
   String get settingsProRestored =>
       _s((l) => l.settingsProRestored, 'Подписка восстановлена');
-  String get settingsProRestoreEmpty => _s(
-    (l) => l.settingsProRestoreEmpty,
-    'Активная подписка не найдена',
-  );
-  String get settingsProBillingFailed => _s(
-    (l) => l.settingsProBillingFailed,
-    'Не удалось начать покупку',
-  );
-  String get settingsProBillingUnavailable => _s(
-    (l) => l.settingsProBillingUnavailable,
-    'Google Play недоступен',
-  );
+  String get settingsProRestoreEmpty =>
+      _s((l) => l.settingsProRestoreEmpty, 'Активная подписка не найдена');
+  String get settingsProBillingFailed =>
+      _s((l) => l.settingsProBillingFailed, 'Не удалось начать покупку');
+  String get settingsProBillingUnavailable =>
+      _s((l) => l.settingsProBillingUnavailable, 'Google Play недоступен');
   String get settingsProLicenseDivider =>
       _s((l) => l.settingsProLicenseDivider, 'Или лицензионный ключ');
   String get settingsProActivePlay =>
       _s((l) => l.settingsProActivePlay, 'Pro через Google Play');
   String get settingsProActiveDemo =>
       _s((l) => l.settingsProActiveDemo, 'Pro demo');
-  String settingsProActiveLicense(String hint) => _s(
-    (l) => l.settingsProActiveLicense(hint),
-    'Pro ••••$hint',
-  );
-  String get settingsProDemoBadge =>
-      _s((l) => l.settingsProDemoBadge, 'Demo');
+  String settingsProActiveLicense(String hint) =>
+      _s((l) => l.settingsProActiveLicense(hint), 'Pro ••••$hint');
+  String get settingsProDemoBadge => _s((l) => l.settingsProDemoBadge, 'Demo');
   String get settingsSchedulerTitle =>
       _s((l) => l.settingsSchedulerTitle, 'Планировщик профилей');
   String get settingsSchedulerAddHint =>
