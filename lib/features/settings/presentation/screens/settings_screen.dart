@@ -468,6 +468,7 @@ class _ProSectionState extends ConsumerState<_ProSection> {
                         if (!context.mounted) return;
                         if (ok) {
                           await settingsNotifier.setPro(true);
+                          if (!context.mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text(s.settingsProActivated)),
                           );
@@ -494,6 +495,7 @@ class _ProSectionState extends ConsumerState<_ProSection> {
                         final active = ref.read(entitlementProvider).isPro;
                         if (active) {
                           await settingsNotifier.setPro(true);
+                          if (!context.mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text(s.settingsProRestored)),
                           );
@@ -793,7 +795,9 @@ class _FilenameTemplateSectionState extends State<_FilenameTemplateSection> {
                 contentPadding: EdgeInsets.zero,
                 title: Text(_presetLabel(s, p)),
                 value: p,
+                // ignore: deprecated_member_use
                 groupValue: preset,
+                // ignore: deprecated_member_use
                 onChanged: (v) {
                   if (v == null) return;
                   widget.notifier.setFilenameTemplatePreset(v);
@@ -948,6 +952,7 @@ class _CloudBackupSectionState extends State<_CloudBackupSection> {
               },
             ),
             DropdownButtonFormField<CloudBackupProvider>(
+              // ignore: deprecated_member_use
               value: _draft.provider,
               decoration: InputDecoration(
                 labelText: s.settingsCloudBackupProvider,

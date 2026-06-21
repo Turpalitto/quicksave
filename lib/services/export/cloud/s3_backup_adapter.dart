@@ -189,7 +189,7 @@ class S3BackupAdapter implements CloudBackupAdapter {
     final h = utc.hour.toString().padLeft(2, '0');
     final mi = utc.minute.toString().padLeft(2, '0');
     final s = utc.second.toString().padLeft(2, '0');
-    return '${y}${mo}${d}T${h}${mi}${s}Z';
+    return '$y$mo${d}T$h$mi${s}Z';
   }
 
   bool _isSuccess(int? code) =>
