@@ -170,23 +170,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
       appBar: AppBar(
         title: Text(s.appTitle),
         actions: [
-          IconButton(
-            tooltip: s.historyTitle,
-            icon: const Icon(Icons.history),
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const HistoryScreen()),
-              );
-            },
+          Semantics(
+            label: s.semHomeHistory,
+            button: true,
+            child: IconButton(
+              tooltip: s.historyTitle,
+              icon: const Icon(Icons.history),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const HistoryScreen()),
+                );
+              },
+            ),
           ),
-          IconButton(
-            tooltip: s.settingsTitle,
-            icon: const Icon(Icons.settings_outlined),
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const SettingsScreen()),
-              );
-            },
+          Semantics(
+            label: s.semHomeSettings,
+            button: true,
+            child: IconButton(
+              tooltip: s.settingsTitle,
+              icon: const Icon(Icons.settings_outlined),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -220,10 +228,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 ),
               ),
               const SizedBox(height: 12),
-              FilledButton.icon(
-                onPressed: _submit,
-                icon: const Icon(Icons.download),
-                label: Text(s.downloadButton),
+              Semantics(
+                label: s.semHomeDownload,
+                button: true,
+                child: FilledButton.icon(
+                  onPressed: _submit,
+                  icon: const Icon(Icons.download),
+                  label: Text(s.downloadButton),
+                ),
               ),
               if (_recentLinks.isNotEmpty) ...[
                 const SizedBox(height: 16),

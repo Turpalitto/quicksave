@@ -5,6 +5,19 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 этот проект следует [Semantic Versioning](https://semver.org/lang/ru/).
 
+## [1.1.0] - 2026-06-21
+
+### Added
+- Backend resolver modularization (`urlNormalizer`, `upstreamClient`, `postExtractor`, `storyExtractor`, `profileExtractorFacade`, `resultAssembler`, `resolverErrors`) + golden tests.
+- Production **download queue**: multi-task, pause/resume/cancel, retry w/ exponential backoff, preflight size check.
+- **Media library**: search (caption/author/fileName), filters (video/photo/stories/profiles), collections, dedupe, failed item tracking, v1→v2 history migration.
+- Accessibility tests (semantics, tap targets).
+- CI: format check, coverage artifact, release APK build; issue/PR templates.
+
+### Changed
+- Unified i18n via `flutter gen-l10n` (removed analyzer exclude for generated l10n).
+- Privacy policy: retention, legal basis, rights flow, telemetry, self-hosted disclosure.
+
 ## [1.0.0] - 2026-06-21
 
 Production-ready release: hosted resolver, Gallery save, Pro tier, store assets.
@@ -32,6 +45,10 @@ Production-ready release: hosted resolver, Gallery save, Pro tier, store assets.
 - Pro license: format validation only (no server activation).
 
 ## [Unreleased]
+
+### Added
+- Preview/Settings semantics labels; expanded accessibility tests; download queue panel widget test.
+- `historyAddedToCollection` l10n for add-to-collection snackbar (distinct from collection created).
 
 ### Fixed — первая успешная сборка APK
 - `android/app/build.gradle`: включён `coreLibraryDesugaringEnabled true` +

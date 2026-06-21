@@ -49,3 +49,11 @@ https://quicksave.app/privacy (host store/privacy_policy.md)
 - Data not sold
 - Encryption in transit: Yes
 - User can delete: history + local files
+
+## Compliance & permissions
+- **Permissions**: Internet (resolve/download), Storage/Media (save to gallery), Notifications (optional download complete)
+- **No login**: QuickSave does not request Instagram credentials
+- **Public content only**: Users must explicitly share URLs; no scraping of private accounts
+- **Data retention**: All media and history stored locally on device; user can clear history and delete files
+- **Children**: Not directed at children under 13; UGC from Instagram subject to platform policies
+- **Open-source resolver**: Self-hosted backend option documented in README for Pro users

@@ -222,6 +222,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get historyFilterImage => 'Photos';
 
   @override
+  String get historyFilterStories => 'Stories';
+
+  @override
+  String get historyFilterProfiles => 'Profiles';
+
+  @override
   String get historyDeleteFileTitle => 'Delete file?';
 
   @override
@@ -463,6 +469,96 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get historyExportZip => 'Export ZIP';
+
+  @override
+  String get historyFailedBadge => 'Failed';
+
+  @override
+  String get historyRetryDownload => 'Retry download';
+
+  @override
+  String get historyRetryStarted => 'Retry started…';
+
+  @override
+  String get historyRetryFailed => 'Retry failed';
+
+  @override
+  String get historyAddToCollection => 'Add to collection';
+
+  @override
+  String get historyCreateCollection => 'New collection';
+
+  @override
+  String get historyCollectionNameHint => 'Collection name';
+
+  @override
+  String get historyCollectionCreated => 'Collection created';
+
+  @override
+  String get historyAddedToCollection => 'Added to collection';
+
+  @override
+  String get historyCollectionAll => 'All collections';
+
+  @override
+  String get queuePanelTitle => 'Download queue';
+
+  @override
+  String get queueStatusQueued => 'Queued';
+
+  @override
+  String get queueStatusRunning => 'Downloading';
+
+  @override
+  String get queueStatusPaused => 'Paused';
+
+  @override
+  String get queueStatusFailed => 'Failed';
+
+  @override
+  String get queueStatusCompleted => 'Done';
+
+  @override
+  String get queueStatusCancelled => 'Cancelled';
+
+  @override
+  String get queuePause => 'Pause';
+
+  @override
+  String get queueResume => 'Resume';
+
+  @override
+  String get queueCancel => 'Cancel';
+
+  @override
+  String get queueRetry => 'Retry';
+
+  @override
+  String get semHomeDownload => 'Download from URL';
+
+  @override
+  String get semHomeHistory => 'Open download history';
+
+  @override
+  String get semHomeSettings => 'Open settings';
+
+  @override
+  String get semHistorySearch => 'Search library';
+
+  @override
+  String get semPreviewDownload => 'Download media';
+
+  @override
+  String get semPreviewCancel => 'Cancel preview';
+
+  @override
+  String get semPreviewStop => 'Stop download';
+
+  @override
+  String get semSettingsProActivate => 'Activate Pro license';
+
+  @override
+  String get semSettingsSchedulerAdd => 'Add scheduled profile';
 
   @override
   String get notificationDownloadCompleteTitle => 'Media saved';

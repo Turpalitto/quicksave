@@ -470,6 +470,18 @@ abstract class AppLocalizations {
   /// **'Photos'**
   String get historyFilterImage;
 
+  /// No description provided for @historyFilterStories.
+  ///
+  /// In en, this message translates to:
+  /// **'Stories'**
+  String get historyFilterStories;
+
+  /// No description provided for @historyFilterProfiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Profiles'**
+  String get historyFilterProfiles;
+
   /// No description provided for @historyDeleteFileTitle.
   ///
   /// In en, this message translates to:
@@ -919,6 +931,186 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Export ZIP'**
   String get historyExportZip;
+
+  /// No description provided for @historyFailedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get historyFailedBadge;
+
+  /// No description provided for @historyRetryDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry download'**
+  String get historyRetryDownload;
+
+  /// No description provided for @historyRetryStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry started…'**
+  String get historyRetryStarted;
+
+  /// No description provided for @historyRetryFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry failed'**
+  String get historyRetryFailed;
+
+  /// No description provided for @historyAddToCollection.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to collection'**
+  String get historyAddToCollection;
+
+  /// No description provided for @historyCreateCollection.
+  ///
+  /// In en, this message translates to:
+  /// **'New collection'**
+  String get historyCreateCollection;
+
+  /// No description provided for @historyCollectionNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Collection name'**
+  String get historyCollectionNameHint;
+
+  /// No description provided for @historyCollectionCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Collection created'**
+  String get historyCollectionCreated;
+
+  /// No description provided for @historyAddedToCollection.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to collection'**
+  String get historyAddedToCollection;
+
+  /// No description provided for @historyCollectionAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All collections'**
+  String get historyCollectionAll;
+
+  /// No description provided for @queuePanelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Download queue'**
+  String get queuePanelTitle;
+
+  /// No description provided for @queueStatusQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'Queued'**
+  String get queueStatusQueued;
+
+  /// No description provided for @queueStatusRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading'**
+  String get queueStatusRunning;
+
+  /// No description provided for @queueStatusPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get queueStatusPaused;
+
+  /// No description provided for @queueStatusFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get queueStatusFailed;
+
+  /// No description provided for @queueStatusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get queueStatusCompleted;
+
+  /// No description provided for @queueStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get queueStatusCancelled;
+
+  /// No description provided for @queuePause.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get queuePause;
+
+  /// No description provided for @queueResume.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get queueResume;
+
+  /// No description provided for @queueCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get queueCancel;
+
+  /// No description provided for @queueRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get queueRetry;
+
+  /// No description provided for @semHomeDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Download from URL'**
+  String get semHomeDownload;
+
+  /// No description provided for @semHomeHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Open download history'**
+  String get semHomeHistory;
+
+  /// No description provided for @semHomeSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get semHomeSettings;
+
+  /// No description provided for @semHistorySearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search library'**
+  String get semHistorySearch;
+
+  /// No description provided for @semPreviewDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Download media'**
+  String get semPreviewDownload;
+
+  /// No description provided for @semPreviewCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel preview'**
+  String get semPreviewCancel;
+
+  /// No description provided for @semPreviewStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop download'**
+  String get semPreviewStop;
+
+  /// No description provided for @semSettingsProActivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate Pro license'**
+  String get semSettingsProActivate;
+
+  /// No description provided for @semSettingsSchedulerAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add scheduled profile'**
+  String get semSettingsSchedulerAdd;
 
   /// No description provided for @notificationDownloadCompleteTitle.
   ///

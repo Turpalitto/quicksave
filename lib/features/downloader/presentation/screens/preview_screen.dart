@@ -14,6 +14,7 @@ import '../../../../core/widgets/media_preview_dialog.dart';
 import '../../../history/domain/download_item.dart';
 import '../../domain/resolve_result.dart';
 import '../providers/download_provider.dart';
+import '../widgets/download_queue_panel.dart';
 
 class PreviewScreen extends ConsumerStatefulWidget {
   final String sourceUrl;
@@ -159,6 +160,7 @@ class _CollectionPreview extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _HeaderCard(result: result, sourceUrl: sourceUrl, scheme: scheme, s: s),
+        const DownloadQueuePanel(compact: true),
         if (isMulti) ...[
           const SizedBox(height: 8),
           _SelectionToolbar(scheme: scheme, s: s),
@@ -194,24 +196,35 @@ class _CollectionPreview extends ConsumerWidget {
                     label: Text(s.previewLoadMore),
                   ),
                 ),
-              FilledButton.icon(
-                onPressed: resolved.selectedCount == 0
-                    ? null
-                    : () => ref
-                        .read(downloadProvider.notifier)
-                        .download(strings: strings),
-                icon: const Icon(Icons.download_rounded),
-                label: Text(
-                  isMulti
-                      ? s.previewDownloadSelected(resolved.selectedCount)
-                      : s.previewDownload,
+              Semantics(
+                label: isMulti
+                    ? s.previewDownloadSelected(resolved.selectedCount)
+                    : s.semPreviewDownload,
+                button: true,
+                enabled: resolved.selectedCount > 0,
+                child: FilledButton.icon(
+                  onPressed: resolved.selectedCount == 0
+                      ? null
+                      : () => ref
+                          .read(downloadProvider.notifier)
+                          .download(strings: strings),
+                  icon: const Icon(Icons.download_rounded),
+                  label: Text(
+                    isMulti
+                        ? s.previewDownloadSelected(resolved.selectedCount)
+                        : s.previewDownload,
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
-              OutlinedButton.icon(
-                onPressed: () => Navigator.of(context).pop(),
-                icon: const Icon(Icons.close),
-                label: Text(s.previewCancel),
+              Semantics(
+                label: s.semPreviewCancel,
+                button: true,
+                child: OutlinedButton.icon(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.close),
+                  label: Text(s.previewCancel),
+                ),
               ),
             ],
           ),
@@ -656,60 +669,72 @@ class _BatchProgressView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final s = S.of(context);
-    return Padding(
+    return Column(
       key: const ValueKey('progress'),
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.cloud_download_outlined, size: 72, color: scheme.primary),
-          const SizedBox(height: 16),
-          Text(
-            s.previewBatchProgress(
-              progress.completed + 1,
-              progress.total,
+      children: [
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.cloud_download_outlined,
+                    size: 72, color: scheme.primary),
+                const SizedBox(height: 16),
+                Text(
+                  s.previewBatchProgress(
+                    progress.completed + 1,
+                    progress.total,
+                  ),
+                  style: TextStyle(color: scheme.onSurface, fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+                if (progress.currentLabel != null) ...[
+                  const SizedBox(height: 6),
+                  Text(
+                    progress.currentLabel!,
+                    style: TextStyle(
+                      color: scheme.onSurfaceVariant,
+                      fontSize: 12,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+                const SizedBox(height: 16),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: LinearProgressIndicator(
+                    value: progress.overallProgress > 0
+                        ? progress.overallProgress
+                        : null,
+                    minHeight: 8,
+                    color: scheme.primary,
+                    backgroundColor: scheme.surfaceContainerHighest,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  formatPercent(progress.overallProgress),
+                  style: TextStyle(color: scheme.onSurfaceVariant),
+                ),
+                const SizedBox(height: 24),
+                Semantics(
+                  label: s.semPreviewStop,
+                  button: true,
+                  child: OutlinedButton.icon(
+                    onPressed: () =>
+                        ref.read(downloadProvider.notifier).cancelDownload(),
+                    icon: const Icon(Icons.cancel_outlined),
+                    label: Text(s.previewStop),
+                  ),
+                ),
+              ],
             ),
-            style: TextStyle(color: scheme.onSurface, fontSize: 16),
-            textAlign: TextAlign.center,
           ),
-          if (progress.currentLabel != null) ...[
-            const SizedBox(height: 6),
-            Text(
-              progress.currentLabel!,
-              style: TextStyle(
-                color: scheme.onSurfaceVariant,
-                fontSize: 12,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-          const SizedBox(height: 16),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: LinearProgressIndicator(
-              value: progress.overallProgress > 0
-                  ? progress.overallProgress
-                  : null,
-              minHeight: 8,
-              color: scheme.primary,
-              backgroundColor: scheme.surfaceContainerHighest,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            formatPercent(progress.overallProgress),
-            style: TextStyle(color: scheme.onSurfaceVariant),
-          ),
-          const SizedBox(height: 24),
-          OutlinedButton.icon(
-            onPressed: () =>
-                ref.read(downloadProvider.notifier).cancelDownload(),
-            icon: const Icon(Icons.cancel_outlined),
-            label: Text(s.previewStop),
-          ),
-        ],
-      ),
+        ),
+        const DownloadQueuePanel(compact: true),
+      ],
     );
   }
 }

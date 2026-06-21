@@ -13,8 +13,6 @@ analyzer:
     - .dart_tool/**
     - '**/*.g.dart'
     - '**/*.freezed.dart'
-    # Ручная реализация локализации (имитация flutter gen-l10n).
-    - 'lib/l10n/app_localizations.dart'
   errors:
     # Обязательные для правки.
     missing_required_param: error

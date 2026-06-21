@@ -195,14 +195,18 @@ class _SwitchTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: SwitchListTile.adaptive(
-        value: value,
-        onChanged: onChanged,
-        title: Text(title),
-        subtitle: Text(subtitle),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+    return Semantics(
+      label: title,
+      toggled: value,
+      child: Card(
+        child: SwitchListTile.adaptive(
+          value: value,
+          onChanged: onChanged,
+          title: Text(title),
+          subtitle: Text(subtitle),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        ),
       ),
     );
   }
@@ -341,25 +345,28 @@ class _BackendModeSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: SegmentedButton<BackendMode>(
-          segments: [
-            ButtonSegment(
-              value: BackendMode.hosted,
-              label: Text(s.settingsBackendModeHosted),
-            ),
-            ButtonSegment(
-              value: BackendMode.selfHosted,
-              label: Text(s.settingsBackendModeSelf),
-              enabled: canSelfHost,
-            ),
-          ],
-          selected: {current},
-          onSelectionChanged: (selected) {
-            if (selected.isNotEmpty) onChanged(selected.first);
-          },
+    return Semantics(
+      label: s.settingsBackendModeHosted,
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: SegmentedButton<BackendMode>(
+            segments: [
+              ButtonSegment(
+                value: BackendMode.hosted,
+                label: Text(s.settingsBackendModeHosted),
+              ),
+              ButtonSegment(
+                value: BackendMode.selfHosted,
+                label: Text(s.settingsBackendModeSelf),
+                enabled: canSelfHost,
+              ),
+            ],
+            selected: {current},
+            onSelectionChanged: (selected) {
+              if (selected.isNotEmpty) onChanged(selected.first);
+            },
+          ),
         ),
       ),
     );
@@ -413,23 +420,27 @@ class _ProSectionState extends ConsumerState<_ProSection> {
               decoration: InputDecoration(hintText: s.settingsProLicenseHint),
             ),
             const SizedBox(height: 8),
-            FilledButton(
-              onPressed: () async {
-                final ok = ProService.instance
-                    .validateLicenseKey(_licenseCtrl.text);
-                if (!ok) {
+            Semantics(
+              label: s.semSettingsProActivate,
+              button: true,
+              child: FilledButton(
+                onPressed: () async {
+                  final ok = ProService.instance
+                      .validateLicenseKey(_licenseCtrl.text);
+                  if (!ok) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(s.settingsProInvalidKey)),
+                    );
+                    return;
+                  }
+                  await widget.notifier.setPro(true);
+                  if (!context.mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(s.settingsProInvalidKey)),
+                    SnackBar(content: Text(s.settingsProActivated)),
                   );
-                  return;
-                }
-                await widget.notifier.setPro(true);
-                if (!context.mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(s.settingsProActivated)),
-                );
-              },
-              child: Text(s.settingsProActivate),
+                },
+                child: Text(s.settingsProActivate),
+              ),
             ),
           ],
         ),
@@ -472,43 +483,49 @@ class _SchedulerSectionState extends State<_SchedulerSection> {
     final s = S.of(context);
     final profiles = widget.settings.scheduledProfiles;
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              s.settingsSchedulerTitle,
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              s.settingsSchedulerSubtitle,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _usernameCtrl,
-                    decoration: InputDecoration(
-                      hintText: s.settingsSchedulerAddHint,
-                      isDense: true,
+    return Semantics(
+      label: s.settingsSchedulerTitle,
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                s.settingsSchedulerTitle,
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                s.settingsSchedulerSubtitle,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _usernameCtrl,
+                      decoration: InputDecoration(
+                        hintText: s.settingsSchedulerAddHint,
+                        isDense: true,
+                      ),
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: (_) => _addProfile(),
                     ),
-                    textInputAction: TextInputAction.done,
-                    onSubmitted: (_) => _addProfile(),
                   ),
-                ),
-                const SizedBox(width: 8),
-                IconButton.filled(
-                  onPressed: _addProfile,
-                  icon: const Icon(Icons.add),
-                  tooltip: s.settingsSchedulerTitle,
-                ),
-              ],
-            ),
+                  const SizedBox(width: 8),
+                  Semantics(
+                    label: s.semSettingsSchedulerAdd,
+                    button: true,
+                    child: IconButton.filled(
+                      onPressed: _addProfile,
+                      icon: const Icon(Icons.add),
+                      tooltip: s.settingsSchedulerTitle,
+                    ),
+                  ),
+                ],
+              ),
             if (profiles.isEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
@@ -535,6 +552,7 @@ class _SchedulerSectionState extends State<_SchedulerSection> {
           ],
         ),
       ),
+    ),
     );
   }
 }

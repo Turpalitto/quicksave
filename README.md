@@ -30,7 +30,7 @@ Android-приложение для сохранения **публичных** 
 cd backend
 npm install
 npm start    # http://localhost:3000
-npm test     # 90 tests
+npm test     # 105 tests
 ```
 
 Production deploy: см. [`backend/render.yaml`](backend/render.yaml) и [`store/RELEASE_CHECKLIST.md`](store/RELEASE_CHECKLIST.md).
@@ -40,8 +40,9 @@ Production deploy: см. [`backend/render.yaml`](backend/render.yaml) и [`store
 ```bash
 flutter pub get
 flutter run
-flutter test      # 86 tests
+flutter test      # 106 tests
 flutter analyze
+cd backend && npm test   # 105 tests
 ```
 
 ### Release AAB (Google Play)

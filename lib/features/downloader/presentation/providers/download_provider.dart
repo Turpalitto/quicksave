@@ -5,10 +5,12 @@ import 'package:uuid/uuid.dart';
 
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/errors/failures.dart';
+import '../../../../services/download_queue.dart';
 import '../../../../services/gallery_save_service.dart';
 import '../../../../services/download_service.dart';
 import '../../../../services/notification_service.dart';
 import '../../../history/domain/download_item.dart';
+import '../../../history/domain/library_filter.dart';
 import '../../../history/presentation/providers/history_provider.dart';
 import '../../../settings/presentation/providers/settings_provider.dart';
 import '../../data/instagram_resolver.dart';
@@ -312,22 +314,44 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
         );
 
         try {
-          var savedPath = await DownloadService.instance.download(
+          final taskId = DownloadQueue.instance.enqueue(
             url: item.mediaUrl,
             fileName: item.fileName,
             subfolder: settings.saveInAuthorFolder
                 ? _sanitizeFolderName(current.result.author)
                 : null,
-            onProgress: (p) {
-              if (_cancelRequested) return;
-              state = DownloadInProgress(
-                completed: i,
-                total: queue.length,
-                currentProgress: p,
-                currentLabel: item.fileName,
-              );
-            },
           );
+
+          DownloadQueueTask finished = await DownloadQueue.instance.waitForTask(taskId);
+          while (finished.status == DownloadTaskStatus.running ||
+              finished.status == DownloadTaskStatus.queued) {
+            state = DownloadInProgress(
+              completed: i,
+              total: queue.length,
+              currentProgress: finished.progress,
+              currentLabel: item.fileName,
+            );
+            finished = await DownloadQueue.instance.waitForTask(taskId);
+          }
+
+          if (finished.status != DownloadTaskStatus.completed ||
+              finished.resultPath == null) {
+            failedCount++;
+            if (settings.saveHistory) {
+              await ref.read(historyProvider.notifier).add(
+                    DownloadItem.failed(
+                      sourceUrl: current.sourceUrl,
+                      mediaUrl: item.mediaUrl,
+                      displayFileName: item.fileName,
+                      author: current.result.author,
+                      sourceKind: _sourceKindFromResult(current.result.type),
+                    ),
+                  );
+            }
+            continue;
+          }
+
+          var savedPath = finished.resultPath!;
 
           if (settings.saveToGallery) {
             savedPath = await GallerySaveService.instance.saveToGallery(
@@ -354,6 +378,9 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
             mediaIndex: item.index,
             mediaType: item.isVideo ? 'video' : 'image',
             groupId: groupId,
+            mediaUrl: item.mediaUrl,
+            displayFileName: item.fileName,
+            sourceKind: _sourceKindFromResult(current.result.type),
           );
 
           if (settings.saveHistory) {
@@ -432,6 +459,7 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
 
   void cancelDownload() {
     _cancelRequested = true;
+    DownloadQueue.instance.cancelAll();
     DownloadService.instance.cancel();
     if (_lastResolved != null) {
       state = _lastResolved!;
@@ -500,6 +528,22 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
         .trim();
     if (clean.isEmpty || clean.length > 64) return null;
     return clean;
+  }
+
+  MediaSourceKind _sourceKindFromResult(ResolveType? type) {
+    switch (type) {
+      case ResolveType.story:
+        return MediaSourceKind.story;
+      case ResolveType.highlight:
+        return MediaSourceKind.highlight;
+      case ResolveType.profile:
+        return MediaSourceKind.profile;
+      case ResolveType.carousel:
+      case ResolveType.single:
+        return MediaSourceKind.post;
+      case null:
+        return MediaSourceKind.unknown;
+    }
   }
 }
 

@@ -13,7 +13,9 @@
 
 - [ ] `keytool -genkey -v -keystore quicksave.jks -keyalg RSA -keysize 2048 -validity 10000 -alias quicksave`
 - [ ] Скопировать `android/key.properties.example` → `android/key.properties`
-- [ ] `flutter build appbundle --release`
+- [ ] `flutter build appbundle --release` (Play Store) **или** `flutter build apk --release` (sideload)
+- [ ] Debug smoke: `flutter build apk --debug` — для локальной проверки без keystore
+- [ ] Release APK/AAB подписывается только при наличии `key.properties`; без него используйте debug APK
 - [ ] Проверить APK/AAB на реальном устройстве (Share, Gallery, widget, QS tile)
 
 ## Google Play Console
@@ -35,7 +37,7 @@
 - [ ] Home screen widget открывает приложение
 - [ ] Pro demo key `QS-PRO-DEMO1` → scheduler UI, ZIP export
 - [ ] Offline / backend down → понятные ошибки
-- [ ] `flutter test` (86+) и `cd backend && npm test` (90+)
+- [ ] `flutter test` (106) и `cd backend && npm test` (105)
 
 ## CI
 

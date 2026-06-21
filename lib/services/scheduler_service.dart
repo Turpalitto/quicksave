@@ -13,7 +13,7 @@ class SchedulerService {
   Future<void> init() async {
     if (_initialized) return;
     _initialized = true;
-    await Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
+    await Workmanager().initialize(callbackDispatcher);
   }
 
   Future<void> syncFromSettings(AppSettings settings) async {

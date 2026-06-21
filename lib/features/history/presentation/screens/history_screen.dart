@@ -7,42 +7,34 @@ import 'package:open_filex/open_filex.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../services/export_service.dart';
+import '../../data/history_repository.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../settings/presentation/providers/settings_provider.dart';
 import '../../../../core/utils/strings.dart';
 import '../../../../core/widgets/cached_thumbnail.dart';
 import '../../../../core/widgets/empty_view.dart';
 import '../../domain/download_item.dart';
+import '../../domain/library_filter.dart';
 import '../providers/history_provider.dart';
-
-enum HistoryMediaFilter { all, video, image }
 
 final historyQueryProvider = StateProvider<String>((ref) => '');
 
 final historyFilterProvider =
-    StateProvider<HistoryMediaFilter>((ref) => HistoryMediaFilter.all);
+    StateProvider<LibraryMediaFilter>((ref) => LibraryMediaFilter.all);
+
+final historyCollectionFilterProvider = StateProvider<String?>((ref) => null);
 
 final filteredHistoryProvider = Provider<List<DownloadItem>>((ref) {
   final all = ref.watch(historyProvider);
-  final q = ref.watch(historyQueryProvider).trim().toLowerCase();
+  final q = ref.watch(historyQueryProvider);
   final filter = ref.watch(historyFilterProvider);
-
-  Iterable<DownloadItem> items = all;
-  switch (filter) {
-    case HistoryMediaFilter.video:
-      items = items.where((i) => i.mediaType != 'image');
-    case HistoryMediaFilter.image:
-      items = items.where((i) => i.mediaType == 'image');
-    case HistoryMediaFilter.all:
-      break;
-  }
-
-  if (q.isEmpty) return items.toList();
-  return items.where((item) {
-    final author = (item.author ?? '').toLowerCase();
-    final url = item.sourceUrl.toLowerCase();
-    return author.contains(q) || url.contains(q);
-  }).toList();
+  final collectionId = ref.watch(historyCollectionFilterProvider);
+  return HistoryRepository.instance.filterItems(
+    all,
+    query: q,
+    filter: filter,
+    collectionId: collectionId,
+  );
 });
 
 /// Groups history entries by [DownloadItem.groupId].
@@ -110,6 +102,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
     final scheme = Theme.of(context).colorScheme;
     final s = S.of(context);
     final filter = ref.watch(historyFilterProvider);
+    final collectionsAsync = ref.watch(collectionsProvider);
+    final collectionFilter = ref.watch(historyCollectionFilterProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -123,32 +117,41 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
             ),
         ],
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _createCollection(context),
+        icon: const Icon(Icons.create_new_folder_outlined),
+        label: Text(s.historyCreateCollection),
+      ),
       body: SafeArea(
         child: Column(
           children: [
             if (all.isNotEmpty) ...[
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-                child: TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: s.historySearchHint,
-                    prefixIcon: const Icon(Icons.search),
-                    suffixIcon: _searchController.text.isEmpty
-                        ? null
-                        : IconButton(
-                            icon: const Icon(Icons.close),
-                            onPressed: () {
-                              _searchController.clear();
-                              ref.read(historyQueryProvider.notifier).state =
-                                  '';
-                            },
-                          ),
+                child: Semantics(
+                  label: s.semHistorySearch,
+                  textField: true,
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: s.historySearchHint,
+                      prefixIcon: const Icon(Icons.search),
+                      suffixIcon: _searchController.text.isEmpty
+                          ? null
+                          : IconButton(
+                              icon: const Icon(Icons.close),
+                              onPressed: () {
+                                _searchController.clear();
+                                ref.read(historyQueryProvider.notifier).state =
+                                    '';
+                              },
+                            ),
+                    ),
+                    onChanged: (v) {
+                      ref.read(historyQueryProvider.notifier).state = v;
+                      setState(() {});
+                    },
                   ),
-                  onChanged: (v) {
-                    ref.read(historyQueryProvider.notifier).state = v;
-                    setState(() {});
-                  },
                 ),
               ),
               Padding(
@@ -157,29 +160,84 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                   children: [
                     _FilterChip(
                       label: s.historyFilterAll,
-                      selected: filter == HistoryMediaFilter.all,
+                      selected: filter == LibraryMediaFilter.all,
                       onTap: () => ref
                           .read(historyFilterProvider.notifier)
-                          .state = HistoryMediaFilter.all,
+                          .state = LibraryMediaFilter.all,
                     ),
                     const SizedBox(width: 8),
                     _FilterChip(
                       label: s.historyFilterVideo,
-                      selected: filter == HistoryMediaFilter.video,
+                      selected: filter == LibraryMediaFilter.video,
                       onTap: () => ref
                           .read(historyFilterProvider.notifier)
-                          .state = HistoryMediaFilter.video,
+                          .state = LibraryMediaFilter.video,
                     ),
                     const SizedBox(width: 8),
                     _FilterChip(
                       label: s.historyFilterImage,
-                      selected: filter == HistoryMediaFilter.image,
+                      selected: filter == LibraryMediaFilter.image,
                       onTap: () => ref
                           .read(historyFilterProvider.notifier)
-                          .state = HistoryMediaFilter.image,
+                          .state = LibraryMediaFilter.image,
+                    ),
+                    const SizedBox(width: 8),
+                    _FilterChip(
+                      label: s.historyFilterStories,
+                      selected: filter == LibraryMediaFilter.stories,
+                      onTap: () => ref
+                          .read(historyFilterProvider.notifier)
+                          .state = LibraryMediaFilter.stories,
+                    ),
+                    const SizedBox(width: 8),
+                    _FilterChip(
+                      label: s.historyFilterProfiles,
+                      selected: filter == LibraryMediaFilter.profiles,
+                      onTap: () => ref
+                          .read(historyFilterProvider.notifier)
+                          .state = LibraryMediaFilter.profiles,
                     ),
                   ],
                 ),
+              ),
+              collectionsAsync.when(
+                data: (collections) {
+                  if (collections.isEmpty) return const SizedBox.shrink();
+                  return Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          _FilterChip(
+                            label: s.historyCollectionAll,
+                            selected: collectionFilter == null,
+                            onTap: () => ref
+                                .read(historyCollectionFilterProvider.notifier)
+                                .state = null,
+                          ),
+                          const SizedBox(width: 8),
+                          ...collections.map(
+                            (c) => Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: _FilterChip(
+                                label: c.name,
+                                selected: collectionFilter == c.id,
+                                onTap: () => ref
+                                    .read(
+                                        historyCollectionFilterProvider.notifier)
+                                    .state = c.id,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+                loading: () => const SizedBox.shrink(),
+                error: (_, __) => const SizedBox.shrink(),
               ),
             ],
             Expanded(
@@ -236,6 +294,41 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
       _searchController.clear();
       ref.read(historyQueryProvider.notifier).state = '';
     }
+  }
+
+  Future<void> _createCollection(BuildContext context) async {
+    final s = S.of(context);
+    final controller = TextEditingController();
+    final name = await showDialog<String>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(s.historyCreateCollection),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: InputDecoration(hintText: s.historyCollectionNameHint),
+          onSubmitted: (v) => Navigator.pop(context, v.trim()),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(s.historyClearConfirmNo),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, controller.text.trim()),
+            child: Text(s.historyCreateCollection),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+    if (name == null || name.isEmpty) return;
+    await ref.read(historyProvider.notifier).createCollection(name);
+    ref.invalidate(collectionsProvider);
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(s.historyCollectionCreated)),
+    );
   }
 }
 
@@ -327,6 +420,7 @@ class _HistoryTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final s = S.of(context);
     final exists = File(item.filePath).existsSync();
+    final collectionsAsync = ref.watch(collectionsProvider);
 
     return Dismissible(
       key: ValueKey('hist_${item.id}'),
@@ -368,15 +462,41 @@ class _HistoryTile extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      item.author ?? 'Instagram',
-                      style: TextStyle(
-                        color: scheme.onSurface,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            item.author ?? 'Instagram',
+                            style: TextStyle(
+                              color: scheme.onSurface,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        if (item.isFailed)
+                          Container(
+                            margin: const EdgeInsets.only(left: 8),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: scheme.errorContainer,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              s.historyFailedBadge,
+                              style: TextStyle(
+                                color: scheme.onErrorContainer,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                     if (item.mediaIndex != null) ...[
                       const SizedBox(height: 4),
@@ -444,6 +564,19 @@ class _HistoryTile extends ConsumerWidget {
                       ],
                     ),
                   ),
+                  if (item.isFailed &&
+                      item.mediaUrl != null &&
+                      item.mediaUrl!.isNotEmpty)
+                    PopupMenuItem(
+                      value: 'retry',
+                      child: Row(
+                        children: [
+                          const Icon(Icons.refresh),
+                          const SizedBox(width: 8),
+                          Text(s.historyRetryDownload),
+                        ],
+                      ),
+                    ),
                   if (item.caption != null && item.caption!.isNotEmpty)
                     PopupMenuItem(
                       value: 'copy_caption',
@@ -456,6 +589,7 @@ class _HistoryTile extends ConsumerWidget {
                       ),
                     ),
                   PopupMenuItem(
+                    value: 'share',
                     child: Row(
                       children: [
                         const Icon(Icons.share_outlined),
@@ -463,6 +597,23 @@ class _HistoryTile extends ConsumerWidget {
                         Text(s.historyActionShare),
                       ],
                     ),
+                  ),
+                  ...collectionsAsync.maybeWhen(
+                    data: (collections) => collections.isEmpty
+                        ? <PopupMenuEntry<String>>[]
+                        : [
+                            PopupMenuItem(
+                              value: 'add_to_collection',
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.folder_outlined),
+                                  const SizedBox(width: 8),
+                                  Text(s.historyAddToCollection),
+                                ],
+                              ),
+                            ),
+                          ],
+                    orElse: () => <PopupMenuEntry<String>>[],
                   ),
                   PopupMenuItem(
                     value: 'delete_file',
@@ -549,6 +700,22 @@ class _HistoryTile extends ConsumerWidget {
           SnackBar(content: Text(s.historyCaptionCopied)),
         );
         break;
+      case 'retry':
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(s.historyRetryStarted)),
+        );
+        final ok = await ref.read(historyProvider.notifier).retryFailed(item.id);
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(ok ? s.historyRetryStarted : s.historyRetryFailed),
+          ),
+        );
+        break;
+      case 'add_to_collection':
+        await _pickCollection(context, ref);
+        break;
       case 'share':
         if (!File(item.filePath).existsSync()) {
           if (!context.mounted) return;
@@ -578,6 +745,41 @@ class _HistoryTile extends ConsumerWidget {
         );
         break;
     }
+  }
+
+  Future<void> _pickCollection(BuildContext context, WidgetRef ref) async {
+    final s = S.of(context);
+    final collections =
+        await ref.read(collectionsProvider.future);
+    if (!context.mounted || collections.isEmpty) return;
+
+    final picked = await showModalBottomSheet<String>(
+      context: context,
+      builder: (_) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text(s.historyAddToCollection),
+              leading: const Icon(Icons.folder_outlined),
+            ),
+            ...collections.map(
+              (c) => ListTile(
+                title: Text(c.name),
+                onTap: () => Navigator.pop(context, c.id),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (picked == null) return;
+    await ref.read(historyProvider.notifier).addToCollection(picked, item.id);
+    ref.invalidate(collectionsProvider);
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(s.historyAddedToCollection)),
+    );
   }
 }
 

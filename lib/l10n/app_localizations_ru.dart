@@ -224,6 +224,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get historyFilterImage => 'Фото';
 
   @override
+  String get historyFilterStories => 'Stories';
+
+  @override
+  String get historyFilterProfiles => 'Профили';
+
+  @override
   String get historyDeleteFileTitle => 'Удалить файл?';
 
   @override
@@ -464,6 +470,96 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get historyExportZip => 'Экспорт ZIP';
+
+  @override
+  String get historyFailedBadge => 'Ошибка';
+
+  @override
+  String get historyRetryDownload => 'Повторить загрузку';
+
+  @override
+  String get historyRetryStarted => 'Повтор запущен…';
+
+  @override
+  String get historyRetryFailed => 'Повтор не удался';
+
+  @override
+  String get historyAddToCollection => 'В коллекцию';
+
+  @override
+  String get historyCreateCollection => 'Новая коллекция';
+
+  @override
+  String get historyCollectionNameHint => 'Название коллекции';
+
+  @override
+  String get historyCollectionCreated => 'Коллекция создана';
+
+  @override
+  String get historyAddedToCollection => 'Добавлено в коллекцию';
+
+  @override
+  String get historyCollectionAll => 'Все коллекции';
+
+  @override
+  String get queuePanelTitle => 'Очередь загрузок';
+
+  @override
+  String get queueStatusQueued => 'В очереди';
+
+  @override
+  String get queueStatusRunning => 'Скачивается';
+
+  @override
+  String get queueStatusPaused => 'Пауза';
+
+  @override
+  String get queueStatusFailed => 'Ошибка';
+
+  @override
+  String get queueStatusCompleted => 'Готово';
+
+  @override
+  String get queueStatusCancelled => 'Отменено';
+
+  @override
+  String get queuePause => 'Пауза';
+
+  @override
+  String get queueResume => 'Продолжить';
+
+  @override
+  String get queueCancel => 'Отмена';
+
+  @override
+  String get queueRetry => 'Повтор';
+
+  @override
+  String get semHomeDownload => 'Скачать по ссылке';
+
+  @override
+  String get semHomeHistory => 'Открыть историю';
+
+  @override
+  String get semHomeSettings => 'Открыть настройки';
+
+  @override
+  String get semHistorySearch => 'Поиск в библиотеке';
+
+  @override
+  String get semPreviewDownload => 'Скачать медиа';
+
+  @override
+  String get semPreviewCancel => 'Отменить предпросмотр';
+
+  @override
+  String get semPreviewStop => 'Остановить загрузку';
+
+  @override
+  String get semSettingsProActivate => 'Активировать Pro лицензию';
+
+  @override
+  String get semSettingsSchedulerAdd => 'Добавить профиль в расписание';
 
   @override
   String get notificationDownloadCompleteTitle => 'Файл сохранён';

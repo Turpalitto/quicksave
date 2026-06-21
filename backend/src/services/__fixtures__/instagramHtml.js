@@ -131,6 +131,30 @@ const GRAPHQL_NESTED_JSON = JSON.stringify({
   status: 'ok',
 });
 
+/** Story with reel_media items array. */
+const STORY_HTML = `<!DOCTYPE html>
+<html><head><meta property="og:title" content="Story"></head><body>
+<script>
+var data = {"reel_media":[{"id":"111","video_versions":[{"url":"https:\\/\\/video.cdninstagram.net\\/v\\/story1.mp4","width":720}],"image_versions2":{"candidates":[{"url":"https:\\/\\/scontent.cdninstagram.net\\/story1.jpg"}]},"is_video":true}]};
+</script></body></html>`;
+
+/** Highlight reel bundle. */
+const HIGHLIGHT_HTML = `<!DOCTYPE html>
+<html><head><meta property="og:title" content="Highlight"></head><body>
+<script>
+var data = {"highlight_reels":[{"id":"222","video_versions":[{"url":"https:\\/\\/video.cdninstagram.net\\/v\\/hl1.mp4","width":720}],"image_versions2":{"candidates":[{"url":"https:\\/\\/scontent.cdninstagram.net\\/hl1.jpg"}]},"is_video":true}]};
+</script></body></html>`;
+
+/** Profile grid HTML snippet. */
+const PROFILE_GRID_HTML = `<!DOCTYPE html>
+<html><head><meta property="og:title" content="natgeo on Instagram"></head><body>
+<script>
+"edge_owner_to_timeline_media":{"edges":[
+{"node":{"shortcode":"PROF1","is_video":true,"video_versions":[{"url":"https:\\/\\/video.cdninstagram.net\\/v\\/prof1.mp4","width":720}],"thumbnail_src":"https:\\/\\/scontent.cdninstagram.net\\/t1.jpg"}},
+{"node":{"shortcode":"PROF2","is_video":false,"image_versions2":{"candidates":[{"url":"https:\\/\\/scontent.cdninstagram.net\\/p2.jpg","width":640}]}}}
+]}
+</script></body></html>`;
+
 module.exports = {
   REEL_OG_VIDEO,
   POST_JSON_LD,
@@ -140,4 +164,7 @@ module.exports = {
   EMPTY_HTML,
   GRAPHQL_JSON,
   GRAPHQL_NESTED_JSON,
+  STORY_HTML,
+  HIGHLIGHT_HTML,
+  PROFILE_GRID_HTML,
 };

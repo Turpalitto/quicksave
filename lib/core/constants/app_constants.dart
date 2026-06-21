@@ -25,7 +25,15 @@ class AppConstants {
 
   /// Имя файла для логов (если понадобится).
   static const String historyPrefsKey = 'quicksave.history.v1';
+  static const String historyV2PrefsKey = 'quicksave.history.v2';
+  static const String collectionsPrefsKey = 'quicksave.collections.v1';
   static const String settingsPrefsKey = 'quicksave.settings.v1';
+
+  /// Max single-file download size (500 MB).
+  static const int maxDownloadBytes = 500 * 1024 * 1024;
+
+  static const int downloadMaxRetries = 3;
+  static const int downloadRetryBaseMs = 1000;
 
   /// Допустимые паттерны Instagram (публичных постов).
   static const List<String> instagramPatterns = [

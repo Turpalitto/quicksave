@@ -31,15 +31,16 @@ class DownloadService {
   );
 
   CancelToken? _activeToken;
+  final Map<String, CancelToken> _taskTokens = {};
 
   /// Скачивает файл по [url]. Возвращает путь к сохранённому файлу.
   ///
-  /// Если файл с таким именем уже существует (или есть .part),
-  /// пытается возобновить загрузку с места обрыва.
+  /// [taskId] — optional queue task id for per-task cancel/pause.
   Future<String> download({
     required String url,
     required String fileName,
     String? subfolder,
+    String? taskId,
     ProgressCallback? onProgress,
     bool resume = true,
   }) async {
@@ -75,6 +76,9 @@ class DownloadService {
 
     final cancelToken = CancelToken();
     _activeToken = cancelToken;
+    if (taskId != null) {
+      _taskTokens[taskId] = cancelToken;
+    }
 
     // Foreground-сервис держит процесс живым во время длительной загрузки.
     // Ошибки платформы проглатываются внутри — скачивание продолжится и без него.
@@ -82,7 +86,8 @@ class DownloadService {
     var lastFgPercent = -1;
 
     try {
-      await _dio.download(
+      try {
+        await _dio.download(
         url,
         part,
         cancelToken: cancelToken,
@@ -119,68 +124,82 @@ class DownloadService {
           }
         },
       );
-    } on DioException catch (e) {
-      if (CancelToken.isCancel(e)) {
-        try {
-          await File(part).delete();
-        } catch (_) {}
-        throw const DownloadCancelledException();
-      }
-      if (e.type == DioExceptionType.connectionTimeout ||
-          e.type == DioExceptionType.connectionError) {
-        // Сохраняем .part для возобновления.
-        throw const NoInternetException();
-      }
-      if (e.type == DioExceptionType.badResponse) {
-        // Если сервер не поддержал Range — попробовать с нуля.
-        if (existingBytes > 0 && e.response?.statusCode == 416) {
-          // 416 Range Not Satisfiable — диапазон битый. Удаляем и пробуем заново.
-          try {
-            await File(part).delete();
-          } catch (_) {}
-          return download(
-            url: url,
-            fileName: fileName,
-            onProgress: onProgress,
-            resume: false,
-          );
+      } on DioException catch (e) {
+        if (CancelToken.isCancel(e)) {
+          if (e.message != 'paused') {
+            try {
+              await File(part).delete();
+            } catch (_) {}
+          }
+          throw const DownloadCancelledException();
         }
-        throw const ServerException();
+        if (e.type == DioExceptionType.connectionTimeout ||
+            e.type == DioExceptionType.connectionError) {
+          throw const NoInternetException();
+        }
+        if (e.type == DioExceptionType.badResponse) {
+          if (existingBytes > 0 && e.response?.statusCode == 416) {
+            try {
+              await File(part).delete();
+            } catch (_) {}
+            return download(
+              url: url,
+              fileName: fileName,
+              subfolder: subfolder,
+              taskId: taskId,
+              onProgress: onProgress,
+              resume: false,
+            );
+          }
+          throw const ServerException();
+        }
+        throw UnknownException(e.message);
       }
-      throw UnknownException(e.message);
-    } finally {
-      _activeToken = null;
-      await ForegroundService.instance.stop();
-    }
 
-    // Атомарно: .part → целевой файл.
-    try {
-      await File(part).rename(target);
-    } catch (_) {
       try {
-        await File(part).copy(target);
-        await File(part).delete();
+        await File(part).rename(target);
       } catch (_) {
+        try {
+          await File(part).copy(target);
+          await File(part).delete();
+        } catch (_) {
+          throw const FileWriteException();
+        }
+      }
+
+      final file = File(target);
+      if (!await file.exists()) {
         throw const FileWriteException();
       }
-    }
+      if (await file.length() == 0) {
+        await file.delete();
+        throw const FileWriteException();
+      }
 
-    final file = File(target);
-    if (!await file.exists()) {
-      throw const FileWriteException();
+      return target;
+    } finally {
+      _activeToken = null;
+      if (taskId != null) {
+        _taskTokens.remove(taskId);
+      }
+      await ForegroundService.instance.stop();
     }
-    if (await file.length() == 0) {
-      await file.delete();
-      throw const FileWriteException();
-    }
-
-    return target;
   }
 
-  /// Отмена текущего скачивания (файл .part сохраняется для возобновления).
+  /// Pause-friendly cancel keeps `.part` for resume.
+  void cancelTask(String taskId, {bool paused = false}) {
+    _taskTokens[taskId]?.cancel(paused ? 'paused' : 'user_cancelled');
+    _taskTokens.remove(taskId);
+  }
+
+  /// Отмена текущего скачивания (legacy — все активные).
   void cancel() {
     _activeToken?.cancel('user_cancelled');
     _activeToken = null;
+    for (final token in _taskTokens.values) {
+      token.cancel('user_cancelled');
+    }
+    _taskTokens.clear();
   }
 
   /// Возвращает список частично скачанных файлов, ожидающих возобновления.
