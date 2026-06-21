@@ -20,10 +20,8 @@ function enrichCollectionWithOembed(result, oembed) {
 
 function buildSuccessResult(extracted, html, shortcode, metaOverride = {}) {
   const meta = html ? extractMetaTags(html) : {};
-  const author = metaOverride.author
-    || extractAuthor(meta.title)
-    || extractAuthor(metaOverride.title)
-    || null;
+  const author =
+    metaOverride.author || extractAuthor(meta.title) || extractAuthor(metaOverride.title) || null;
   const qualities = html ? extractVideoQualitiesFromHtml(html) : [];
   const item = {
     id: `${shortcode}_0`,
@@ -45,10 +43,8 @@ function buildSuccessResult(extracted, html, shortcode, metaOverride = {}) {
 
 function buildImageSuccessResult(imageUrl, html, shortcode, metaOverride = {}) {
   const meta = html ? extractMetaTags(html) : {};
-  const author = metaOverride.author
-    || extractAuthor(meta.title)
-    || extractAuthor(metaOverride.title)
-    || null;
+  const author =
+    metaOverride.author || extractAuthor(meta.title) || extractAuthor(metaOverride.title) || null;
   const item = {
     id: `${shortcode}_0`,
     index: 0,

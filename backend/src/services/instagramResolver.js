@@ -46,9 +46,7 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
     return { ok: false, error: 'invalid_url' };
   }
 
-  const cacheKey = options.cursor
-    ? `${url}?cursor=${options.cursor}`
-    : url;
+  const cacheKey = options.cursor ? `${url}?cursor=${options.cursor}` : url;
   if (config.nodeEnv !== 'test') {
     const cached = await resolveCache.get(cacheKey);
     if (cached) {
@@ -89,7 +87,7 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
         continue;
       }
 
-      const html = (item.res.data && typeof item.res.data === 'string') ? item.res.data : '';
+      const html = item.res.data && typeof item.res.data === 'string' ? item.res.data : '';
       if (html.length === 0) continue;
       gotNonEmptyHtml = true;
       if (html.length > bestHtml.length) bestHtml = html;
@@ -101,8 +99,7 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
         bestCollection = collection;
       }
 
-      if (collection.length >= 1 &&
-          (urlKind === 'story' || urlKind === 'highlight')) {
+      if (collection.length >= 1 && (urlKind === 'story' || urlKind === 'highlight')) {
         const meta = extractMetaTags(html);
         const type = collectionTypeForKind(urlKind, collection.length);
         let result = buildCollectionResponse(type, collection, {
@@ -173,7 +170,7 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
         { videoUrl: gqlResult.videoUrl, thumbnailUrl: gqlResult.thumbnailUrl },
         null,
         shortcode,
-        { thumbnailUrl: gqlResult.thumbnailUrl }
+        { thumbnailUrl: gqlResult.thumbnailUrl },
       );
       const oembed = await fetchOembedMetadata(url, USER_AGENTS[0]);
       result = enrichCollectionWithOembed(result, oembed);
@@ -190,8 +187,7 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
       }
     }
 
-    if (bestCollection.length >= 1 &&
-        (urlKind === 'story' || urlKind === 'highlight')) {
+    if (bestCollection.length >= 1 && (urlKind === 'story' || urlKind === 'highlight')) {
       const meta = bestHtml ? extractMetaTags(bestHtml) : {};
       const type = collectionTypeForKind(urlKind, bestCollection.length);
       let result = buildCollectionResponse(type, bestCollection, {
@@ -229,10 +225,7 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
   const deadline = config.resolveDeadlineMs;
   let deadlineTimer;
   const deadlinePromise = new Promise((resolve) => {
-    deadlineTimer = setTimeout(
-      () => resolve({ ok: false, error: 'resolver_failed' }),
-      deadline
-    );
+    deadlineTimer = setTimeout(() => resolve({ ok: false, error: 'resolver_failed' }), deadline);
   });
 
   const result = await Promise.race([runResolve(), deadlinePromise]);

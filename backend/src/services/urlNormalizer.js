@@ -27,20 +27,11 @@ function normalizeUrl(url) {
     if (h >= 0) u = u.slice(0, h);
   }
 
-  u = u.replace(
-    /instagram\.com\/(?:video\/|share\/)?(reels|reel|p|tv)\//gi,
-    'instagram.com/$1/'
-  );
+  u = u.replace(/instagram\.com\/(?:video\/|share\/)?(reels|reel|p|tv)\//gi, 'instagram.com/$1/');
   u = u.replace(/instagram\.com\/reels\//gi, 'instagram.com/reel/');
-  u = u.replace(
-    /instagr\.am\/(?:video\/|share\/)?(reels|reel|p|tv)\//gi,
-    'instagr.am/$1/'
-  );
+  u = u.replace(/instagr\.am\/(?:video\/|share\/)?(reels|reel|p|tv)\//gi, 'instagr.am/$1/');
   u = u.replace(/instagr\.am\/reels\//gi, 'instagr.am/reel/');
-  u = u.replace(
-    /instagram\.com\/stories\/([^/]+)\/(\d+)\/[^/]+/gi,
-    'instagram.com/stories/$1/$2'
-  );
+  u = u.replace(/instagram\.com\/stories\/([^/]+)\/(\d+)\/[^/]+/gi, 'instagram.com/stories/$1/$2');
 
   if (u.endsWith('/')) u = u.slice(0, -1);
   return u;
@@ -59,7 +50,7 @@ function extractShortcode(url) {
     return id.replace(/[^A-Za-z0-9_\-]/g, '') || 'story';
   }
   const m = url.match(/\/(reel|p|tv)\/([A-Za-z0-9_\-]+)/i);
-  return m ? m[2] : (url.split('/').filter(Boolean).pop() || 'media');
+  return m ? m[2] : url.split('/').filter(Boolean).pop() || 'media';
 }
 
 function getUrlKind(url) {

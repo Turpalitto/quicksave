@@ -62,9 +62,7 @@ describe('Health endpoints', () => {
   test('Too large JSON body returns 413', async () => {
     // express.json limit = 64kb. Шлём >64kb валидного JSON.
     const huge = { url: 'x'.repeat(70000) };
-    const res = await request(app)
-      .post('/resolve')
-      .send(huge);
+    const res = await request(app).post('/resolve').send(huge);
     expect(res.status).toBe(413);
     expect(res.body.ok).toBe(false);
     expect(res.body.error).toBe('payload_too_large');

@@ -32,7 +32,7 @@ async function resolveProfileUrl(url, options = {}) {
       cursor,
       username,
       USER_AGENTS[0],
-      REQUEST_TIMEOUT
+      REQUEST_TIMEOUT,
     );
     const items = dedupeProfileItems(feed.items);
     if (items.length === 0) {

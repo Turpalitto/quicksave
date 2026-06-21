@@ -9,9 +9,7 @@ describe('urlSanitizer', () => {
   });
 
   test('sanitizeUrlForLog redacts query and truncates path', () => {
-    const s = sanitizeUrlForLog(
-      'https://www.instagram.com/reel/ABC123/?utm_source=share',
-    );
+    const s = sanitizeUrlForLog('https://www.instagram.com/reel/ABC123/?utm_source=share');
     expect(s).toContain('instagram.com');
     expect(s).not.toContain('utm_source');
   });

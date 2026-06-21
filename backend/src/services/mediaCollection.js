@@ -51,9 +51,10 @@ function mediaNodeToItem(node, index, idPrefix) {
   let height = 0;
 
   if (isVideo) {
-    mediaUrl = pickBestVideoUrl(node.video_versions)
-      || (node.video_url ? unescapeJsonString(node.video_url) : null)
-      || (node.playable_url ? unescapeJsonString(node.playable_url) : null);
+    mediaUrl =
+      pickBestVideoUrl(node.video_versions) ||
+      (node.video_url ? unescapeJsonString(node.video_url) : null) ||
+      (node.playable_url ? unescapeJsonString(node.playable_url) : null);
     duration = Math.round(node.video_duration || node.duration || 0);
     const vv = node.video_versions?.[0];
     width = vv?.width || node.original_width || 0;
@@ -88,9 +89,7 @@ function mediaNodeToItem(node, index, idPrefix) {
 
 function nodesFromEdges(edges) {
   if (!Array.isArray(edges)) return [];
-  return edges
-    .map((e) => (e && e.node ? e.node : e))
-    .filter(Boolean);
+  return edges.map((e) => (e && e.node ? e.node : e)).filter(Boolean);
 }
 
 /**
@@ -117,9 +116,7 @@ function extractCarouselFromHtml(html, idPrefix) {
           const raw = arrStart >= 0 ? extractBalancedJson(html, arrStart, '[', ']') : null;
           const edges = tryParseJson(raw);
           const nodes = nodesFromEdges(edges);
-          const items = nodes
-            .map((n, i) => mediaNodeToItem(n, i, idPrefix))
-            .filter(Boolean);
+          const items = nodes.map((n, i) => mediaNodeToItem(n, i, idPrefix)).filter(Boolean);
           if (items.length > best.length) best = items;
         }
       } else if (marker === '"carousel_media"') {
@@ -127,9 +124,7 @@ function extractCarouselFromHtml(html, idPrefix) {
         const raw = arrStart >= 0 ? extractBalancedJson(html, arrStart, '[', ']') : null;
         const parsed = tryParseJson(raw);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          const items = parsed
-            .map((n, i) => mediaNodeToItem(n, i, idPrefix))
-            .filter(Boolean);
+          const items = parsed.map((n, i) => mediaNodeToItem(n, i, idPrefix)).filter(Boolean);
           if (items.length > best.length) best = items;
         }
       } else {
@@ -139,9 +134,7 @@ function extractCarouselFromHtml(html, idPrefix) {
           const raw = arrStart >= 0 ? extractBalancedJson(html, arrStart, '[', ']') : null;
           const parsed = tryParseJson(raw);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            const items = parsed
-              .map((n, i) => mediaNodeToItem(n, i, idPrefix))
-              .filter(Boolean);
+            const items = parsed.map((n, i) => mediaNodeToItem(n, i, idPrefix)).filter(Boolean);
             if (items.length > best.length) best = items;
           }
         }
@@ -159,11 +152,7 @@ function extractCarouselFromHtml(html, idPrefix) {
 function extractStoriesFromHtml(html, idPrefix) {
   if (!html) return [];
 
-  const markers = [
-    '"reel_media"',
-    '"items"',
-    '"highlight_reels"',
-  ];
+  const markers = ['"reel_media"', '"items"', '"highlight_reels"'];
 
   let best = [];
 
@@ -188,9 +177,7 @@ function extractStoriesFromHtml(html, idPrefix) {
         }
       }
 
-      const items = nodes
-        .map((n, i) => mediaNodeToItem(n, i, idPrefix))
-        .filter(Boolean);
+      const items = nodes.map((n, i) => mediaNodeToItem(n, i, idPrefix)).filter(Boolean);
       if (items.length > best.length) best = items;
       idx += marker.length;
     }
@@ -204,17 +191,19 @@ function extractStoriesFromHtml(html, idPrefix) {
       const url = pickBestVideoUrl(versions);
       if (url) {
         const thumb = html.match(/"thumbnail_url"\s*:\s*"([^"]+)"/);
-        best = [{
-          id: `${idPrefix}_0`,
-          index: 0,
-          mediaType: 'video',
-          mediaUrl: url,
-          thumbnailUrl: thumb ? unescapeJsonString(thumb[1]) : null,
-          duration: 0,
-          fileName: `quicksave_${idPrefix}_1.mp4`,
-          width: 0,
-          height: 0,
-        }];
+        best = [
+          {
+            id: `${idPrefix}_0`,
+            index: 0,
+            mediaType: 'video',
+            mediaUrl: url,
+            thumbnailUrl: thumb ? unescapeJsonString(thumb[1]) : null,
+            duration: 0,
+            fileName: `quicksave_${idPrefix}_1.mp4`,
+            width: 0,
+            height: 0,
+          },
+        ];
       }
     }
   }
@@ -273,9 +262,7 @@ function findStoriesInJson(obj, depth = 0) {
 }
 
 function itemsFromJsonNodes(nodes, idPrefix) {
-  return nodes
-    .map((n, i) => mediaNodeToItem(n, i, idPrefix))
-    .filter(Boolean);
+  return nodes.map((n, i) => mediaNodeToItem(n, i, idPrefix)).filter(Boolean);
 }
 
 function buildCollectionResponse(type, items, meta = {}) {

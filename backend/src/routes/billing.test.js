@@ -28,13 +28,11 @@ describe('Billing routes', () => {
 
   test('POST /billing/play/verify returns 501 when not configured', async () => {
     const app = createApp();
-    const res = await request(app)
-      .post('/billing/play/verify')
-      .send({
-        productId: 'quicksave_pro_monthly',
-        purchaseToken: 'token',
-        packageName: 'com.quicksave.app',
-      });
+    const res = await request(app).post('/billing/play/verify').send({
+      productId: 'quicksave_pro_monthly',
+      purchaseToken: 'token',
+      packageName: 'com.quicksave.app',
+    });
     expect(res.status).toBe(501);
     expect(res.body.code).toBe('BILLING_VERIFY_NOT_CONFIGURED');
   });
@@ -43,13 +41,11 @@ describe('Billing routes', () => {
     process.env.BILLING_PLAY_VERIFY = '1';
     process.env.BILLING_DEV_ACCEPT = '1';
     const app = createApp();
-    const res = await request(app)
-      .post('/billing/play/verify')
-      .send({
-        productId: 'quicksave_pro_monthly',
-        purchaseToken: 'token',
-        packageName: 'com.quicksave.app',
-      });
+    const res = await request(app).post('/billing/play/verify').send({
+      productId: 'quicksave_pro_monthly',
+      purchaseToken: 'token',
+      packageName: 'com.quicksave.app',
+    });
     expect(res.status).toBe(200);
     expect(res.body.valid).toBe(true);
   });

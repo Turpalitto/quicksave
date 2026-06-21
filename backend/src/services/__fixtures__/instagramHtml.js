@@ -111,9 +111,7 @@ const GRAPHQL_JSON = JSON.stringify({
       video_versions: [
         { type: 101, url: 'https://video-ams.cdninstagram.net/v/gql_fallback.mp4?token=zzz' },
       ],
-      image_versions: [
-        { url: 'https://scontent.cdninstagram.net/gql_thumb.jpg' },
-      ],
+      image_versions: [{ url: 'https://scontent.cdninstagram.net/gql_thumb.jpg' }],
     },
   ],
 });

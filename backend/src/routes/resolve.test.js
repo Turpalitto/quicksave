@@ -33,9 +33,7 @@ describe('POST /resolve', () => {
   });
 
   test('400 on non-instagram URL', async () => {
-    const res = await request(app)
-      .post('/resolve')
-      .send({ url: 'https://example.com/' });
+    const res = await request(app).post('/resolve').send({ url: 'https://example.com/' });
     expect(res.status).toBe(400);
     expect(res.body.ok).toBe(false);
   });

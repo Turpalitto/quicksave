@@ -63,39 +63,29 @@ describe('isValidPublicUrl', () => {
 
 describe('normalizeUrl', () => {
   test('adds https if missing', () => {
-    expect(normalizeUrl('instagram.com/reel/X/')).toBe(
-      'https://instagram.com/reel/X'
-    );
+    expect(normalizeUrl('instagram.com/reel/X/')).toBe('https://instagram.com/reel/X');
   });
   test('keeps existing https', () => {
-    expect(normalizeUrl('https://instagram.com/p/X/')).toBe(
-      'https://instagram.com/p/X'
-    );
+    expect(normalizeUrl('https://instagram.com/p/X/')).toBe('https://instagram.com/p/X');
   });
   test('removes trailing slash', () => {
-    expect(normalizeUrl('https://instagram.com/p/X/')).toBe(
-      'https://instagram.com/p/X'
-    );
+    expect(normalizeUrl('https://instagram.com/p/X/')).toBe('https://instagram.com/p/X');
   });
   test('strips query and fragment', () => {
     expect(normalizeUrl('https://instagram.com/reel/X/?igsh=abc#frag')).toBe(
-      'https://instagram.com/reel/X'
+      'https://instagram.com/reel/X',
     );
   });
   test('normalizes /video/reel/ alias', () => {
     expect(normalizeUrl('https://www.instagram.com/video/reel/DWze_eKkrwr/')).toBe(
-      'https://www.instagram.com/reel/DWze_eKkrwr'
+      'https://www.instagram.com/reel/DWze_eKkrwr',
     );
   });
   test('normalizes /reels/ alias', () => {
-    expect(normalizeUrl('https://instagram.com/reels/ABC/')).toBe(
-      'https://instagram.com/reel/ABC'
-    );
+    expect(normalizeUrl('https://instagram.com/reels/ABC/')).toBe('https://instagram.com/reel/ABC');
   });
   test('fixes instagr.com typo to instagram.com', () => {
-    expect(normalizeUrl('https://instagr.com/reel/ABC/')).toBe(
-      'https://instagram.com/reel/ABC'
-    );
+    expect(normalizeUrl('https://instagr.com/reel/ABC/')).toBe('https://instagram.com/reel/ABC');
   });
 });
 
@@ -105,7 +95,7 @@ describe('extractShortcode / buildEmbedUrl', () => {
   });
   test('builds embed url', () => {
     expect(buildEmbedUrl('https://instagram.com/reel/ABC123')).toBe(
-      'https://www.instagram.com/reel/ABC123/embed/captioned/'
+      'https://www.instagram.com/reel/ABC123/embed/captioned/',
     );
   });
 });
@@ -153,7 +143,7 @@ describe('extractVideoFromHtml', () => {
   test('strategy 3: embedded "video_url" with escaped slashes', () => {
     const html = '"video_url":"https:\\/\\/video-ams.cdninstagram.net\\/v.mp4?token=1"';
     expect(extractVideoFromHtml(html).videoUrl).toBe(
-      'https://video-ams.cdninstagram.net/v.mp4?token=1'
+      'https://video-ams.cdninstagram.net/v.mp4?token=1',
     );
   });
 
@@ -194,7 +184,7 @@ describe('resolveInstagramUrl', () => {
       }
       if (url.includes('__a=1')) return { data: null, status: 200 };
       return htmlResponse(
-        '<meta property="og:video:secure_url" content="https://cdn.example.com/reel.mp4">'
+        '<meta property="og:video:secure_url" content="https://cdn.example.com/reel.mp4">',
       );
     });
     const r = await resolveInstagramUrl('https://www.instagram.com/video/reel/ABC/');
@@ -230,7 +220,7 @@ describe('resolveInstagramUrl', () => {
       return htmlResponse(
         '<meta property="og:video:secure_url" content="https://cdn.example.com/reel.mp4">' +
           '<meta property="og:image" content="https://cdn.example.com/thumb.jpg">' +
-          '<meta property="og:title" content="Alice • Instagram">'
+          '<meta property="og:title" content="Alice • Instagram">',
       );
     });
     const r = await resolveInstagramUrl('https://www.instagram.com/reel/ABC/');
@@ -246,7 +236,7 @@ describe('resolveInstagramUrl', () => {
       if (url.includes('oembed')) return { data: {}, status: 200 };
       if (url.includes('__a=1')) return { data: null, status: 200 };
       return htmlResponse(
-        '<html><body>"video_url":"https:\\/\\/cdn.example.com\\/v.mp4"</body></html>'
+        '<html><body>"video_url":"https:\\/\\/cdn.example.com\\/v.mp4"</body></html>',
       );
     });
     const r = await resolveInstagramUrl('https://www.instagram.com/p/POST1/');
@@ -260,9 +250,7 @@ describe('resolveInstagramUrl', () => {
       if (url.includes('__a=1')) {
         return {
           data: {
-            items: [
-              { video_versions: [{ url: 'https://cdn.example.com/gql.mp4', width: 720 }] },
-            ],
+            items: [{ video_versions: [{ url: 'https://cdn.example.com/gql.mp4', width: 720 }] }],
           },
           status: 200,
         };
@@ -329,7 +317,7 @@ describe('resolveInstagramUrl', () => {
       if (url.includes('__a=1')) return { data: null, status: 200 };
       if (url.includes('/embed/')) {
         return htmlResponse(
-          '<meta property="og:video" content="https://cdn.example.com/embed.mp4">'
+          '<meta property="og:video" content="https://cdn.example.com/embed.mp4">',
         );
       }
       return htmlResponse('<html>empty shell without video</html>');
@@ -347,7 +335,7 @@ describe('resolveInstagramUrl', () => {
       if (url.includes('__a=1')) return { data: null, status: 200 };
       return htmlResponse(
         '<meta property="og:image" content="https://cdn.example.com/photo.jpg">' +
-        '<meta property="og:title" content="User on Instagram">'
+          '<meta property="og:title" content="User on Instagram">',
       );
     });
     const r = await resolveInstagramUrl('https://www.instagram.com/p/PHOTO1/');

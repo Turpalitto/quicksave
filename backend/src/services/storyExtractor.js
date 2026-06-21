@@ -15,9 +15,10 @@ function extractCollectionFromHtml(html, idPrefix, urlKind) {
 
 function extractCollectionFromGraphql(data, idPrefix, urlKind) {
   if (!data || typeof data !== 'object') return [];
-  const nodes = urlKind === 'story' || urlKind === 'highlight'
-    ? findStoriesInJson(data)
-    : findCarouselInJson(data);
+  const nodes =
+    urlKind === 'story' || urlKind === 'highlight'
+      ? findStoriesInJson(data)
+      : findCarouselInJson(data);
   return itemsFromJsonNodes(nodes, idPrefix);
 }
 

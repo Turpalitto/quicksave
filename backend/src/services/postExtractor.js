@@ -9,13 +9,13 @@ function extractMetaTags(html) {
   const get = (property) => {
     const re1 = new RegExp(
       `<meta[^>]+property=["']${property}["'][^>]*content=["']([^"']+)["']`,
-      'i'
+      'i',
     );
     const m1 = html.match(re1);
     if (m1) return m1[1];
     const re2 = new RegExp(
       `<meta[^>]+content=["']([^"']+)["'][^>]*property=["']${property}["']`,
-      'i'
+      'i',
     );
     const m2 = html.match(re2);
     return m2 ? m2[1] : null;
@@ -46,7 +46,7 @@ function extractAuthor(title) {
 
 function extractDuration(html) {
   const metaMatch = html.match(
-    /<meta[^>]+property=["']video:duration["'][^>]*content=["'](\d+(?:\.\d+)?)["']/i
+    /<meta[^>]+property=["']video:duration["'][^>]*content=["'](\d+(?:\.\d+)?)["']/i,
   );
   if (metaMatch) return Math.round(parseFloat(metaMatch[1]));
   const jsonMatch = html.match(/"video_duration"\s*:\s*(\d+(?:\.\d+)?)/);
@@ -115,9 +115,10 @@ function extractVideoFromHtml(html) {
       const ld = JSON.parse(ldMatch[1].trim());
       const objs = Array.isArray(ld) ? ld : [ld];
       for (const obj of objs) {
-        const node = obj && obj['@graph'] && Array.isArray(obj['@graph'])
-          ? obj['@graph'].find((n) => n && n['@type'] === 'VideoObject')
-          : obj;
+        const node =
+          obj && obj['@graph'] && Array.isArray(obj['@graph'])
+            ? obj['@graph'].find((n) => n && n['@type'] === 'VideoObject')
+            : obj;
         if (node && (node.contentUrl || node.embedUrl)) {
           const u = unescapeJsonString(node.contentUrl || node.embedUrl);
           if (/^https?:\/\//i.test(u)) {
@@ -139,8 +140,11 @@ function extractVideoFromHtml(html) {
 
   const bestVersionUrl = extractBestFromVideoVersions(html);
   if (bestVersionUrl) {
-    const thumb = safeMatch(html, /"image_versions2"\s*:\s*\{[^}]*"candidates"\s*:\s*\[\s*\{[^\}]*?"url"\s*:\s*"([^"]+)"/)
-      || safeMatch(html, /"image_versions"\s*:\s*\[\s*\{[^\}]*?"url"\s*:\s*"([^"]+)"/);
+    const thumb =
+      safeMatch(
+        html,
+        /"image_versions2"\s*:\s*\{[^}]*"candidates"\s*:\s*\[\s*\{[^\}]*?"url"\s*:\s*"([^"]+)"/,
+      ) || safeMatch(html, /"image_versions"\s*:\s*\[\s*\{[^\}]*?"url"\s*:\s*"([^"]+)"/);
     return {
       videoUrl: bestVersionUrl,
       thumbnailUrl: thumb ? unescapeJsonString(thumb) : meta.image || null,
@@ -156,7 +160,7 @@ function extractVideoFromHtml(html) {
   }
 
   const xdtMatch = html.match(
-    /"xdt_api__v1__media__shortcode__web_info"[\s\S]{0,8000}?"video_versions"\s*:\s*(\[[\s\S]*?\])/
+    /"xdt_api__v1__media__shortcode__web_info"[\s\S]{0,8000}?"video_versions"\s*:\s*(\[[\s\S]*?\])/,
   );
   if (xdtMatch) {
     try {
@@ -176,10 +180,11 @@ function extractImageFromHtml(html) {
   if (meta.image && /^https?:\/\//i.test(meta.image)) {
     return unescapeJsonString(meta.image);
   }
-  const imgMatch = safeMatch(
-    html,
-    /"image_versions2"\s*:\s*\{[^}]*"candidates"\s*:\s*\[\s*\{[^\}]*?"url"\s*:\s*"([^"]+)"/
-  ) || safeMatch(html, /"display_url"\s*:\s*"([^"]+)"/);
+  const imgMatch =
+    safeMatch(
+      html,
+      /"image_versions2"\s*:\s*\{[^}]*"candidates"\s*:\s*\[\s*\{[^\}]*?"url"\s*:\s*"([^"]+)"/,
+    ) || safeMatch(html, /"display_url"\s*:\s*"([^"]+)"/);
   return imgMatch ? unescapeJsonString(imgMatch) : null;
 }
 

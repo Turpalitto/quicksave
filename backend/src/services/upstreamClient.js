@@ -1,9 +1,6 @@
 const axios = require('axios');
 const config = require('../config');
-const {
-  findVideoUrlInJson,
-  findThumbnailInJson,
-} = require('./postExtractor');
+const { findVideoUrlInJson, findThumbnailInJson } = require('./postExtractor');
 
 const USER_AGENTS = [
   'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 ' +
@@ -29,8 +26,7 @@ async function fetchHtml(url, userAgent, maxAttempts = 2) {
         headers: {
           'User-Agent': userAgent,
           'Accept-Language': 'en-US,en;q=0.9',
-          Accept:
-            'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
           Referer: 'https://www.instagram.com/',
         },
       });
@@ -73,9 +69,7 @@ async function fetchHtmlSources(pageUrl, embedUrl) {
     }
   }
 
-  await Promise.all(
-    Array.from({ length: Math.min(poolSize, jobs.length) }, () => worker())
-  );
+  await Promise.all(Array.from({ length: Math.min(poolSize, jobs.length) }, () => worker()));
   return results.filter(Boolean);
 }
 

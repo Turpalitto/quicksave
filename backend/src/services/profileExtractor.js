@@ -7,11 +7,41 @@ const { mediaNodeToItem, pickBestImageUrl, isVideoNode } = require('./mediaColle
 const { unescapeJsonString, extractBalancedJson } = require('./htmlParseUtils');
 
 const RESERVED_USERNAMES = new Set([
-  'reel', 'reels', 'p', 'tv', 'stories', 'explore', 'accounts', 'direct',
-  'about', 'legal', 'developer', 'privacy', 'terms', 'api', 'static',
-  'challenge', 'oauth', 'nametag', 'login', 'directory', 'web', 'help',
-  'press', 'jobs', 'graphql', 'email', 'sms', 'sharing', 'lite',
-  'download', 'creators', 'blog', 'guides', 'locations', 'session',
+  'reel',
+  'reels',
+  'p',
+  'tv',
+  'stories',
+  'explore',
+  'accounts',
+  'direct',
+  'about',
+  'legal',
+  'developer',
+  'privacy',
+  'terms',
+  'api',
+  'static',
+  'challenge',
+  'oauth',
+  'nametag',
+  'login',
+  'directory',
+  'web',
+  'help',
+  'press',
+  'jobs',
+  'graphql',
+  'email',
+  'sms',
+  'sharing',
+  'lite',
+  'download',
+  'creators',
+  'blog',
+  'guides',
+  'locations',
+  'session',
 ]);
 
 function isProfileUrl(url) {
@@ -36,10 +66,7 @@ function nodesFromTimelineEdges(edges) {
 function findTimelineEdges(obj, depth = 0) {
   if (!obj || typeof obj !== 'object' || depth > 14) return [];
 
-  const keys = [
-    'edge_owner_to_timeline_media',
-    'edge_felix_video_timeline',
-  ];
+  const keys = ['edge_owner_to_timeline_media', 'edge_felix_video_timeline'];
 
   for (const k of keys) {
     const block = obj[k];
@@ -91,13 +118,14 @@ function timelineNodeToItem(node, index, username) {
   const directUrl = fromMedia?.mediaUrl;
   const hasDirect = hasDirectDownloadUrl(directUrl, isVideo);
 
-  const thumb = pickBestImageUrl(node)
-    || (node.thumbnail_src ? unescapeJsonString(node.thumbnail_src) : null)
-    || fromMedia?.thumbnailUrl;
+  const thumb =
+    pickBestImageUrl(node) ||
+    (node.thumbnail_src ? unescapeJsonString(node.thumbnail_src) : null) ||
+    fromMedia?.thumbnailUrl;
 
   if (!hasDirect && !thumb && !isVideo) return null;
 
-  const mediaUrl = hasDirect ? directUrl : (isVideo ? '' : (directUrl || thumb || ''));
+  const mediaUrl = hasDirect ? directUrl : isVideo ? '' : directUrl || thumb || '';
 
   return {
     id: shortcode,
@@ -174,16 +202,12 @@ function extractProfileFromHtml(html, username) {
 
   const edges = findTimelineEdgesInHtml(html);
   const nodes = nodesFromTimelineEdges(edges);
-  const items = nodes
-    .map((n, i) => timelineNodeToItem(n, i, username))
-    .filter(Boolean);
+  const items = nodes.map((n, i) => timelineNodeToItem(n, i, username)).filter(Boolean);
 
   let author = username;
-  const titleMatch = html.match(
-    /<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']+)["']/i
-  ) || html.match(
-    /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:title["']/i
-  );
+  const titleMatch =
+    html.match(/<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']+)["']/i) ||
+    html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:title["']/i);
   if (titleMatch) {
     const m = titleMatch[1].match(/^(@?\w[\w.]*)/);
     if (m) author = m[1].replace(/^@/, '');
@@ -199,9 +223,7 @@ function extractProfileFromUserJson(user, username) {
 
   const edges = findTimelineEdges(user);
   const nodes = nodesFromTimelineEdges(edges);
-  const items = nodes
-    .map((n, i) => timelineNodeToItem(n, i, username))
-    .filter(Boolean);
+  const items = nodes.map((n, i) => timelineNodeToItem(n, i, username)).filter(Boolean);
 
   return {
     items,

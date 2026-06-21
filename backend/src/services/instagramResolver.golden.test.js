@@ -38,7 +38,7 @@ describe('Golden resolver scenarios', () => {
   test('carousel — multiple items from video_versions blocks', async () => {
     const carouselHtml = REEL_VIDEO_VERSIONS.replace(
       '"video_versions"',
-      '"edge_sidecar_to_children":{"edges":[{"node":{"video_versions"'
+      '"edge_sidecar_to_children":{"edges":[{"node":{"video_versions"',
     );
     axios.get.mockImplementation((url) => {
       if (String(url).includes('oembed')) {
@@ -68,9 +68,11 @@ describe('Golden resolver scenarios', () => {
   });
 
   test('404 returns not_found when no html', async () => {
-    axios.get.mockRejectedValue(Object.assign(new Error('404'), {
-      response: { status: 404 },
-    }));
+    axios.get.mockRejectedValue(
+      Object.assign(new Error('404'), {
+        response: { status: 404 },
+      }),
+    );
     const result = await resolveInstagramUrl('https://www.instagram.com/reel/MISSING999/');
     expect(result.ok).toBe(false);
     expect(['not_found', 'resolver_failed']).toContain(result.error);
@@ -84,7 +86,7 @@ describe('Golden resolver scenarios', () => {
       return Promise.resolve(htmlResponse(STORY_HTML));
     });
     const result = await resolveInstagramUrl(
-      'https://www.instagram.com/stories/storyuser/1234567890'
+      'https://www.instagram.com/stories/storyuser/1234567890',
     );
     expect(result.ok).toBe(true);
     expect(result.type).toBe('story');
@@ -99,7 +101,7 @@ describe('Golden resolver scenarios', () => {
       return Promise.resolve(htmlResponse(HIGHLIGHT_HTML));
     });
     const result = await resolveInstagramUrl(
-      'https://www.instagram.com/stories/highlights/987654321'
+      'https://www.instagram.com/stories/highlights/987654321',
     );
     expect(result.ok).toBe(true);
     expect(result.type).toBe('highlight');
@@ -128,9 +130,7 @@ describe('urlNormalizer module', () => {
   const { normalizeUrl, extractShortcode, getUrlKind } = require('./urlNormalizer');
 
   test('normalizes instagr.com typo', () => {
-    expect(normalizeUrl('https://instagr.com/reel/ABC/')).toBe(
-      'https://instagram.com/reel/ABC'
-    );
+    expect(normalizeUrl('https://instagr.com/reel/ABC/')).toBe('https://instagram.com/reel/ABC');
   });
 
   test('extractShortcode from reel', () => {

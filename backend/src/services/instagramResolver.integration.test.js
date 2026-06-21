@@ -8,10 +8,7 @@
  * Это максимально близко к реальной работе без сетевых запросов.
  */
 const axios = require('axios');
-const {
-  resolveInstagramUrl,
-  extractVideoFromHtml,
-} = require('./instagramResolver');
+const { resolveInstagramUrl, extractVideoFromHtml } = require('./instagramResolver');
 const F = require('./__fixtures__/instagramHtml');
 
 jest.mock('axios');
@@ -130,7 +127,8 @@ describe('Integration: resolver extracts videoUrl from realistic HTML', () => {
 
   test('all fixture extraction strategies are mutually exclusive and ordered', () => {
     // Если в HTML есть и og:video и video_versions — должна победить og:video (стратегия 1).
-    const html = F.REEL_VIDEO_VERSIONS +
+    const html =
+      F.REEL_VIDEO_VERSIONS +
       '<meta property="og:video" content="https://cdn.example.com/og_wins.mp4">';
     expect(extractVideoFromHtml(html).videoUrl).toBe('https://cdn.example.com/og_wins.mp4');
   });
@@ -139,7 +137,8 @@ describe('Integration: resolver extracts videoUrl from realistic HTML', () => {
 describe('Integration: URL normalization with real-world inputs', () => {
   test('reel URL with tracking query (?igsh=...) is stripped', async () => {
     axios.get.mockResolvedValue(htmlOk(F.REEL_OG_VIDEO));
-    const input = 'https://www.instagram.com/reel/Cabc123/?igshid=MWZjczhkZGY%3D&utm_source=ig_share';
+    const input =
+      'https://www.instagram.com/reel/Cabc123/?igshid=MWZjczhkZGY%3D&utm_source=ig_share';
     const r = await resolveInstagramUrl(input);
     expect(r.ok).toBe(true);
     // axios.get должен вызываться с нормализованным URL без query

@@ -16,9 +16,7 @@ function sanitizeUrlForLog(url) {
   try {
     const u = new URL(url.trim());
     const host = u.hostname.replace(/^www\./, '');
-    const path = u.pathname.length > 48
-      ? `${u.pathname.slice(0, 48)}…`
-      : u.pathname;
+    const path = u.pathname.length > 48 ? `${u.pathname.slice(0, 48)}…` : u.pathname;
     return `${host}${path}`;
   } catch {
     return hashUrl(url);

@@ -21,9 +21,11 @@ const NODE_ENV = config.nodeEnv;
 
 app.set('trust proxy', config.trustProxy);
 
-app.use(helmet({
-  contentSecurityPolicy: false,
-}));
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  }),
+);
 
 const corsOptions = {
   origin: NODE_ENV === 'development' ? true : false,

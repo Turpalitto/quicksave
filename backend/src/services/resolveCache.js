@@ -90,9 +90,7 @@ class CompositeResolveCache {
   set(url, value) {
     this.memory.set(url, value);
     if (!this.redis?.isReady || !value || value.ok !== true) return;
-    this.redis
-      .setEx(this._redisKey(url), this.ttlSec, JSON.stringify(value))
-      .catch(() => {});
+    this.redis.setEx(this._redisKey(url), this.ttlSec, JSON.stringify(value)).catch(() => {});
   }
 
   clear() {

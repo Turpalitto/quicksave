@@ -42,13 +42,11 @@ function recordRateLimitHit() {
 
 function getMetrics() {
   const failureTotal = metrics.total - metrics.success;
-  const successRate = metrics.total > 0
-    ? Math.round((metrics.success / metrics.total) * 1000) / 10
-    : 100;
+  const successRate =
+    metrics.total > 0 ? Math.round((metrics.success / metrics.total) * 1000) / 10 : 100;
   const cacheTotal = metrics.cacheHits + metrics.cacheMisses;
-  const cacheHitRate = cacheTotal > 0
-    ? Math.round((metrics.cacheHits / cacheTotal) * 1000) / 10
-    : 0;
+  const cacheHitRate =
+    cacheTotal > 0 ? Math.round((metrics.cacheHits / cacheTotal) * 1000) / 10 : 0;
   return {
     total: metrics.total,
     success: metrics.success,
