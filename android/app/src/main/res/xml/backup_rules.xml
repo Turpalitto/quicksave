@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Auto Backup rules для Android 6+.
+
+  Бэкапим только настройки и историю.
+  Скачанные видео НЕ бэкапим — они могут быть большими.
+-->
+<full-backup-content>
+    <include domain="sharedpref" path="." />
+    <exclude domain="file" path="QuickSave/" />
+</full-backup-content>

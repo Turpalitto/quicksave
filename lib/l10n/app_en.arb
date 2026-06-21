@@ -1,0 +1,207 @@
+{
+  "@@locale": "en",
+  "appTitle": "QuickSave",
+  "homeHeroTitle": "Save Instagram media",
+  "homeHeroSubtitle": "Share a link from Instagram to QuickSave",
+  "urlFieldHint": "Post, reel, story or @profile",
+  "urlFieldPaste": "Paste",
+  "downloadButton": "Download",
+  "homeTip": "Share from Instagram, paste a link, or enter @username to browse a profile grid.",
+  "homeClipboardDetected": "Instagram link detected in clipboard",
+  "homeFooter": "Only public posts \u2022 v{version}",
+  "@homeFooter": {
+    "placeholders": {
+      "version": { "type": "String" }
+    }
+  },
+  "errorEnterUrl": "Enter a link.",
+  "errorInvalidUrl": "The link must point to a public Instagram post, story, highlight, or profile.",
+  "errorNotRecognized": "Could not recognize the Instagram link.",
+  "previewTitle": "Preview",
+  "previewResolving": "Fetching video info\u2026",
+  "previewSource": "Source: {source}",
+  "@previewSource": {
+    "placeholders": {
+      "source": { "type": "String" }
+    }
+  },
+  "previewDownload": "Download",
+  "previewCancel": "Cancel",
+  "previewDownloading": "Downloading\u2026 {percent}",
+  "@previewDownloading": {
+    "placeholders": {
+      "percent": { "type": "String" }
+    }
+  },
+  "previewStop": "Cancel",
+  "previewSuccess": "Done!",
+  "previewSavedTo": "Saved to QuickSave",
+  "previewOpen": "Open video",
+  "previewShare": "Share",
+  "previewDownloadSelected": "Download selected ({count})",
+  "@previewDownloadSelected": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "previewTypeCarousel": "Carousel · {count} items",
+  "@previewTypeCarousel": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "previewTypeStory": "Story",
+  "previewTypeHighlight": "Highlights · {count}",
+  "@previewTypeHighlight": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "previewTypeSingle": "Single post",
+  "previewSelectAll": "Select all",
+  "previewDeselectAll": "Clear",
+  "previewVideosOnly": "Videos only",
+  "previewBatchProgress": "Downloading {current} of {total}…",
+  "@previewBatchProgress": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "previewBatchSaved": "Saved {count} files",
+  "@previewBatchSaved": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "previewBatchSavedCount": "{count} files saved to QuickSave",
+  "@previewBatchSavedCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "previewPartialSuccess": "Saved {saved} of {total} files ({failed} failed)",
+  "@previewPartialSuccess": {
+    "placeholders": {
+      "saved": { "type": "int" },
+      "total": { "type": "int" },
+      "failed": { "type": "int" }
+    }
+  },
+  "previewTypeProfile": "Profile · {count} posts",
+  "@previewTypeProfile": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "previewShareAll": "Share all",
+  "previewGoHome": "Home",
+  "previewLoadMore": "Load more posts",
+  "previewTapToPreview": "Tap to preview",
+  "previewQualityTitle": "Choose quality",
+  "recentLinksTitle": "Recent links",
+  "errorNoInternet": "No internet connection. Check your network.",
+  "errorPrivatePost": "Post is private or requires Instagram login.",
+  "errorNotFoundPost": "Post not found. Check the link.",
+  "errorResolverFailed": "Could not get a direct link. Try another public post.",
+  "errorServer": "Server error. Try again later.",
+  "errorNoSpace": "Not enough space on device.",
+  "errorFileWrite": "Could not save the file.",
+  "errorCancelled": "Download cancelled.",
+  "errorUnknown": "Unknown error.",
+  "errorRetry": "Retry",
+  "errorOpenFailed": "Could not open: {message}",
+  "@errorOpenFailed": {
+    "placeholders": {
+      "message": { "type": "String" }
+    }
+  },
+  "errorFileMissing": "File not found.",
+  "historyTitle": "History",
+  "historyEmpty": "History is empty",
+  "historyEmptySubtitle": "Downloaded media will appear here.",
+  "historySearchHint": "Search by author or URL",
+  "historySearchEmpty": "No results for your search.",
+  "historyFilterAll": "All",
+  "historyFilterVideo": "Videos",
+  "historyFilterImage": "Photos",
+  "historyDeleteFileTitle": "Delete file?",
+  "historyDeleteFileBody": "Remove the file from device storage and history.",
+  "historyDeleteFileConfirm": "Delete file",
+  "historyDeleteRecordBody": "Remove this entry from history?",
+  "historyBatchFiles": "{count} files",
+  "@historyBatchFiles": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "historyClearAll": "Clear all",
+  "historyClearConfirmTitle": "Clear history?",
+  "historyClearConfirmBody": "All records will be deleted. Files will remain.",
+  "historyClearConfirmYes": "Clear",
+  "historyClearConfirmNo": "Cancel",
+  "historyFileUnavailable": "file unavailable",
+  "historyActionOpen": "Open",
+  "historyActionShare": "Share",
+  "historyActionDelete": "Delete",
+  "historyDeleted": "Deleted from history.",
+  "settingsTitle": "Settings",
+  "settingsSectionBehavior": "Behavior",
+  "settingsAutoDownload": "Auto-download after Share",
+  "settingsAutoDownloadSubtitle": "Start download immediately when a link comes from Instagram.",
+  "settingsNotifications": "Notifications",
+  "settingsNotificationsSubtitle": "Show a notification when download completes.",
+  "settingsSaveHistory": "Save history",
+  "settingsSaveHistorySubtitle": "Add downloaded videos to the history list.",
+  "settingsSectionAppearance": "Appearance",
+  "settingsThemeSystem": "System default",
+  "settingsThemeLight": "Light",
+  "settingsThemeDark": "Dark",
+  "settingsSectionBackend": "Backend",
+  "settingsBackendUrlLabel": "Backend URL",
+  "settingsBackendUrlHint": "http://10.0.2.2:3000",
+  "settingsBackendSave": "Save",
+  "settingsBackendSaved": "Saved.",
+  "settingsBackendTest": "Test connection",
+  "settingsBackendOnline": "Backend is online.",
+  "settingsBackendOffline": "Cannot reach backend. Check URL and network.",
+  "settingsBackendNote": "For emulator use http://10.0.2.2:3000.\nFor real device use http://YOUR-IP:3000.",
+  "settingsSectionData": "Data",
+  "settingsClearHistory": "Clear history",
+  "settingsClearHistorySubtitle": "Delete all records. Files remain.",
+  "settingsCleared": "History cleared.",
+  "settingsWatchClipboard": "Watch clipboard",
+  "settingsWatchClipboardSubtitle": "Suggest Instagram links when you copy them.",
+  "settingsSaveInAuthorFolder": "Save in author folder",
+  "settingsSaveInAuthorFolderSubtitle": "Create a subfolder per @author inside QuickSave.",
+  "settingsSaveToGallery": "Save to Gallery",
+  "settingsSaveToGallerySubtitle": "Copy downloads to Pictures/Movies so Gallery apps can see them.",
+  "settingsBackendModeHosted": "QuickSave Cloud (recommended)",
+  "settingsBackendModeSelf": "Self-hosted server",
+  "settingsSectionPro": "QuickSave Pro",
+  "settingsProActive": "Pro active",
+  "settingsProInactive": "Unlock scheduler, ZIP export, self-hosted",
+  "settingsProLicenseHint": "License key QS-PRO-XXXX",
+  "settingsProActivate": "Activate",
+  "settingsProActivated": "Pro activated!",
+  "settingsProInvalidKey": "Invalid license key",
+  "settingsSchedulerTitle": "Profile scheduler",
+  "settingsSchedulerSubtitle": "Check @profiles daily for new public posts (Pro)",
+  "settingsSchedulerAddHint": "@username",
+  "settingsExportZip": "Export batch as ZIP",
+  "settingsPrivacyPolicy": "Privacy policy",
+  "onboardingTitle": "Get started",
+  "onboardingShareTitle": "Share from Instagram",
+  "onboardingShareBody": "Open a public post → Share → QuickSave. With auto-download on, files save in the background.",
+  "onboardingTileTitle": "Quick Settings tile",
+  "onboardingTileBody": "Add the QuickSave tile in the notification shade for one-tap paste from clipboard.",
+  "onboardingGalleryTitle": "Gallery saving",
+  "onboardingGalleryBody": "Turn on Save to Gallery in Settings so photos and videos appear in your Gallery app.",
+  "onboardingGotIt": "Got it",
+  "privacyTitle": "Privacy Policy",
+  "privacyIntro": "QuickSave respects your privacy.",
+  "privacyBody": "QuickSave does not require an Instagram account. We only process URLs you explicitly share or paste. Downloaded media is stored on your device. When using QuickSave Cloud, your URL is sent to our resolver to obtain public media links — we do not store your downloads on our servers. Self-hosted mode sends URLs only to your own server. Contact: support@quicksave.app",
+  "historyCopyCaption": "Copy caption",
+  "historyCaptionCopied": "Caption copied",
+  "historyPostDate": "Post date",
+  "historyExportZip": "Export ZIP",
+  "notificationDownloadCompleteTitle": "Media saved",
+  "notificationChannelDownloads": "Downloads",
+  "notificationChannelDownloadsDesc": "Download completion notifications",
+  "notificationDownloadCompleteBody": "Author: {author}",
+  "@notificationDownloadCompleteBody": {
+    "placeholders": {
+      "author": { "type": "String" }
+    }
+  },
+  "notificationDownloadCompleteBodyFallback": "File saved in QuickSave",
+  "notificationDownloadErrorTitle": "Download error",
+  "notificationDownloadAuthorPrefix": "Author",
+  "shareText": "Video from QuickSave"
+}

@@ -1,0 +1,29 @@
+# One-click deploy on Render: https://render.com/docs/infrastructure-as-code
+services:
+  - type: web
+    name: quicksave-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: TRUST_PROXY
+        value: "1"
+      - key: RATE_LIMIT_MAX
+        value: "60"
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: quicksave-redis
+          property: connectionString
+          # Optional: comment out REDIS_URL block if you skip Redis below.
+
+  - type: redis
+    name: quicksave-redis
+    plan: free
+    ipAllowList: []

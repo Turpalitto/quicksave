@@ -1,0 +1,83 @@
+name: Flutter
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Tests & Analyze
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          # Flutter 3.44: ThemeData.cardTheme ждёт CardThemeData (CardTheme
+          # удалён), ColorScheme.*.withValues() стабилен. AGP 8.9.1
+          # (compileSdk 36 / Android 16) поддерживается с 3.29+.
+          flutter-version: 3.44.2
+          cache: true
+
+      # Корень репозитория уже является Flutter-проектом
+      # (pubspec.yaml, lib/, android/ лежат в корне).
+      - name: Get packages
+        run: flutter pub get
+
+      - name: Get packages
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Run tests
+        run: flutter test --no-pub --reporter=expanded
+
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.44.2
+          cache: true
+
+      - name: Get packages
+        run: flutter pub get
+
+      - name: Build APK (debug)
+        run: flutter build apk --debug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: quicksave-debug
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 14

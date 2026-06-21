@@ -1,0 +1,45 @@
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+build_*/
+.flutter-version
+.fvm/
+**/generated_plugin_registrant.dart
+
+# IDE / ОС
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.DS_Store
+Thumbs.db
+*.swp
+
+# Android
+android/.gradle/
+android/local.properties
+android/captures/
+android/gradlew
+android/gradlew.bat
+android/**/key.properties
+android/key.jks
+android/app/debug/
+android/app/profile/
+android/app/release/
+*.keystore
+*.jks
+
+# Node (если кто-то запускает из корня)
+node_modules/
+
+# Секреты / окружение / логи
+.env
+.env.local
+*.log
+coverage/

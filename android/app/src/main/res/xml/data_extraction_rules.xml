@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Data Extraction Rules для Android 12+.
+  Применяется при Device-to-Device transfer и Cloud Restore.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <include domain="sharedpref" path="." />
+        <exclude domain="file" path="QuickSave/" />
+    </cloud-backup>
+    <device-transfer>
+        <include domain="sharedpref" path="." />
+        <exclude domain="file" path="QuickSave/" />
+    </device-transfer>
+</data-extraction-rules>

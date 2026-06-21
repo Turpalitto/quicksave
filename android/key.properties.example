@@ -1,0 +1,19 @@
+# ─────────────────────────────────────────────────────────────
+# Пример релизного keystore-конфига для QuickSave.
+#
+# РЕАЛЬНЫЙ файл называется `key.properties` (без .example) и НЕ
+# коммитится в репозиторий (см. .gitignore). Никогда не храните
+# пароли в Git.
+#
+# 1) Сгенерируйте keystore (один раз):
+#      keytool -genkey -v -keystore quicksave.jks \
+#        -keyalg RSA -keysize 2048 -validity 10000 \
+#        -alias quicksave
+# 2) Скопируйте этот файл → key.properties и заполните значения.
+# 3) Положите quicksave.jks рядом (или укажите абсолютный путь).
+# 4) `flutter build appbundle --release` подпишет релиз этим ключом.
+# ─────────────────────────────────────────────────────────────
+storePassword=ВВЕДИТЕ_ПАРОЛЬ_ХРАНИЛИЩА
+keyPassword=ВВЕДИТЕ_ПАРОЛЬ_КЛЮЧА
+keyAlias=quicksave
+storeFile=../quicksave.jks

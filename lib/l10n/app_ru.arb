@@ -1,0 +1,208 @@
+{
+  "@@locale": "ru",
+  "appTitle": "QuickSave",
+  "homeHeroTitle": "Сохраняйте медиа Instagram",
+  "homeHeroSubtitle": "Отправьте ссылку из Instagram в QuickSave",
+  "urlFieldHint": "Пост, reel, story или @профиль",
+  "urlFieldPaste": "Вставить",
+  "downloadButton": "Скачать",
+  "homeTip": "Поделитесь из Instagram, вставьте ссылку или введите @username для сетки постов профиля.",
+  "homeClipboardDetected": "В буфере обмена найдена ссылка Instagram",
+  "homeFooter": "Только публичные посты • v{version}",
+  "@homeFooter": {
+    "placeholders": {
+      "version": { "type": "String" }
+    }
+  },
+  "errorEnterUrl": "Введите ссылку.",
+  "errorInvalidUrl": "Ссылка должна вести на публичный пост, story, highlights или профиль Instagram.",
+  "errorNotRecognized": "Не удалось распознать ссылку Instagram.",
+  "previewTitle": "Предпросмотр",
+  "previewResolving": "Получаем информацию о видео…",
+  "previewSource": "Источник: {source}",
+  "@previewSource": {
+    "placeholders": {
+      "source": { "type": "String" }
+    }
+  },
+  "previewDownload": "Скачать",
+  "previewCancel": "Отмена",
+  "previewDownloading": "Скачиваем… {percent}",
+  "@previewDownloading": {
+    "placeholders": {
+      "percent": { "type": "String" }
+    }
+  },
+  "previewStop": "Отмена",
+  "previewSuccess": "Готово!",
+  "previewSavedTo": "Сохранено в QuickSave",
+  "previewOpen": "Открыть видео",
+  "previewShare": "Поделиться",
+  "previewDownloadSelected": "Скачать выбранные ({count})",
+  "@previewDownloadSelected": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "previewTypeCarousel": "Карусель · {count} файлов",
+  "@previewTypeCarousel": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "previewTypeStory": "Story",
+  "previewTypeHighlight": "Highlights · {count}",
+  "@previewTypeHighlight": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "previewTypeSingle": "Один пост",
+  "previewSelectAll": "Выбрать все",
+  "previewDeselectAll": "Снять выбор",
+  "previewVideosOnly": "Только видео",
+  "previewBatchProgress": "Скачиваем {current} из {total}…",
+  "@previewBatchProgress": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "previewBatchSaved": "Сохранено файлов: {count}",
+  "@previewBatchSaved": {
+    "placeholders": { "count": { "type": "String" } }
+  },
+  "previewBatchSavedCount": "Сохранено {count} файлов в QuickSave",
+  "@previewBatchSavedCount": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "previewPartialSuccess": "Сохранено {saved} из {total} ({failed} с ошибкой)",
+  "@previewPartialSuccess": {
+    "placeholders": {
+      "saved": { "type": "int" },
+      "total": { "type": "int" },
+      "failed": { "type": "int" }
+    }
+  },
+  "previewTypeProfile": "Профиль · {count} постов",
+  "@previewTypeProfile": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "previewShareAll": "Поделиться всеми",
+  "previewGoHome": "На главную",
+  "previewLoadMore": "Загрузить ещё",
+  "previewTapToPreview": "Нажмите для просмотра",
+  "previewQualityTitle": "Выберите качество",
+  "recentLinksTitle": "Недавние ссылки",
+  "errorNoInternet": "Нет подключения к интернету. Проверьте сеть.",
+  "errorPrivatePost": "Пост приватный или требует входа в Instagram.",
+  "errorNotFoundPost": "Пост не найден. Проверьте ссылку.",
+  "errorResolverFailed": "Не удалось получить прямую ссылку. Попробуйте другой публичный пост.",
+  "errorServer": "Ошибка сервера. Попробуйте позже.",
+  "errorNoSpace": "Недостаточно места на устройстве.",
+  "errorFileWrite": "Не удалось сохранить файл.",
+  "errorCancelled": "Скачивание отменено.",
+  "errorUnknown": "Неизвестная ошибка.",
+  "errorRetry": "Повторить",
+  "errorOpenFailed": "Не удалось открыть: {message}",
+  "@errorOpenFailed": {
+    "placeholders": {
+      "message": { "type": "String" }
+    }
+  },
+  "errorFileMissing": "Файл не найден.",
+  "historyTitle": "История",
+  "historyEmpty": "История пуста",
+  "historyEmptySubtitle": "Скачанные файлы появятся здесь.",
+  "historySearchHint": "Поиск по автору или ссылке",
+  "historySearchEmpty": "Ничего не найдено по запросу.",
+  "historyFilterAll": "Все",
+  "historyFilterVideo": "Видео",
+  "historyFilterImage": "Фото",
+  "historyDeleteFileTitle": "Удалить файл?",
+  "historyDeleteFileBody": "Удалить файл с устройства и из истории.",
+  "historyDeleteFileConfirm": "Удалить файл",
+  "historyDeleteRecordBody": "Удалить эту запись из истории?",
+  "historyBatchFiles": "{count} файлов",
+  "@historyBatchFiles": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "historyClearAll": "Очистить всё",
+  "historyClearConfirmTitle": "Очистить историю?",
+  "historyClearConfirmBody": "Записи будут удалены. Файлы останутся.",
+  "historyClearConfirmYes": "Очистить",
+  "historyClearConfirmNo": "Отмена",
+  "historyFileUnavailable": "файл недоступен",
+  "historyActionOpen": "Открыть",
+  "historyActionShare": "Поделиться",
+  "historyActionDelete": "Удалить",
+  "historyDeleted": "Удалено из истории.",
+  "settingsTitle": "Настройки",
+  "settingsSectionBehavior": "Поведение",
+  "settingsAutoDownload": "Автоскачивание после Share",
+  "settingsAutoDownloadSubtitle": "Начинать загрузку сразу при получении ссылки из Instagram.",
+  "settingsNotifications": "Уведомления",
+  "settingsNotificationsSubtitle": "Показывать уведомление о завершении загрузки.",
+  "settingsSaveHistory": "Сохранять историю",
+  "settingsSaveHistorySubtitle": "Добавлять загруженные видео в список истории.",
+  "settingsSectionAppearance": "Внешний вид",
+  "settingsThemeSystem": "Системная",
+  "settingsThemeLight": "Светлая",
+  "settingsThemeDark": "Тёмная",
+  "settingsSectionBackend": "Сервер",
+  "settingsBackendUrlLabel": "Адрес сервера",
+  "settingsBackendUrlHint": "http://10.0.2.2:3000",
+  "settingsBackendSave": "Сохранить",
+  "settingsBackendSaved": "Сохранено.",
+  "settingsBackendTest": "Проверить связь",
+  "settingsBackendOnline": "Backend доступен.",
+  "settingsBackendOffline": "Не удалось подключиться к backend. Проверьте URL и сеть.",
+  "settingsBackendNote": "Для эмулятора: http://10.0.2.2:3000.\nДля реального устройства: http://ВАШ-IP:3000.",
+  "settingsSectionData": "Данные",
+  "settingsClearHistory": "Очистить историю",
+  "settingsClearHistorySubtitle": "Удалить все записи. Файлы останутся.",
+  "settingsCleared": "История очищена.",
+  "settingsWatchClipboard": "Следить за буфером",
+  "settingsWatchClipboardSubtitle": "Предлагать ссылки Instagram при копировании.",
+  "settingsSaveInAuthorFolder": "Папка по автору",
+  "settingsSaveInAuthorFolderSubtitle": "Сохранять в подпапку @author внутри QuickSave.",
+  "settingsSaveToGallery": "Сохранять в Gallery",
+  "settingsSaveToGallerySubtitle": "Копировать в Pictures/Movies — файлы видны в галерее.",
+  "settingsBackendModeHosted": "QuickSave Cloud (рекомендуется)",
+  "settingsBackendModeSelf": "Свой сервер",
+  "settingsSectionPro": "QuickSave Pro",
+  "settingsProActive": "Pro активен",
+  "settingsProInactive": "Планировщик, ZIP, свой сервер",
+  "settingsProLicenseHint": "Ключ QS-PRO-XXXX",
+  "settingsProActivate": "Активировать",
+  "settingsProActivated": "Pro активирован!",
+  "settingsProInvalidKey": "Неверный ключ",
+  "settingsSchedulerTitle": "Планировщик профилей",
+  "settingsSchedulerSubtitle": "Ежедневно проверять @профили на новые посты (Pro)",
+  "settingsSchedulerAddHint": "@username",
+  "settingsExportZip": "Экспорт batch в ZIP",
+  "settingsPrivacyPolicy": "Политика конфиденциальности",
+  "onboardingTitle": "Начало работы",
+  "onboardingShareTitle": "Поделиться из Instagram",
+  "onboardingShareBody": "Публичный пост → Поделиться → QuickSave. С автоскачиванием файлы сохраняются в фоне.",
+  "onboardingTileTitle": "Плитка в шторке",
+  "onboardingTileBody": "Добавьте плитку QuickSave в быстрые настройки для вставки из буфера.",
+  "onboardingGalleryTitle": "Сохранение в Gallery",
+  "onboardingGalleryBody": "Включите «Сохранять в Gallery» в настройках — медиа появится в галерее.",
+  "onboardingGotIt": "Понятно",
+  "privacyTitle": "Политика конфиденциальности",
+  "privacyIntro": "QuickSave уважает вашу приватность.",
+  "privacyBody": "QuickSave не требует аккаунта Instagram. Обрабатываются только ссылки, которые вы сами отправили. Медиа хранится на устройстве. В режиме QuickSave Cloud URL отправляется на наш resolver для получения публичных ссылок — мы не храним ваши файлы на сервере. Self-hosted — URL только на ваш сервер. Контакт: support@quicksave.app",
+  "historyCopyCaption": "Копировать описание",
+  "historyCaptionCopied": "Описание скопировано",
+  "historyPostDate": "Дата поста",
+  "historyExportZip": "Экспорт ZIP",
+  "notificationDownloadCompleteTitle": "Файл сохранён",
+  "notificationChannelDownloads": "Загрузки",
+  "notificationChannelDownloadsDesc": "Уведомления о завершении скачивания",
+  "notificationDownloadCompleteBody": "Автор: {author}",
+  "@notificationDownloadCompleteBody": {
+    "placeholders": {
+      "author": { "type": "String" }
+    }
+  },
+  "notificationDownloadCompleteBodyFallback": "Файл сохранён в QuickSave",
+  "notificationDownloadErrorTitle": "Ошибка загрузки",
+  "notificationDownloadAuthorPrefix": "Автор",
+  "shareText": "Видео из QuickSave"
+}
+

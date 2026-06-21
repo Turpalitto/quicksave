@@ -1,0 +1,99 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader("UTF-8") { reader ->
+        localProperties.load(reader)
+    }
+}
+
+// Релизное подписание.
+// Файл android/key.properties (НЕ коммитится — см. .gitignore) хранит
+// путь к keystore и пароли. Если файла нет — release-сборка подписывается
+// debug-ключом (подходит для локальной отладки и CI).
+// Пример заполнения — в android/key.properties.example.
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+def flutterVersionCode = localProperties.getProperty("flutter.versionCode")
+if (flutterVersionCode == null) {
+    flutterVersionCode = "1"
+}
+
+def flutterVersionName = localProperties.getProperty("flutter.versionName")
+if (flutterVersionName == null) {
+    flutterVersionName = "1.0"
+}
+
+android {
+    namespace "com.quicksave.app"
+    compileSdk 36
+    ndkVersion flutter.ndkVersion
+
+    compileOptions {
+        // flutter_local_notifications требует core library desugaring
+        // (использует java.time API на Android < 26).
+        coreLibraryDesugaringEnabled true
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+
+    sourceSets {
+        main.java.srcDirs += "src/main/kotlin"
+    }
+
+    defaultConfig {
+        applicationId "com.quicksave.app"
+        // Android 11 (API 30) — минимальная версия.
+        // Ниже не поддерживаем: scoped storage упрощает работу с файлами,
+        // runtime storage-permission не нужны.
+        minSdk 30
+        // Android 16 (API 36) — целевая версия.
+        targetSdk 36
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+    }
+
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
+    buildTypes {
+        release {
+            // Если настроен key.properties — подписываем release-ключом,
+            // иначе — debug-ключом (отладка / CI).
+            signingConfig keystoreProperties['storeFile'] != null
+                    ? signingConfigs.release
+                    : signingConfigs.debug
+            minifyEnabled false
+            shrinkResources false
+        }
+    }
+}
+
+flutter {
+    source "../.."
+}
+
+dependencies {
+    // Core library desugaring — требуется flutter_local_notifications (java.time на API < 26).
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.4'
+    implementation "androidx.core:core-ktx:1.13.1"
+}
