@@ -42,7 +42,7 @@ jobs:
         run: flutter test --no-pub --coverage --reporter=expanded
 
       - name: Upload coverage artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: flutter-coverage
           path: coverage/lcov.info
@@ -74,13 +74,13 @@ jobs:
 
       - run: flutter build appbundle --release
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: quicksave-release-apk
           path: build/app/outputs/flutter-apk/app-release.apk
           retention-days: 30
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: quicksave-release-aab
           path: build/app/outputs/bundle/release/app-release.aab
@@ -108,13 +108,13 @@ jobs:
       - name: Stage web for backend Docker
         run: node scripts/stage-web-for-backend.mjs
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: quicksave-web-pwa
           path: build/web
           retention-days: 14
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: quicksave-web-staged-backend
           path: backend/public/web
