@@ -12,10 +12,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'QuickSave';
 
   @override
-  String get homeHeroTitle => 'Save Instagram media';
+  String get homeHeroTitle => 'Save & organize public Instagram media';
 
   @override
-  String get homeHeroSubtitle => 'Share a link from Instagram to QuickSave';
+  String get homeHeroSubtitle =>
+      'No login, no cookies — only content you share or paste';
 
   @override
   String get urlFieldHint => 'Post, reel, story or @profile';
@@ -228,6 +229,127 @@ class AppLocalizationsEn extends AppLocalizations {
   String get historyFilterProfiles => 'Profiles';
 
   @override
+  String get historyFilterReels => 'Reels';
+
+  @override
+  String get historyFilterCarousels => 'Carousels';
+
+  @override
+  String get historyFilterErrors => 'Errors';
+
+  @override
+  String get historyFilterRecent => 'Recent';
+
+  @override
+  String get historyFilterUncollected => 'No collection';
+
+  @override
+  String get historyAlreadySaved => 'Already saved';
+
+  @override
+  String get historyMissingFile => 'File not found';
+
+  @override
+  String get historySortSavedNewest => 'Newest first';
+
+  @override
+  String get historySortSavedOldest => 'Oldest first';
+
+  @override
+  String get historySortUsername => 'By username';
+
+  @override
+  String get historySortType => 'By type';
+
+  @override
+  String get historySortSize => 'By size';
+
+  @override
+  String get historySortStatus => 'By status';
+
+  @override
+  String get historyBulkSelect => 'Select';
+
+  @override
+  String get historyBulkExportZip => 'Export ZIP';
+
+  @override
+  String get historyBulkDelete => 'Delete selected';
+
+  @override
+  String get historyBulkCopyUrls => 'Copy URLs';
+
+  @override
+  String get creatorReminder =>
+      'Save only content you have the right to use. Respect creators.';
+
+  @override
+  String get diagnosticsTitle => 'Diagnostics';
+
+  @override
+  String get diagnosticsOpenSubtitle =>
+      'App version, backend status (no personal data)';
+
+  @override
+  String get diagnosticsAppVersion => 'App version';
+
+  @override
+  String get diagnosticsBackendMode => 'Backend mode';
+
+  @override
+  String get diagnosticsHostedStatus => 'Hosted backend';
+
+  @override
+  String get diagnosticsAvailable => 'Available';
+
+  @override
+  String get diagnosticsUnavailable => 'Unavailable';
+
+  @override
+  String get diagnosticsLatency => 'Latency';
+
+  @override
+  String get diagnosticsBackendVersion => 'Backend version';
+
+  @override
+  String get diagnosticsPrivacyNote =>
+      'Diagnostics never include your saved URLs or files.';
+
+  @override
+  String get diagnosticsCopy => 'Copy diagnostics';
+
+  @override
+  String get diagnosticsCopied => 'Diagnostics copied';
+
+  @override
+  String get diagnosticsRefresh => 'Refresh';
+
+  @override
+  String get watchlistTitle => 'Watchlist';
+
+  @override
+  String get watchlistOpenSubtitle => 'Public profiles — low-frequency checks';
+
+  @override
+  String get watchlistDisclaimer =>
+      'Works only with publicly available content. Frequent checks may be rate-limited. No login or private access.';
+
+  @override
+  String get watchlistEmpty => 'Add public profiles in Settings → Scheduler';
+
+  @override
+  String get watchlistFrequency => 'Frequency';
+
+  @override
+  String get watchlistLastChecked => 'Last checked';
+
+  @override
+  String get watchlistCheckNow => 'Check now';
+
+  @override
+  String get watchlistCheckQueued => 'Manual check queued — open app to sync';
+
+  @override
   String get historyDeleteFileTitle => 'Delete file?';
 
   @override
@@ -404,6 +526,47 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsProInvalidKey => 'Invalid license key';
+
+  @override
+  String get settingsProSubscribe => 'Subscribe with Google Play';
+
+  @override
+  String settingsProSubscribePrice(String price) {
+    return 'Pro — $price';
+  }
+
+  @override
+  String get settingsProRestore => 'Restore purchases';
+
+  @override
+  String get settingsProRestored => 'Pro subscription restored';
+
+  @override
+  String get settingsProRestoreEmpty => 'No active subscription found';
+
+  @override
+  String get settingsProBillingFailed => 'Could not start purchase';
+
+  @override
+  String get settingsProBillingUnavailable =>
+      'Google Play billing is not available on this device. Use a license key for self-hosted Pro.';
+
+  @override
+  String get settingsProLicenseDivider => 'Or use a license key';
+
+  @override
+  String get settingsProActivePlay => 'Pro via Google Play subscription';
+
+  @override
+  String get settingsProActiveDemo => 'Pro demo mode (review / beta)';
+
+  @override
+  String settingsProActiveLicense(String hint) {
+    return 'Pro license ••••$hint';
+  }
+
+  @override
+  String get settingsProDemoBadge => 'Demo';
 
   @override
   String get settingsSchedulerTitle => 'Profile scheduler';
@@ -584,6 +747,276 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationDownloadAuthorPrefix => 'Author';
+
+  @override
+  String get watchlistCheckFailed =>
+      'Could not check profile. Try again later.';
+
+  @override
+  String watchlistNoNewItems(int saved) {
+    return 'No new public posts ($saved already in library)';
+  }
+
+  @override
+  String get watchlistNewItemsTitle => 'New public posts found';
+
+  @override
+  String watchlistNewItemsBody(int count, int saved) {
+    return '$count new items ($saved already saved). Open profile to download manually.';
+  }
+
+  @override
+  String get watchlistOpenProfile => 'Open profile';
+
+  @override
+  String watchlistNewItemsCount(int count) {
+    return '$count new on last check';
+  }
+
+  @override
+  String get downloadStageAnalyzing => 'Analyzing link…';
+
+  @override
+  String get downloadStageResolving => 'Resolving media…';
+
+  @override
+  String get downloadStagePreparing => 'Preparing download…';
+
+  @override
+  String get downloadStageDownloading => 'Downloading…';
+
+  @override
+  String get downloadStageSaving => 'Saving…';
+
+  @override
+  String get downloadStageAddedToLibrary => 'Added to library';
+
+  @override
+  String get postSaveSubtitle => 'Saved to your media library';
+
+  @override
+  String get postSaveMore => 'Save another';
+
+  @override
+  String historyBulkSelected(int count) {
+    return '$count selected';
+  }
+
+  @override
+  String get historyBulkUrlsCopied => 'URLs copied';
+
+  @override
+  String get settingsFilenameTemplateTitle => 'Filename template';
+
+  @override
+  String get settingsFilenameTemplateSubtitle =>
+      'How saved files are named (Pro)';
+
+  @override
+  String get settingsFilenamePresetDefault => 'username_type_shortcode_date';
+
+  @override
+  String get settingsFilenamePresetDateFirst => 'date_username_shortcode';
+
+  @override
+  String get settingsFilenamePresetFolder => 'username/type/shortcode';
+
+  @override
+  String get settingsFilenamePresetCustom => 'Custom template';
+
+  @override
+  String get settingsFilenameTemplateCustomHint =>
+      'username_type_shortcode_date';
+
+  @override
+  String get settingsFilenameTemplateTokens =>
+      'Tokens: username, type, shortcode, date';
+
+  @override
+  String get settingsFilenameTemplatePreview => 'Preview';
+
+  @override
+  String get settingsCloudBackupTitle => 'Cloud backup';
+
+  @override
+  String get settingsCloudBackupSubtitle =>
+      'Upload ZIP exports to your storage (Pro). Credentials stay on device.';
+
+  @override
+  String get settingsCloudBackupEnabled => 'Backup after export';
+
+  @override
+  String get settingsCloudBackupEnabledSubtitle =>
+      'When exporting ZIP from library, also upload to cloud';
+
+  @override
+  String get settingsCloudBackupProvider => 'Destination';
+
+  @override
+  String get settingsCloudBackupProviderNone => 'None';
+
+  @override
+  String get settingsCloudBackupProviderWebDav => 'WebDAV (NAS, Nextcloud)';
+
+  @override
+  String get settingsCloudBackupProviderS3 => 'S3-compatible';
+
+  @override
+  String get settingsCloudBackupProviderDrive => 'Google Drive';
+
+  @override
+  String get settingsCloudBackupWebDavUrl => 'WebDAV URL';
+
+  @override
+  String get settingsCloudBackupWebDavUser => 'Username';
+
+  @override
+  String get settingsCloudBackupWebDavPassword => 'Password';
+
+  @override
+  String get settingsCloudBackupWebDavPath => 'Remote folder';
+
+  @override
+  String get settingsCloudBackupS3Endpoint => 'Endpoint URL';
+
+  @override
+  String get settingsCloudBackupS3Bucket => 'Bucket';
+
+  @override
+  String get settingsCloudBackupS3Region => 'Region';
+
+  @override
+  String get settingsCloudBackupS3Prefix => 'Key prefix';
+
+  @override
+  String get settingsCloudBackupS3AccessKey => 'Access key';
+
+  @override
+  String get settingsCloudBackupS3SecretKey => 'Secret key';
+
+  @override
+  String get settingsCloudBackupDriveNote =>
+      'Google Drive requires OAuth sign-in — coming in a future update.';
+
+  @override
+  String get settingsCloudBackupTest => 'Test connection';
+
+  @override
+  String get settingsCloudBackupTestOk => 'Cloud backup connection OK';
+
+  @override
+  String settingsCloudBackupTestFailed(String reason) {
+    return 'Connection failed: $reason';
+  }
+
+  @override
+  String settingsCloudBackupComingSoon(String feature) {
+    return '$feature — coming soon';
+  }
+
+  @override
+  String get historyBulkCloudBackupOk => 'Uploaded to cloud backup';
+
+  @override
+  String get historyBulkCloudBackupFailed => 'Cloud backup failed';
+
+  @override
+  String get webDashboardTitle => 'QuickSave Web';
+
+  @override
+  String get webNavResolve => 'Resolve';
+
+  @override
+  String get webNavLibrary => 'Library';
+
+  @override
+  String get webNavSettings => 'Settings';
+
+  @override
+  String get webResolveTitle => 'Resolve public links';
+
+  @override
+  String get webResolveSubtitle =>
+      'Paste an Instagram URL you explicitly chose — preview only on web.';
+
+  @override
+  String get webResolveHint =>
+      'Resolver uses your configured backend. Saving files requires the Android app.';
+
+  @override
+  String webResolveSuccess(int count) {
+    return '$count media items found';
+  }
+
+  @override
+  String get webResolveMediaItem => 'Media item';
+
+  @override
+  String get webOpenMedia => 'Open media URL';
+
+  @override
+  String get webResolveMobileNote =>
+      'Install QuickSave on Android to save to your device library and gallery.';
+
+  @override
+  String get webLibraryTitle => 'Library metadata';
+
+  @override
+  String get webLibrarySubtitle =>
+      'Import JSON exported from the Android app — stored locally in this browser.';
+
+  @override
+  String get webLibrarySearchHint => 'Search author, URL, caption…';
+
+  @override
+  String get webLibraryImportFile => 'Import JSON file';
+
+  @override
+  String get webLibraryExportCsv => 'Export CSV';
+
+  @override
+  String get webLibraryClear => 'Clear local library';
+
+  @override
+  String get webLibraryPasteJson => 'Paste JSON';
+
+  @override
+  String get webLibraryPasteHint => 'Paste metadata.json or export array';
+
+  @override
+  String get webLibraryImport => 'Import';
+
+  @override
+  String webLibraryImported(int count) {
+    return 'Imported $count items';
+  }
+
+  @override
+  String get webLibraryImportFailed => 'Invalid JSON format';
+
+  @override
+  String get webLibraryEmpty =>
+      'No items yet — export metadata from the Android app and import here.';
+
+  @override
+  String get webSettingsTitle => 'Backend';
+
+  @override
+  String get webSettingsSubtitle =>
+      'Choose hosted QuickSave Cloud or your self-hosted resolver.';
+
+  @override
+  String get webSettingsCheckBackend => 'Check health';
+
+  @override
+  String get webSettingsBackendOk => 'Backend is online';
+
+  @override
+  String get webSettingsBackendFail => 'Backend unreachable';
+
+  @override
+  String get webSettingsPrivacyNote =>
+      'Web dashboard never logs into Instagram. Only URLs you paste are sent to your configured resolver.';
 
   @override
   String get shareText => 'Video from QuickSave';

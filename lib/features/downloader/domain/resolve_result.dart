@@ -16,11 +16,11 @@ class VideoQuality {
   });
 
   factory VideoQuality.fromJson(Map<String, dynamic> json) => VideoQuality(
-        url: json['url'] as String? ?? '',
-        width: (json['width'] as num?)?.toInt() ?? 0,
-        height: (json['height'] as num?)?.toInt() ?? 0,
-        label: (json['label'] as String?) ?? '${json['width']}p',
-      );
+    url: json['url'] as String? ?? '',
+    width: (json['width'] as num?)?.toInt() ?? 0,
+    height: (json['height'] as num?)?.toInt() ?? 0,
+    label: (json['label'] as String?) ?? '${json['width']}p',
+  );
 }
 
 /// Один элемент медиа (видео или фото) из поста/карусели/story/профиля.
@@ -67,22 +67,21 @@ class MediaItem {
     String? thumbnailUrl,
     bool? needsResolve,
     List<VideoQuality>? qualities,
-  }) =>
-      MediaItem(
-        id: id,
-        index: index,
-        mediaType: mediaType,
-        mediaUrl: mediaUrl ?? this.mediaUrl,
-        fileName: fileName ?? this.fileName,
-        thumbnailUrl: thumbnailUrl ?? this.thumbnailUrl,
-        durationSeconds: durationSeconds,
-        width: width,
-        height: height,
-        postUrl: postUrl,
-        shortcode: shortcode,
-        needsResolve: needsResolve ?? this.needsResolve,
-        qualities: qualities ?? this.qualities,
-      );
+  }) => MediaItem(
+    id: id,
+    index: index,
+    mediaType: mediaType,
+    mediaUrl: mediaUrl ?? this.mediaUrl,
+    fileName: fileName ?? this.fileName,
+    thumbnailUrl: thumbnailUrl ?? this.thumbnailUrl,
+    durationSeconds: durationSeconds,
+    width: width,
+    height: height,
+    postUrl: postUrl,
+    shortcode: shortcode,
+    needsResolve: needsResolve ?? this.needsResolve,
+    qualities: qualities ?? this.qualities,
+  );
 
   factory MediaItem.fromJson(Map<String, dynamic> json) {
     final typeStr = (json['mediaType'] as String?) ?? 'video';
@@ -90,19 +89,21 @@ class MediaItem {
     final rawQualities = json['qualities'];
     final qualities = rawQualities is List
         ? rawQualities
-            .whereType<Map<String, dynamic>>()
-            .map(VideoQuality.fromJson)
-            .where((q) => q.url.isNotEmpty)
-            .toList()
+              .whereType<Map<String, dynamic>>()
+              .map(VideoQuality.fromJson)
+              .where((q) => q.url.isNotEmpty)
+              .toList()
         : <VideoQuality>[];
     return MediaItem(
       id: json['id'] as String? ?? 'item_${json['index'] ?? 0}',
       index: (json['index'] as num?)?.toInt() ?? 0,
       mediaType: typeStr == 'image' ? MediaType.image : MediaType.video,
-      mediaUrl: json['mediaUrl'] as String? ?? json['videoUrl'] as String? ?? '',
+      mediaUrl:
+          json['mediaUrl'] as String? ?? json['videoUrl'] as String? ?? '',
       thumbnailUrl: json['thumbnailUrl'] as String?,
       durationSeconds: (json['duration'] as num?)?.toInt(),
-      fileName: (json['fileName'] as String?) ?? 'media_${json['index'] ?? 0}.mp4',
+      fileName:
+          (json['fileName'] as String?) ?? 'media_${json['index'] ?? 0}.mp4',
       width: (json['width'] as num?)?.toInt(),
       height: (json['height'] as num?)?.toInt(),
       postUrl: json['postUrl'] as String?,
@@ -151,10 +152,7 @@ class ResolveResult {
 
   ResolveResult mergeItems(ResolveResult page) {
     final seen = items.map((i) => i.id).toSet();
-    final merged = [
-      ...items,
-      ...page.items.where((i) => !seen.contains(i.id)),
-    ];
+    final merged = [...items, ...page.items.where((i) => !seen.contains(i.id))];
     return ResolveResult(
       type: type,
       sourceUrl: sourceUrl,
@@ -185,7 +183,9 @@ class ResolveResult {
       items = rawItems
           .whereType<Map<String, dynamic>>()
           .map(MediaItem.fromJson)
-          .where((i) => i.mediaUrl.isNotEmpty || (i.postUrl?.isNotEmpty ?? false))
+          .where(
+            (i) => i.mediaUrl.isNotEmpty || (i.postUrl?.isNotEmpty ?? false),
+          )
           .toList();
     } else {
       final videoUrl = json['videoUrl'] as String?;
@@ -215,10 +215,12 @@ class ResolveResult {
       _ => ResolveType.single,
     };
 
-    final vCount = (json['videoCount'] as num?)?.toInt()
-        ?? items.where((i) => i.isVideo).length;
-    final iCount = (json['imageCount'] as num?)?.toInt()
-        ?? items.where((i) => !i.isVideo).length;
+    final vCount =
+        (json['videoCount'] as num?)?.toInt() ??
+        items.where((i) => i.isVideo).length;
+    final iCount =
+        (json['imageCount'] as num?)?.toInt() ??
+        items.where((i) => !i.isVideo).length;
 
     ResolveType resolvedType = type;
     if (type == ResolveType.single && items.length > 1) {

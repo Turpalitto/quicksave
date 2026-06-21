@@ -32,39 +32,36 @@ void main() {
       );
     });
 
-  test('extracts short URL with instagr.com typo', () {
-    const text = 'https://instagr.com/tv/VID1/';
-    expect(
-      Validators.extractInstagramUrl(text),
-      'https://instagr.com/tv/VID1/',
-    );
-    expect(
-      Validators.normalize(text),
-      'https://instagram.com/tv/VID1',
-    );
-    expect(Validators.isValidInstagramUrl(text), isTrue);
-  });
+    test('extracts short URL with instagr.com typo', () {
+      const text = 'https://instagr.com/tv/VID1/';
+      expect(
+        Validators.extractInstagramUrl(text),
+        'https://instagr.com/tv/VID1/',
+      );
+      expect(Validators.normalize(text), 'https://instagram.com/tv/VID1');
+      expect(Validators.isValidInstagramUrl(text), isTrue);
+    });
 
-  test('extracts /video/reel/ alias URL', () {
-    const text = 'https://www.instagram.com/video/reel/DWze_eKkrwr/';
-    expect(
-      Validators.extractInstagramUrl(text),
-      'https://www.instagram.com/video/reel/DWze_eKkrwr/',
-    );
-    expect(
-      Validators.normalize(text),
-      'https://www.instagram.com/reel/DWze_eKkrwr',
-    );
-    expect(Validators.isValidInstagramUrl(text), isTrue);
-  });
+    test('extracts /video/reel/ alias URL', () {
+      const text = 'https://www.instagram.com/video/reel/DWze_eKkrwr/';
+      expect(
+        Validators.extractInstagramUrl(text),
+        'https://www.instagram.com/video/reel/DWze_eKkrwr/',
+      );
+      expect(
+        Validators.normalize(text),
+        'https://www.instagram.com/reel/DWze_eKkrwr',
+      );
+      expect(Validators.isValidInstagramUrl(text), isTrue);
+    });
 
-  test('prepareUrl normalizes share text with alias path', () {
-    const text = 'Look https://www.instagram.com/video/reel/ABC123/ wow';
-    expect(
-      Validators.prepareUrl(text),
-      'https://www.instagram.com/reel/ABC123',
-    );
-  });
+    test('prepareUrl normalizes share text with alias path', () {
+      const text = 'Look https://www.instagram.com/video/reel/ABC123/ wow';
+      expect(
+        Validators.prepareUrl(text),
+        'https://www.instagram.com/reel/ABC123',
+      );
+    });
 
     test('returns null for non-instagram URL', () {
       expect(
@@ -106,10 +103,7 @@ void main() {
       );
     });
     test('rejects non-instagram URL', () {
-      expect(
-        Validators.isValidInstagramUrl('https://example.com/'),
-        isFalse,
-      );
+      expect(Validators.isValidInstagramUrl('https://example.com/'), isFalse);
     });
     // Edge-кейсы строгой валидации (раньше мягкий contains пропускал их).
     test('rejects instagram pattern hidden in query of other site', () {
@@ -142,14 +136,18 @@ void main() {
     });
     test('rejects stories with shortcode', () {
       expect(
-        Validators.isValidInstagramUrl('https://www.instagram.com/stories/user/1234567890'),
+        Validators.isValidInstagramUrl(
+          'https://www.instagram.com/stories/user/1234567890',
+        ),
         isTrue,
       );
     });
 
     test('rejects old stories path without id', () {
       expect(
-        Validators.isValidInstagramUrl('https://www.instagram.com/stories/abc/'),
+        Validators.isValidInstagramUrl(
+          'https://www.instagram.com/stories/abc/',
+        ),
         isFalse,
       );
     });
@@ -161,10 +159,7 @@ void main() {
     });
 
     test('accepts @username shorthand', () {
-      expect(
-        Validators.prepareUrl('@natgeo'),
-        'https://instagram.com/natgeo',
-      );
+      expect(Validators.prepareUrl('@natgeo'), 'https://instagram.com/natgeo');
     });
 
     test('rejects empty string', () {

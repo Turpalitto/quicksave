@@ -1,0 +1,30 @@
+name: Browser Extension
+
+on:
+  push:
+    paths:
+      - 'extension/**'
+  pull_request:
+    paths:
+      - 'extension/**'
+
+jobs:
+  test:
+    name: Extension tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate manifest
+        working-directory: extension
+        run: node scripts/validate-manifest.js
+
+      - name: Unit tests
+        working-directory: extension
+        run: npm test

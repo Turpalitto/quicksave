@@ -33,10 +33,7 @@ void main() {
       expect(queue.tasks.any((t) => t.id == id), isTrue);
       expect(
         queue.tasks.firstWhere((t) => t.id == id).status,
-        anyOf(
-          DownloadTaskStatus.queued,
-          DownloadTaskStatus.running,
-        ),
+        anyOf(DownloadTaskStatus.queued, DownloadTaskStatus.running),
       );
     });
 

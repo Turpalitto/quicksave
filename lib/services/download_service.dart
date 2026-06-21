@@ -88,42 +88,42 @@ class DownloadService {
     try {
       try {
         await _dio.download(
-        url,
-        part,
-        cancelToken: cancelToken,
-        options: Options(
-          responseType: ResponseType.bytes,
-          followRedirects: true,
-          validateStatus: (s) => s != null && s < 400,
-          headers: {
-            if (existingBytes > 0) 'Range': 'bytes=$existingBytes-',
-            if (_isInstagramCdn(url)) ...{
-              'Referer': 'https://www.instagram.com/',
-              'User-Agent':
-                  'Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 '
-                  '(KHTML, like Gecko) Chrome/122.0 Mobile Safari/537.36',
+          url,
+          part,
+          cancelToken: cancelToken,
+          options: Options(
+            responseType: ResponseType.bytes,
+            followRedirects: true,
+            validateStatus: (s) => s != null && s < 400,
+            headers: {
+              if (existingBytes > 0) 'Range': 'bytes=$existingBytes-',
+              if (_isInstagramCdn(url)) ...{
+                'Referer': 'https://www.instagram.com/',
+                'User-Agent':
+                    'Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 '
+                    '(KHTML, like Gecko) Chrome/122.0 Mobile Safari/537.36',
+              },
             },
-          },
-        ),
-        onReceiveProgress: (received, total) {
-          if (onProgress == null) return;
-          final totalBytes = total > 0 ? total + existingBytes : 0;
-          final downloaded = received + existingBytes;
-          if (totalBytes > 0) {
-            final ratio = downloaded / totalBytes;
-            onProgress(ratio);
-            // Троттлинг обновления foreground-уведомления — только при изменении
-            // целого процента, чтобы не спамить MethodChannel на каждый чих.
-            final percent = (ratio.clamp(0.0, 1.0) * 100).round();
-            if (percent != lastFgPercent) {
-              lastFgPercent = percent;
-              ForegroundService.instance.updateProgress(ratio);
+          ),
+          onReceiveProgress: (received, total) {
+            if (onProgress == null) return;
+            final totalBytes = total > 0 ? total + existingBytes : 0;
+            final downloaded = received + existingBytes;
+            if (totalBytes > 0) {
+              final ratio = downloaded / totalBytes;
+              onProgress(ratio);
+              // Троттлинг обновления foreground-уведомления — только при изменении
+              // целого процента, чтобы не спамить MethodChannel на каждый чих.
+              final percent = (ratio.clamp(0.0, 1.0) * 100).round();
+              if (percent != lastFgPercent) {
+                lastFgPercent = percent;
+                ForegroundService.instance.updateProgress(ratio);
+              }
+            } else {
+              onProgress(0);
             }
-          } else {
-            onProgress(0);
-          }
-        },
-      );
+          },
+        );
       } on DioException catch (e) {
         if (CancelToken.isCancel(e)) {
           if (e.message != 'paused') {

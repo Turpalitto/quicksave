@@ -7,7 +7,9 @@ final downloadQueueProvider = StreamProvider<List<DownloadQueueTask>>(
 );
 
 final downloadQueueTasksProvider = Provider<List<DownloadQueueTask>>((ref) {
-  return ref.watch(downloadQueueProvider).maybeWhen(
+  return ref
+      .watch(downloadQueueProvider)
+      .maybeWhen(
         data: (tasks) => tasks,
         orElse: () => DownloadQueue.instance.tasks,
       );

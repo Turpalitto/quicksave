@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_constants.dart';
+import '../../../services/filename_template_engine.dart';
+import 'cloud_backup_config.dart';
 import 'scheduled_profile.dart';
 
 enum AppThemeMode { system, light, dark }
@@ -21,6 +23,9 @@ class AppSettings {
   final AppThemeMode themeMode;
   final String backendUrl;
   final List<ScheduledProfile> scheduledProfiles;
+  final FilenameTemplatePreset filenameTemplatePreset;
+  final String customFilenameTemplate;
+  final CloudBackupConfig cloudBackup;
 
   const AppSettings({
     this.autoDownload = true,
@@ -35,6 +40,9 @@ class AppSettings {
     this.themeMode = AppThemeMode.system,
     this.backendUrl = AppConstants.defaultSelfHostedBackendUrl,
     this.scheduledProfiles = const [],
+    this.filenameTemplatePreset = FilenameTemplatePreset.defaultTemplate,
+    this.customFilenameTemplate = '',
+    this.cloudBackup = const CloudBackupConfig(),
   });
 
   /// URL resolver для текущего режима.
@@ -45,6 +53,9 @@ class AppSettings {
   bool get canUseScheduler => isPro;
   bool get canExportZip => isPro;
   bool get canSelfHost => isPro;
+  bool get canUseFilenameTemplates => isPro;
+  bool get canBulkActions => isPro;
+  bool get canCloudBackup => isPro;
 
   ThemeMode get materialThemeMode {
     switch (themeMode) {
@@ -70,38 +81,48 @@ class AppSettings {
     AppThemeMode? themeMode,
     String? backendUrl,
     List<ScheduledProfile>? scheduledProfiles,
-  }) =>
-      AppSettings(
-        autoDownload: autoDownload ?? this.autoDownload,
-        notificationsEnabled:
-            notificationsEnabled ?? this.notificationsEnabled,
-        saveHistory: saveHistory ?? this.saveHistory,
-        watchClipboard: watchClipboard ?? this.watchClipboard,
-        saveInAuthorFolder: saveInAuthorFolder ?? this.saveInAuthorFolder,
-        saveToGallery: saveToGallery ?? this.saveToGallery,
-        onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
-        isPro: isPro ?? this.isPro,
-        backendMode: backendMode ?? this.backendMode,
-        themeMode: themeMode ?? this.themeMode,
-        backendUrl: backendUrl ?? this.backendUrl,
-        scheduledProfiles: scheduledProfiles ?? this.scheduledProfiles,
-      );
+    FilenameTemplatePreset? filenameTemplatePreset,
+    String? customFilenameTemplate,
+    CloudBackupConfig? cloudBackup,
+  }) => AppSettings(
+    autoDownload: autoDownload ?? this.autoDownload,
+    notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
+    saveHistory: saveHistory ?? this.saveHistory,
+    watchClipboard: watchClipboard ?? this.watchClipboard,
+    saveInAuthorFolder: saveInAuthorFolder ?? this.saveInAuthorFolder,
+    saveToGallery: saveToGallery ?? this.saveToGallery,
+    onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
+    isPro: isPro ?? this.isPro,
+    backendMode: backendMode ?? this.backendMode,
+    themeMode: themeMode ?? this.themeMode,
+    backendUrl: backendUrl ?? this.backendUrl,
+    scheduledProfiles: scheduledProfiles ?? this.scheduledProfiles,
+    filenameTemplatePreset:
+        filenameTemplatePreset ?? this.filenameTemplatePreset,
+    customFilenameTemplate:
+        customFilenameTemplate ?? this.customFilenameTemplate,
+    cloudBackup: cloudBackup ?? this.cloudBackup,
+  );
 
   Map<String, dynamic> toJson() => {
-        'autoDownload': autoDownload,
-        'notificationsEnabled': notificationsEnabled,
-        'saveHistory': saveHistory,
-        'watchClipboard': watchClipboard,
-        'saveInAuthorFolder': saveInAuthorFolder,
-        'saveToGallery': saveToGallery,
-        'onboardingCompleted': onboardingCompleted,
-        'isPro': isPro,
-        'backendMode': backendMode.name,
-        'themeMode': themeMode.name,
-        'backendUrl': backendUrl,
-        'scheduledProfiles':
-            scheduledProfiles.map((p) => p.toJson()).toList(),
-      };
+    'autoDownload': autoDownload,
+    'notificationsEnabled': notificationsEnabled,
+    'saveHistory': saveHistory,
+    'watchClipboard': watchClipboard,
+    'saveInAuthorFolder': saveInAuthorFolder,
+    'saveToGallery': saveToGallery,
+    'onboardingCompleted': onboardingCompleted,
+    'isPro': isPro,
+    'backendMode': backendMode.name,
+    'themeMode': themeMode.name,
+    'backendUrl': backendUrl,
+    'scheduledProfiles': scheduledProfiles.map((p) => p.toJson()).toList(),
+    'filenameTemplatePreset': filenameTemplatePreset.name,
+    if (customFilenameTemplate.isNotEmpty)
+      'customFilenameTemplate': customFilenameTemplate,
+    if (cloudBackup.enabled || cloudBackup.provider != CloudBackupProvider.none)
+      'cloudBackup': cloudBackup.toJson(),
+  };
 
   factory AppSettings.fromJson(Map<String, dynamic> json) {
     final themeStr = json['themeMode'] as String?;
@@ -120,16 +141,37 @@ class AppSettings {
           ? BackendMode.selfHosted
           : BackendMode.hosted,
       themeMode: _parseTheme(themeStr),
-      backendUrl: json['backendUrl'] as String? ??
+      backendUrl:
+          json['backendUrl'] as String? ??
           AppConstants.defaultSelfHostedBackendUrl,
       scheduledProfiles: rawProfiles is List
           ? rawProfiles
-              .whereType<Map<String, dynamic>>()
-              .map(ScheduledProfile.fromJson)
-              .where((p) => p.username.isNotEmpty)
-              .toList()
+                .whereType<Map<String, dynamic>>()
+                .map(ScheduledProfile.fromJson)
+                .where((p) => p.username.isNotEmpty)
+                .toList()
           : const [],
+      filenameTemplatePreset: _parseFilenamePreset(
+        json['filenameTemplatePreset'] as String?,
+      ),
+      customFilenameTemplate: json['customFilenameTemplate'] as String? ?? '',
+      cloudBackup: CloudBackupConfig.fromJson(
+        json['cloudBackup'] as Map<String, dynamic>?,
+      ),
     );
+  }
+
+  static FilenameTemplatePreset _parseFilenamePreset(String? raw) {
+    switch (raw) {
+      case 'dateFirst':
+        return FilenameTemplatePreset.dateFirst;
+      case 'folderStyle':
+        return FilenameTemplatePreset.folderStyle;
+      case 'custom':
+        return FilenameTemplatePreset.custom;
+      default:
+        return FilenameTemplatePreset.defaultTemplate;
+    }
   }
 
   static AppThemeMode _parseTheme(String? v) {

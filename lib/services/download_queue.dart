@@ -50,32 +50,31 @@ class DownloadQueueTask {
     String? errorMessage,
     String? resultPath,
     DownloadPreflight? preflight,
-  }) =>
-      DownloadQueueTask(
-        id: id,
-        url: url,
-        fileName: fileName,
-        subfolder: subfolder,
-        preflight: preflight ?? this.preflight,
-        status: status ?? this.status,
-        progress: progress ?? this.progress,
-        retryCount: retryCount ?? this.retryCount,
-        errorMessage: errorMessage ?? this.errorMessage,
-        resultPath: resultPath ?? this.resultPath,
-      );
+  }) => DownloadQueueTask(
+    id: id,
+    url: url,
+    fileName: fileName,
+    subfolder: subfolder,
+    preflight: preflight ?? this.preflight,
+    status: status ?? this.status,
+    progress: progress ?? this.progress,
+    retryCount: retryCount ?? this.retryCount,
+    errorMessage: errorMessage ?? this.errorMessage,
+    resultPath: resultPath ?? this.resultPath,
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'url': url,
-        'fileName': fileName,
-        'subfolder': subfolder,
-        'preflight': preflight?.toJson(),
-        'status': status.name,
-        'progress': progress,
-        'retryCount': retryCount,
-        'errorMessage': errorMessage,
-        'resultPath': resultPath,
-      };
+    'id': id,
+    'url': url,
+    'fileName': fileName,
+    'subfolder': subfolder,
+    'preflight': preflight?.toJson(),
+    'status': status.name,
+    'progress': progress,
+    'retryCount': retryCount,
+    'errorMessage': errorMessage,
+    'resultPath': resultPath,
+  };
 }
 
 typedef QueueProgressCallback = void Function(DownloadQueueTask task);
@@ -85,12 +84,14 @@ class DownloadQueue {
   DownloadQueue._();
   static final DownloadQueue instance = DownloadQueue._();
 
-  final _dio = Dio(BaseOptions(
-    connectTimeout: const Duration(seconds: 15),
-    receiveTimeout: const Duration(seconds: 15),
-    followRedirects: true,
-    validateStatus: (s) => s != null && s < 500,
-  ));
+  final _dio = Dio(
+    BaseOptions(
+      connectTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 15),
+      followRedirects: true,
+      validateStatus: (s) => s != null && s < 500,
+    ),
+  );
 
   final List<DownloadQueueTask> _tasks = [];
   final _controller = StreamController<List<DownloadQueueTask>>.broadcast();
@@ -114,25 +115,31 @@ class DownloadQueue {
     bool runPreflight = true,
   }) {
     final id = const Uuid().v4();
-    _tasks.add(DownloadQueueTask(
-      id: id,
-      url: url,
-      fileName: fileName,
-      subfolder: subfolder,
-    ));
+    _tasks.add(
+      DownloadQueueTask(
+        id: id,
+        url: url,
+        fileName: fileName,
+        subfolder: subfolder,
+      ),
+    );
     _emit();
     unawaited(_processQueue(runPreflight: runPreflight));
     return id;
   }
 
-  void enqueueBatch(List<({String url, String fileName, String? subfolder})> items) {
+  void enqueueBatch(
+    List<({String url, String fileName, String? subfolder})> items,
+  ) {
     for (final item in items) {
-      _tasks.add(DownloadQueueTask(
-        id: const Uuid().v4(),
-        url: item.url,
-        fileName: item.fileName,
-        subfolder: item.subfolder,
-      ));
+      _tasks.add(
+        DownloadQueueTask(
+          id: const Uuid().v4(),
+          url: item.url,
+          fileName: item.fileName,
+          subfolder: item.subfolder,
+        ),
+      );
     }
     _emit();
     unawaited(_processQueue());
@@ -173,18 +180,22 @@ class DownloadQueue {
       _pauseRequested = true;
       DownloadService.instance.cancelTask(taskId, paused: true);
     }
-    _updateTask(taskId, (t) => t.copyWith(
-          status: DownloadTaskStatus.paused,
-          progress: t.progress,
-        ));
+    _updateTask(
+      taskId,
+      (t) =>
+          t.copyWith(status: DownloadTaskStatus.paused, progress: t.progress),
+    );
   }
 
   void resume(String taskId) {
-    _updateTask(taskId, (t) => t.copyWith(
-          status: DownloadTaskStatus.queued,
-          progress: 0,
-          errorMessage: null,
-        ));
+    _updateTask(
+      taskId,
+      (t) => t.copyWith(
+        status: DownloadTaskStatus.queued,
+        progress: 0,
+        errorMessage: null,
+      ),
+    );
     unawaited(_processQueue());
   }
 
@@ -192,10 +203,10 @@ class DownloadQueue {
     if (_activeTaskId == taskId) {
       DownloadService.instance.cancelTask(taskId);
     }
-    _updateTask(taskId, (t) => t.copyWith(
-          status: DownloadTaskStatus.cancelled,
-          progress: 0,
-        ));
+    _updateTask(
+      taskId,
+      (t) => t.copyWith(status: DownloadTaskStatus.cancelled, progress: 0),
+    );
   }
 
   void cancelAll() {
@@ -214,18 +225,23 @@ class DownloadQueue {
   }
 
   void retry(String taskId) {
-    _updateTask(taskId, (t) => t.copyWith(
-          status: DownloadTaskStatus.queued,
-          progress: 0,
-          errorMessage: null,
-        ));
+    _updateTask(
+      taskId,
+      (t) => t.copyWith(
+        status: DownloadTaskStatus.queued,
+        progress: 0,
+        errorMessage: null,
+      ),
+    );
     unawaited(_processQueue());
   }
 
   void clearCompleted() {
-    _tasks.removeWhere((t) =>
-        t.status == DownloadTaskStatus.completed ||
-        t.status == DownloadTaskStatus.cancelled);
+    _tasks.removeWhere(
+      (t) =>
+          t.status == DownloadTaskStatus.completed ||
+          t.status == DownloadTaskStatus.cancelled,
+    );
     _emit();
   }
 
@@ -254,19 +270,22 @@ class DownloadQueue {
 
         _activeTaskId = next.id;
         _pauseRequested = false;
-        _updateTask(next.id, (t) => t.copyWith(
-              status: DownloadTaskStatus.running,
-              progress: 0,
-            ));
+        _updateTask(
+          next.id,
+          (t) => t.copyWith(status: DownloadTaskStatus.running, progress: 0),
+        );
 
         if (runPreflight) {
           final pf = await preflight(next.url, next.fileName);
           _updateTask(next.id, (t) => t.copyWith(preflight: pf));
           if (!pf.acceptable) {
-            _updateTask(next.id, (t) => t.copyWith(
-                  status: DownloadTaskStatus.failed,
-                  errorMessage: pf.rejectionReason ?? 'preflight_rejected',
-                ));
+            _updateTask(
+              next.id,
+              (t) => t.copyWith(
+                status: DownloadTaskStatus.failed,
+                errorMessage: pf.rejectionReason ?? 'preflight_rejected',
+              ),
+            );
             _activeTaskId = null;
             continue;
           }
@@ -274,7 +293,10 @@ class DownloadQueue {
 
         final success = await _runWithRetry(next);
         if (!success && _pauseRequested) {
-          _updateTask(next.id, (t) => t.copyWith(status: DownloadTaskStatus.paused));
+          _updateTask(
+            next.id,
+            (t) => t.copyWith(status: DownloadTaskStatus.paused),
+          );
         }
         _activeTaskId = null;
       }
@@ -297,11 +319,14 @@ class DownloadQueue {
             _updateTask(task.id, (t) => t.copyWith(progress: p));
           },
         );
-        _updateTask(task.id, (t) => t.copyWith(
-              status: DownloadTaskStatus.completed,
-              progress: 1,
-              resultPath: path,
-            ));
+        _updateTask(
+          task.id,
+          (t) => t.copyWith(
+            status: DownloadTaskStatus.completed,
+            progress: 1,
+            resultPath: path,
+          ),
+        );
         return true;
       } on DownloadCancelledException {
         return false;

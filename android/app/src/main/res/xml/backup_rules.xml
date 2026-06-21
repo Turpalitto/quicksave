@@ -7,5 +7,4 @@
 -->
 <full-backup-content>
     <include domain="sharedpref" path="." />
-    <exclude domain="file" path="QuickSave/" />
 </full-backup-content>

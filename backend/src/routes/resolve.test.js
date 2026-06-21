@@ -14,7 +14,9 @@ describe('POST /resolve', () => {
   test('400 on empty body', async () => {
     const res = await request(app).post('/resolve').send({});
     expect(res.status).toBe(400);
-    expect(res.body).toEqual({ ok: false, error: 'invalid_url' });
+    expect(res.body.ok).toBe(false);
+    expect(res.body.error).toBe('invalid_url');
+    expect(res.body.code).toBe('INVALID_URL');
   });
 
   test('400 on non-string url', async () => {

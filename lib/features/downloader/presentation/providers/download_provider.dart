@@ -6,11 +6,16 @@ import 'package:uuid/uuid.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../services/download_queue.dart';
+import '../../../../services/filename_template_engine.dart';
+import '../../../../services/app_info_service.dart';
 import '../../../../services/gallery_save_service.dart';
 import '../../../../services/download_service.dart';
 import '../../../../services/notification_service.dart';
+import '../../../history/data/history_repository.dart';
 import '../../../history/domain/download_item.dart';
 import '../../../history/domain/library_filter.dart';
+import '../../../settings/domain/app_settings.dart';
+import '../../domain/download_stage.dart';
 import '../../../history/presentation/providers/history_provider.dart';
 import '../../../settings/presentation/providers/settings_provider.dart';
 import '../../data/instagram_resolver.dart';
@@ -42,12 +47,11 @@ class DownloadResolved extends DownloadState {
   DownloadResolved copyWith({
     ResolveResult? result,
     Set<String>? selectedIds,
-  }) =>
-      DownloadResolved(
-        result: result ?? this.result,
-        sourceUrl: sourceUrl,
-        selectedIds: selectedIds ?? this.selectedIds,
-      );
+  }) => DownloadResolved(
+    result: result ?? this.result,
+    sourceUrl: sourceUrl,
+    selectedIds: selectedIds ?? this.selectedIds,
+  );
 
   List<MediaItem> get selectedItems =>
       result.items.where((i) => selectedIds.contains(i.id)).toList();
@@ -60,18 +64,25 @@ class DownloadInProgress extends DownloadState {
   final int total;
   final double currentProgress;
   final String? currentLabel;
+  final DownloadStage stage;
 
   const DownloadInProgress({
     required this.completed,
     required this.total,
     required this.currentProgress,
     this.currentLabel,
+    this.stage = DownloadStage.downloading,
   });
 
   double get overallProgress {
     if (total <= 0) return 0;
     return ((completed + currentProgress) / total).clamp(0.0, 1.0);
   }
+}
+
+class DownloadAlreadySaved extends DownloadState {
+  final DownloadItem existing;
+  const DownloadAlreadySaved(this.existing);
 }
 
 class DownloadSuccess extends DownloadState {
@@ -146,11 +157,13 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
         backendUrl: backendUrl,
       );
       _batchGroupId = const Uuid().v4();
-      _setResolved(DownloadResolved(
-        result: result,
-        sourceUrl: url,
-        selectedIds: result.items.map((i) => i.id).toSet(),
-      ));
+      _setResolved(
+        DownloadResolved(
+          result: result,
+          sourceUrl: url,
+          selectedIds: result.items.map((i) => i.id).toSet(),
+        ),
+      );
     } on AppException catch (e) {
       state = DownloadFailureState(mapExceptionToFailure(e));
     } catch (e) {
@@ -173,21 +186,22 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
   void mergeProfileItems(ResolveResult merged) {
     final current = state;
     if (current is! DownloadResolved) return;
-    _setResolved(current.copyWith(
-      result: merged,
-      selectedIds: {
-        ...current.selectedIds,
-        ...merged.items.map((i) => i.id),
-      },
-    ));
+    _setResolved(
+      current.copyWith(
+        result: merged,
+        selectedIds: {...current.selectedIds, ...merged.items.map((i) => i.id)},
+      ),
+    );
   }
 
   void selectAll() {
     final current = state;
     if (current is! DownloadResolved) return;
-    _setResolved(current.copyWith(
-      selectedIds: current.result.items.map((i) => i.id).toSet(),
-    ));
+    _setResolved(
+      current.copyWith(
+        selectedIds: current.result.items.map((i) => i.id).toSet(),
+      ),
+    );
   }
 
   void deselectAll() {
@@ -199,21 +213,21 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
   void selectVideosOnly() {
     final current = state;
     if (current is! DownloadResolved) return;
-    _setResolved(current.copyWith(
-      selectedIds: current.result.items
-          .where((i) => i.isVideo)
-          .map((i) => i.id)
-          .toSet(),
-    ));
+    _setResolved(
+      current.copyWith(
+        selectedIds: current.result.items
+            .where((i) => i.isVideo)
+            .map((i) => i.id)
+            .toSet(),
+      ),
+    );
   }
 
   Future<bool> loadMoreProfile() async {
     final current = state;
     if (current is! DownloadResolved) return false;
     final result = current.result;
-    if (!result.hasMore ||
-        result.nextCursor == null ||
-        result.userId == null) {
+    if (!result.hasMore || result.nextCursor == null || result.userId == null) {
       return false;
     }
 
@@ -247,20 +261,22 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
         ),
       );
     }).toList();
-    _setResolved(current.copyWith(
-      result: ResolveResult(
-        type: current.result.type,
-        sourceUrl: current.result.sourceUrl,
-        items: items,
-        author: current.result.author,
-        shortcode: current.result.shortcode,
-        videoCount: current.result.videoCount,
-        imageCount: current.result.imageCount,
-        userId: current.result.userId,
-        nextCursor: current.result.nextCursor,
-        hasMore: current.result.hasMore,
+    _setResolved(
+      current.copyWith(
+        result: ResolveResult(
+          type: current.result.type,
+          sourceUrl: current.result.sourceUrl,
+          items: items,
+          author: current.result.author,
+          shortcode: current.result.shortcode,
+          videoCount: current.result.videoCount,
+          imageCount: current.result.imageCount,
+          userId: current.result.userId,
+          nextCursor: current.result.nextCursor,
+          hasMore: current.result.hasMore,
+        ),
       ),
-    ));
+    );
   }
 
   Future<void> download({
@@ -272,12 +288,27 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
     final toDownload = current.selectedItems;
     if (toDownload.isEmpty) return;
 
+    state = const DownloadInProgress(
+      completed: 0,
+      total: 1,
+      currentProgress: 0,
+      stage: DownloadStage.analyzing,
+    );
+
     final settings = ref.read(settingsProvider);
     final backendUrl = settings.effectiveBackendUrl;
     final groupId = _batchGroupId ?? const Uuid().v4();
     final saved = <DownloadItem>[];
     var failedCount = 0;
+    var alreadySavedCount = 0;
     _cancelRequested = false;
+
+    state = DownloadInProgress(
+      completed: 0,
+      total: toDownload.length,
+      currentProgress: 0,
+      stage: DownloadStage.resolvingMedia,
+    );
 
     final queue = <MediaItem>[];
     for (final item in toDownload) {
@@ -292,10 +323,27 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
 
     if (queue.isEmpty) return;
 
+    if (queue.length == 1 && settings.saveHistory) {
+      final probe = _probeItem(
+        current: current,
+        media: queue.first,
+        settings: settings,
+      );
+      final dup = HistoryRepository.instance.findDuplicate(
+        ref.read(historyProvider),
+        probe,
+      );
+      if (dup != null) {
+        state = DownloadAlreadySaved(dup);
+        return;
+      }
+    }
+
     state = DownloadInProgress(
       completed: 0,
       total: queue.length,
       currentProgress: 0,
+      stage: DownloadStage.preparing,
     );
 
     try {
@@ -306,30 +354,40 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
         }
 
         final item = queue[i];
+        final fileName = _resolveFileName(
+          settings: settings,
+          result: current.result,
+          media: item,
+        );
+
         state = DownloadInProgress(
           completed: i,
           total: queue.length,
           currentProgress: 0,
-          currentLabel: item.fileName,
+          currentLabel: fileName,
+          stage: DownloadStage.downloading,
         );
 
         try {
           final taskId = DownloadQueue.instance.enqueue(
             url: item.mediaUrl,
-            fileName: item.fileName,
+            fileName: fileName,
             subfolder: settings.saveInAuthorFolder
                 ? _sanitizeFolderName(current.result.author)
                 : null,
           );
 
-          DownloadQueueTask finished = await DownloadQueue.instance.waitForTask(taskId);
+          DownloadQueueTask finished = await DownloadQueue.instance.waitForTask(
+            taskId,
+          );
           while (finished.status == DownloadTaskStatus.running ||
               finished.status == DownloadTaskStatus.queued) {
             state = DownloadInProgress(
               completed: i,
               total: queue.length,
               currentProgress: finished.progress,
-              currentLabel: item.fileName,
+              currentLabel: fileName,
+              stage: DownloadStage.downloading,
             );
             finished = await DownloadQueue.instance.waitForTask(taskId);
           }
@@ -338,13 +396,21 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
               finished.resultPath == null) {
             failedCount++;
             if (settings.saveHistory) {
-              await ref.read(historyProvider.notifier).add(
+              await ref
+                  .read(historyProvider.notifier)
+                  .add(
                     DownloadItem.failed(
                       sourceUrl: current.sourceUrl,
                       mediaUrl: item.mediaUrl,
-                      displayFileName: item.fileName,
+                      displayFileName: fileName,
                       author: current.result.author,
                       sourceKind: _sourceKindFromResult(current.result.type),
+                      provenance: _buildProvenance(
+                        settings: settings,
+                        sourceUrl: current.sourceUrl,
+                        result: current.result,
+                        media: item,
+                      ),
                     ),
                   );
             }
@@ -352,6 +418,14 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
           }
 
           var savedPath = finished.resultPath!;
+
+          state = DownloadInProgress(
+            completed: i,
+            total: queue.length,
+            currentProgress: 0.9,
+            currentLabel: fileName,
+            stage: DownloadStage.saving,
+          );
 
           if (settings.saveToGallery) {
             savedPath = await GallerySaveService.instance.saveToGallery(
@@ -379,18 +453,41 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
             mediaType: item.isVideo ? 'video' : 'image',
             groupId: groupId,
             mediaUrl: item.mediaUrl,
-            displayFileName: item.fileName,
+            displayFileName: fileName,
+            shortcode: item.shortcode ?? current.result.shortcode,
             sourceKind: _sourceKindFromResult(current.result.type),
+            provenance: _buildProvenance(
+              settings: settings,
+              sourceUrl: current.sourceUrl,
+              result: current.result,
+              media: item,
+            ),
           );
 
           if (settings.saveHistory) {
-            await ref.read(historyProvider.notifier).add(downloadItem);
+            final dedupe = await ref
+                .read(historyProvider.notifier)
+                .add(downloadItem);
+            if (dedupe.kind == DedupeResultKind.duplicate &&
+                dedupe.existing != null) {
+              alreadySavedCount++;
+              continue;
+            }
           }
           saved.add(downloadItem);
         } on DownloadCancelledException {
           rethrow;
         } catch (_) {
           failedCount++;
+        }
+      }
+
+      if (saved.isEmpty && alreadySavedCount > 0 && failedCount == 0) {
+        final all = ref.read(historyProvider);
+        final last = all.isNotEmpty ? all.first : null;
+        if (last != null) {
+          state = DownloadAlreadySaved(last);
+          return;
         }
       }
 
@@ -404,8 +501,8 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
       if (settings.notificationsEnabled && saved.isNotEmpty) {
         final body = saved.length == 1 && failedCount == 0
             ? (current.result.author != null
-                ? '${strings.completeBodyAuthorPrefix}: ${current.result.author}'
-                : strings.completeBodyFallback)
+                  ? '${strings.completeBodyAuthorPrefix}: ${current.result.author}'
+                  : strings.completeBodyFallback)
             : strings.batchCompleteBody.replaceAll(
                 '{count}',
                 '${saved.length}',
@@ -539,15 +636,84 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
       case ResolveType.profile:
         return MediaSourceKind.profile;
       case ResolveType.carousel:
+        return MediaSourceKind.carousel;
       case ResolveType.single:
         return MediaSourceKind.post;
       case null:
         return MediaSourceKind.unknown;
     }
   }
+
+  DownloadItem _probeItem({
+    required DownloadResolved current,
+    required MediaItem media,
+    required AppSettings settings,
+  }) => DownloadItem.create(
+    sourceUrl: current.sourceUrl,
+    filePath: '',
+    mediaUrl: media.mediaUrl,
+    shortcode: media.shortcode ?? current.result.shortcode,
+    author: current.result.author,
+    mediaIndex: media.index,
+    sourceKind: _sourceKindFromResult(current.result.type),
+  );
+
+  String _resolveFileName({
+    required AppSettings settings,
+    required ResolveResult result,
+    required MediaItem media,
+  }) {
+    if (!settings.canUseFilenameTemplates) {
+      return media.fileName;
+    }
+    final preset = settings.filenameTemplatePreset;
+    final template = preset == FilenameTemplatePreset.custom
+        ? (settings.customFilenameTemplate.isNotEmpty
+              ? settings.customFilenameTemplate
+              : FilenameTemplateEngine.presetTemplate(preset))
+        : FilenameTemplateEngine.presetTemplate(preset);
+    final ext = media.isVideo ? 'mp4' : 'jpg';
+    final typeLabel = _mediaTypeLabel(result.type, media);
+    final shortcode =
+        media.shortcode ?? result.shortcode ?? 'item${media.index}';
+    return FilenameTemplateEngine.apply(
+      template: template,
+      username: result.author ?? 'unknown',
+      type: typeLabel,
+      shortcode: shortcode,
+      date: DateTime.now(),
+      extension: ext,
+    );
+  }
+
+  String _mediaTypeLabel(ResolveType type, MediaItem media) {
+    if (type == ResolveType.carousel) return 'carousel';
+    if (type == ResolveType.story) return 'story';
+    if (type == ResolveType.highlight) return 'highlight';
+    if (type == ResolveType.profile) return 'profile';
+    if (media.isVideo) return 'reel';
+    return 'post';
+  }
+
+  MediaProvenance _buildProvenance({
+    required AppSettings settings,
+    required String sourceUrl,
+    required ResolveResult result,
+    required MediaItem media,
+  }) => MediaProvenance(
+    originalUrl: sourceUrl,
+    resolvedUrl: media.postUrl ?? sourceUrl,
+    contentType: media.isVideo ? 'video' : 'image',
+    username: result.author,
+    shortcode: media.shortcode ?? result.shortcode,
+    mediaId: media.id,
+    savedAt: DateTime.now(),
+    appVersion: AppInfoService.instance.version,
+    backendMode: settings.backendMode.name,
+    userInitiated: true,
+  );
 }
 
-final downloadProvider =
-    StateNotifierProvider<DownloadNotifier, DownloadState>(
+final downloadProvider = StateNotifierProvider<DownloadNotifier, DownloadState>(
   DownloadNotifier.new,
 );

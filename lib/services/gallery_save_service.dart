@@ -9,8 +9,9 @@ class GallerySaveService {
   GallerySaveService._();
   static final GallerySaveService instance = GallerySaveService._();
 
-  static const MethodChannel _channel =
-      MethodChannel(AppConstants.galleryChannelName);
+  static const MethodChannel _channel = MethodChannel(
+    AppConstants.galleryChannelName,
+  );
 
   /// Копирует [filePath] в Gallery. Возвращает URI или исходный путь.
   Future<String> saveToGallery(String filePath, {required bool isVideo}) async {

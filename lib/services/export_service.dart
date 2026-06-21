@@ -1,49 +1,69 @@
-import 'dart:io';
-
-import 'package:archive/archive_io.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../features/history/domain/download_item.dart';
+import '../../features/history/domain/download_item.dart';
+import '../../features/settings/domain/cloud_backup_config.dart';
+import 'export/cloud/cloud_backup_adapter.dart';
+import 'export/cloud/cloud_backup_registry.dart';
+import 'export/cloud/cloud_backup_service.dart';
+import 'export/export_service_base.dart';
+import 'export/metadata_export_service.dart';
+import 'export/zip_export_service.dart';
 
-/// Экспорт batch-загрузок в ZIP.
+/// Facade for library export (ZIP, JSON, CSV) and optional cloud backup.
 class ExportService {
   ExportService._();
   static final ExportService instance = ExportService._();
 
-  Future<String> exportToZip(List<DownloadItem> items) async {
-    if (items.isEmpty) {
-      throw StateError('No files to export');
-    }
+  final ZipExportService _zip = ZipExportService();
+  final MetadataExportService _metadata = MetadataExportService();
 
-    final archive = Archive();
-    for (final item in items) {
-      final file = File(item.filePath);
-      if (!await file.exists()) continue;
-      final bytes = await file.readAsBytes();
-      final name = p.basename(item.filePath);
-      archive.addFile(ArchiveFile(name, bytes.length, bytes));
-    }
+  Future<String> exportToZip(List<DownloadItem> items) =>
+      _zip.exportItems(items, format: ExportFormat.zip);
 
-    if (archive.files.isEmpty) {
-      throw StateError('Files missing on disk');
-    }
+  Future<String> exportMetadataJson(List<DownloadItem> items) =>
+      _metadata.exportItems(items, format: ExportFormat.json);
 
-    final dir = await getTemporaryDirectory();
-    final stamp = DateTime.now().millisecondsSinceEpoch;
-    final zipPath = p.join(dir.path, 'quicksave_export_$stamp.zip');
-    final encoder = ZipFileEncoder();
-    encoder.create(zipPath);
-    for (final f in archive.files) {
-      encoder.addArchiveFile(f);
-    }
-    encoder.close();
-    return zipPath;
-  }
+  Future<String> exportMetadataCsv(List<DownloadItem> items) =>
+      _metadata.exportItems(items, format: ExportFormat.csv);
 
   Future<void> shareZip(List<DownloadItem> items) async {
     final zipPath = await exportToZip(items);
     await Share.shareXFiles([XFile(zipPath)], text: 'QuickSave export');
   }
+
+  Future<void> shareMetadata(
+    List<DownloadItem> items, {
+    ExportFormat format = ExportFormat.json,
+  }) async {
+    final path = await _metadata.exportItems(items, format: format);
+    await Share.shareXFiles([XFile(path)], text: 'QuickSave metadata');
+  }
+
+  /// Exports ZIP and optionally uploads to configured cloud destination.
+  Future<CloudBackupResult?> exportZipWithOptionalCloudBackup(
+    List<DownloadItem> items,
+    CloudBackupConfig config, {
+    bool shareAfterExport = true,
+  }) async {
+    final zipPath = await exportToZip(items);
+    if (shareAfterExport) {
+      await Share.shareXFiles([XFile(zipPath)], text: 'QuickSave export');
+    }
+
+    if (!config.enabled || !config.isConfigured) return null;
+    return CloudBackupService.instance.uploadArchive(
+      zipPath,
+      config,
+      remoteFileName: cloudBackupArchiveName(),
+    );
+  }
+
+  Future<CloudBackupResult> backupZipToCloud(
+    String zipPath,
+    CloudBackupConfig config,
+  ) => CloudBackupService.instance.uploadArchive(
+    zipPath,
+    config,
+    remoteFileName: cloudBackupArchiveName(),
+  );
 }

@@ -1,7 +1,6 @@
 const axios = require('axios');
 const config = require('../config');
 const {
-  extractVideoFromHtml,
   findVideoUrlInJson,
   findThumbnailInJson,
 } = require('./postExtractor');

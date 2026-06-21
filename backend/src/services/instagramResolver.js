@@ -1,6 +1,6 @@
 const config = require('../config');
 const { resolveCache } = require('./resolveCache');
-const { recordResolve } = require('./resolveMetrics');
+const { recordResolve, recordCacheHit, recordCacheMiss } = require('./resolveMetrics');
 const { buildCollectionResponse } = require('./mediaCollection');
 const {
   normalizeUrl,
@@ -51,7 +51,11 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
     : url;
   if (config.nodeEnv !== 'test') {
     const cached = await resolveCache.get(cacheKey);
-    if (cached) return cached;
+    if (cached) {
+      recordCacheHit();
+      return cached;
+    }
+    recordCacheMiss();
   }
 
   const runResolve = async () => {

@@ -9,13 +9,13 @@ import 'package:quicksave/services/download_queue.dart';
 import '../helpers/mock_setup.dart';
 
 Widget _wrap(Widget child) => ProviderScope(
-      child: MaterialApp(
-        locale: const Locale('en'),
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: Scaffold(body: child),
-      ),
-    );
+  child: MaterialApp(
+    locale: const Locale('en'),
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
+    home: Scaffold(body: child),
+  ),
+);
 
 void main() {
   setUpAll(initPlatformMocks);
@@ -23,7 +23,9 @@ void main() {
   group('DownloadQueuePanel', () {
     setUp(DownloadQueue.instance.resetForTests);
 
-    testWidgets('renders tasks with progress and queue controls', (tester) async {
+    testWidgets('renders tasks with progress and queue controls', (
+      tester,
+    ) async {
       final queue = DownloadQueue.instance;
       final id = queue.enqueue(
         url: 'https://example.com/video.mp4',

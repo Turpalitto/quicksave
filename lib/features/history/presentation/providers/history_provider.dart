@@ -19,8 +19,25 @@ class HistoryNotifier extends StateNotifier<List<DownloadItem>> {
     state = await _repo.getAll();
   }
 
-  Future<void> add(DownloadItem item) async {
-    await _repo.add(item, dedupe: true);
+  Future<DedupeAddResult> add(DownloadItem item) async {
+    final result = await _repo.addWithDedupe(item);
+    state = await _repo.getAll();
+    return result;
+  }
+
+  Future<void> removeMany(Set<String> ids, {bool deleteFiles = false}) async {
+    if (deleteFiles) {
+      for (final id in ids) {
+        final item = state.where((e) => e.id == id).firstOrNull;
+        if (item != null && item.filePath.isNotEmpty) {
+          try {
+            final file = File(item.filePath);
+            if (await file.exists()) await file.delete();
+          } catch (_) {}
+        }
+      }
+    }
+    await _repo.removeMany(ids);
     state = await _repo.getAll();
   }
 
@@ -33,11 +50,15 @@ class HistoryNotifier extends StateNotifier<List<DownloadItem>> {
   Future<bool> retryFailed(String id) async {
     final item = state.where((e) => e.id == id).firstOrNull;
     final mediaUrl = item?.mediaUrl;
-    if (item == null || !item.isFailed || mediaUrl == null || mediaUrl.isEmpty) {
+    if (item == null ||
+        !item.isFailed ||
+        mediaUrl == null ||
+        mediaUrl.isEmpty) {
       return false;
     }
 
-    final fileName = item.displayFileName ??
+    final fileName =
+        item.displayFileName ??
         'quicksave_${item.id}.${item.isVideo ? 'mp4' : 'jpg'}';
 
     final taskId = DownloadQueue.instance.enqueue(
@@ -98,10 +119,9 @@ class HistoryNotifier extends StateNotifier<List<DownloadItem>> {
 
 final historyProvider =
     StateNotifierProvider<HistoryNotifier, List<DownloadItem>>(
-  (ref) => HistoryNotifier(HistoryRepository.instance),
-);
+      (ref) => HistoryNotifier(HistoryRepository.instance),
+    );
 
-final collectionsProvider =
-    FutureProvider<List<MediaCollection>>((ref) async {
+final collectionsProvider = FutureProvider<List<MediaCollection>>((ref) async {
   return HistoryRepository.instance.getCollections();
 });

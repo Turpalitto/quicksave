@@ -19,22 +19,35 @@ import '../providers/history_provider.dart';
 
 final historyQueryProvider = StateProvider<String>((ref) => '');
 
-final historyFilterProvider =
-    StateProvider<LibraryMediaFilter>((ref) => LibraryMediaFilter.all);
+final historyFilterProvider = StateProvider<LibraryMediaFilter>(
+  (ref) => LibraryMediaFilter.all,
+);
 
 final historyCollectionFilterProvider = StateProvider<String?>((ref) => null);
+
+final historySortProvider = StateProvider<LibrarySortOption>(
+  (ref) => LibrarySortOption.savedAtDesc,
+);
+
+final historySelectionProvider = StateProvider<Set<String>>((ref) => {});
+
+final historyBulkModeProvider = StateProvider<bool>((ref) => false);
 
 final filteredHistoryProvider = Provider<List<DownloadItem>>((ref) {
   final all = ref.watch(historyProvider);
   final q = ref.watch(historyQueryProvider);
   final filter = ref.watch(historyFilterProvider);
   final collectionId = ref.watch(historyCollectionFilterProvider);
-  return HistoryRepository.instance.filterItems(
+  final sort = ref.watch(historySortProvider);
+  final collections = ref.watch(collectionsProvider).valueOrNull ?? [];
+  final filtered = HistoryRepository.instance.filterItems(
     all,
     query: q,
     filter: filter,
     collectionId: collectionId,
+    collections: collections,
   );
+  return HistoryRepository.instance.sortItems(filtered, sort);
 });
 
 /// Groups history entries by [DownloadItem.groupId].
@@ -104,19 +117,85 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
     final filter = ref.watch(historyFilterProvider);
     final collectionsAsync = ref.watch(collectionsProvider);
     final collectionFilter = ref.watch(historyCollectionFilterProvider);
+    final bulkMode = ref.watch(historyBulkModeProvider);
+    final selection = ref.watch(historySelectionProvider);
+    final sort = ref.watch(historySortProvider);
+    final isPro = ref.watch(settingsProvider).canBulkActions;
+    final filtered = ref.watch(filteredHistoryProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(s.historyTitle),
+        title: Text(
+          bulkMode ? s.historyBulkSelected(selection.length) : s.historyTitle,
+        ),
+        leading: bulkMode
+            ? IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () {
+                  ref.read(historyBulkModeProvider.notifier).state = false;
+                  ref.read(historySelectionProvider.notifier).state = {};
+                },
+              )
+            : null,
         actions: [
-          if (all.isNotEmpty)
+          if (all.isNotEmpty && !bulkMode) ...[
+            PopupMenuButton<LibrarySortOption>(
+              icon: const Icon(Icons.sort),
+              tooltip: s.historySortSavedNewest,
+              initialValue: sort,
+              onSelected: (v) =>
+                  ref.read(historySortProvider.notifier).state = v,
+              itemBuilder: (_) => [
+                PopupMenuItem(
+                  value: LibrarySortOption.savedAtDesc,
+                  child: Text(s.historySortSavedNewest),
+                ),
+                PopupMenuItem(
+                  value: LibrarySortOption.savedAtAsc,
+                  child: Text(s.historySortSavedOldest),
+                ),
+                PopupMenuItem(
+                  value: LibrarySortOption.usernameAsc,
+                  child: Text(s.historySortUsername),
+                ),
+                PopupMenuItem(
+                  value: LibrarySortOption.typeAsc,
+                  child: Text(s.historySortType),
+                ),
+                PopupMenuItem(
+                  value: LibrarySortOption.sizeDesc,
+                  child: Text(s.historySortSize),
+                ),
+                PopupMenuItem(
+                  value: LibrarySortOption.statusAsc,
+                  child: Text(s.historySortStatus),
+                ),
+              ],
+            ),
+            IconButton(
+              tooltip: s.historyBulkSelect,
+              icon: const Icon(Icons.checklist),
+              onPressed: () {
+                if (!isPro) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(s.settingsProInactive)),
+                  );
+                  return;
+                }
+                ref.read(historyBulkModeProvider.notifier).state = true;
+              },
+            ),
             IconButton(
               tooltip: s.historyClearAll,
               icon: const Icon(Icons.delete_sweep_outlined),
               onPressed: () => _confirmClear(context),
             ),
+          ],
         ],
       ),
+      bottomNavigationBar: bulkMode
+          ? _BulkActionBar(selectedIds: selection, filteredItems: filtered)
+          : null,
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _createCollection(context),
         icon: const Icon(Icons.create_new_folder_outlined),
@@ -155,57 +234,105 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                child: Row(
-                  children: [
-                    _FilterChip(
-                      label: s.historyFilterAll,
-                      selected: filter == LibraryMediaFilter.all,
-                      onTap: () => ref
-                          .read(historyFilterProvider.notifier)
-                          .state = LibraryMediaFilter.all,
-                    ),
-                    const SizedBox(width: 8),
-                    _FilterChip(
-                      label: s.historyFilterVideo,
-                      selected: filter == LibraryMediaFilter.video,
-                      onTap: () => ref
-                          .read(historyFilterProvider.notifier)
-                          .state = LibraryMediaFilter.video,
-                    ),
-                    const SizedBox(width: 8),
-                    _FilterChip(
-                      label: s.historyFilterImage,
-                      selected: filter == LibraryMediaFilter.image,
-                      onTap: () => ref
-                          .read(historyFilterProvider.notifier)
-                          .state = LibraryMediaFilter.image,
-                    ),
-                    const SizedBox(width: 8),
-                    _FilterChip(
-                      label: s.historyFilterStories,
-                      selected: filter == LibraryMediaFilter.stories,
-                      onTap: () => ref
-                          .read(historyFilterProvider.notifier)
-                          .state = LibraryMediaFilter.stories,
-                    ),
-                    const SizedBox(width: 8),
-                    _FilterChip(
-                      label: s.historyFilterProfiles,
-                      selected: filter == LibraryMediaFilter.profiles,
-                      onTap: () => ref
-                          .read(historyFilterProvider.notifier)
-                          .state = LibraryMediaFilter.profiles,
-                    ),
-                  ],
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 4,
+                ),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      _FilterChip(
+                        label: s.historyFilterAll,
+                        selected: filter == LibraryMediaFilter.all,
+                        onTap: () =>
+                            ref.read(historyFilterProvider.notifier).state =
+                                LibraryMediaFilter.all,
+                      ),
+                      const SizedBox(width: 8),
+                      _FilterChip(
+                        label: s.historyFilterReels,
+                        selected: filter == LibraryMediaFilter.reels,
+                        onTap: () =>
+                            ref.read(historyFilterProvider.notifier).state =
+                                LibraryMediaFilter.reels,
+                      ),
+                      const SizedBox(width: 8),
+                      _FilterChip(
+                        label: s.historyFilterVideo,
+                        selected: filter == LibraryMediaFilter.video,
+                        onTap: () =>
+                            ref.read(historyFilterProvider.notifier).state =
+                                LibraryMediaFilter.video,
+                      ),
+                      const SizedBox(width: 8),
+                      _FilterChip(
+                        label: s.historyFilterImage,
+                        selected: filter == LibraryMediaFilter.image,
+                        onTap: () =>
+                            ref.read(historyFilterProvider.notifier).state =
+                                LibraryMediaFilter.image,
+                      ),
+                      const SizedBox(width: 8),
+                      _FilterChip(
+                        label: s.historyFilterCarousels,
+                        selected: filter == LibraryMediaFilter.carousels,
+                        onTap: () =>
+                            ref.read(historyFilterProvider.notifier).state =
+                                LibraryMediaFilter.carousels,
+                      ),
+                      const SizedBox(width: 8),
+                      _FilterChip(
+                        label: s.historyFilterStories,
+                        selected: filter == LibraryMediaFilter.stories,
+                        onTap: () =>
+                            ref.read(historyFilterProvider.notifier).state =
+                                LibraryMediaFilter.stories,
+                      ),
+                      const SizedBox(width: 8),
+                      _FilterChip(
+                        label: s.historyFilterProfiles,
+                        selected: filter == LibraryMediaFilter.profiles,
+                        onTap: () =>
+                            ref.read(historyFilterProvider.notifier).state =
+                                LibraryMediaFilter.profiles,
+                      ),
+                      const SizedBox(width: 8),
+                      _FilterChip(
+                        label: s.historyFilterErrors,
+                        selected: filter == LibraryMediaFilter.errors,
+                        onTap: () =>
+                            ref.read(historyFilterProvider.notifier).state =
+                                LibraryMediaFilter.errors,
+                      ),
+                      const SizedBox(width: 8),
+                      _FilterChip(
+                        label: s.historyFilterRecent,
+                        selected: filter == LibraryMediaFilter.recent,
+                        onTap: () =>
+                            ref.read(historyFilterProvider.notifier).state =
+                                LibraryMediaFilter.recent,
+                      ),
+                      const SizedBox(width: 8),
+                      _FilterChip(
+                        label: s.historyFilterUncollected,
+                        selected: filter == LibraryMediaFilter.uncollected,
+                        onTap: () =>
+                            ref.read(historyFilterProvider.notifier).state =
+                                LibraryMediaFilter.uncollected,
+                      ),
+                    ],
+                  ),
                 ),
               ),
               collectionsAsync.when(
                 data: (collections) {
                   if (collections.isEmpty) return const SizedBox.shrink();
                   return Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 4,
+                    ),
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
@@ -213,9 +340,14 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                           _FilterChip(
                             label: s.historyCollectionAll,
                             selected: collectionFilter == null,
-                            onTap: () => ref
-                                .read(historyCollectionFilterProvider.notifier)
-                                .state = null,
+                            onTap: () =>
+                                ref
+                                        .read(
+                                          historyCollectionFilterProvider
+                                              .notifier,
+                                        )
+                                        .state =
+                                    null,
                           ),
                           const SizedBox(width: 8),
                           ...collections.map(
@@ -224,10 +356,14 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                               child: _FilterChip(
                                 label: c.name,
                                 selected: collectionFilter == c.id,
-                                onTap: () => ref
-                                    .read(
-                                        historyCollectionFilterProvider.notifier)
-                                    .state = c.id,
+                                onTap: () =>
+                                    ref
+                                            .read(
+                                              historyCollectionFilterProvider
+                                                  .notifier,
+                                            )
+                                            .state =
+                                        c.id,
                               ),
                             ),
                           ),
@@ -248,21 +384,21 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                       subtitle: s.historyEmptySubtitle,
                     )
                   : groups.isEmpty
-                      ? EmptyView(
-                          icon: Icons.search_off,
-                          title: s.historyEmpty,
-                          subtitle: s.historySearchEmpty,
-                        )
-                      : ListView.separated(
-                          padding: const EdgeInsets.all(16),
-                          itemCount: groups.length,
-                          separatorBuilder: (_, __) =>
-                              const SizedBox(height: 12),
-                          itemBuilder: (_, i) => _HistoryGroupTile(
-                            group: groups[i],
-                            scheme: scheme,
-                          ),
-                        ),
+                  ? EmptyView(
+                      icon: Icons.search_off,
+                      title: s.historyEmpty,
+                      subtitle: s.historySearchEmpty,
+                    )
+                  : ListView.separated(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: groups.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 12),
+                      itemBuilder: (_, i) => _HistoryGroupTile(
+                        group: groups[i],
+                        scheme: scheme,
+                        bulkMode: bulkMode,
+                      ),
+                    ),
             ),
           ],
         ),
@@ -326,8 +462,118 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
     await ref.read(historyProvider.notifier).createCollection(name);
     ref.invalidate(collectionsProvider);
     if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(s.historyCollectionCreated)),
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(s.historyCollectionCreated)));
+  }
+}
+
+class _BulkActionBar extends ConsumerWidget {
+  const _BulkActionBar({
+    required this.selectedIds,
+    required this.filteredItems,
+  });
+
+  final Set<String> selectedIds;
+  final List<DownloadItem> filteredItems;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final s = S.of(context);
+    final scheme = Theme.of(context).colorScheme;
+    final enabled = selectedIds.isNotEmpty;
+    final settings = ref.watch(settingsProvider);
+
+    return Material(
+      elevation: 8,
+      color: scheme.surfaceContainerHighest,
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              TextButton(
+                onPressed: filteredItems.isEmpty
+                    ? null
+                    : () {
+                        final allIds = filteredItems.map((e) => e.id).toSet();
+                        ref.read(historySelectionProvider.notifier).state =
+                            allIds;
+                      },
+                child: Text(s.previewSelectAll),
+              ),
+              IconButton(
+                tooltip: s.historyBulkExportZip,
+                onPressed: !enabled
+                    ? null
+                    : () async {
+                        final items = filteredItems
+                            .where((i) => selectedIds.contains(i.id))
+                            .toList();
+                        try {
+                          final backup =
+                              await ExportService.instance
+                                  .exportZipWithOptionalCloudBackup(
+                            items,
+                            settings.cloudBackup,
+                          );
+                          if (!context.mounted) return;
+                          if (backup != null && backup.success) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(s.historyBulkCloudBackupOk)),
+                            );
+                          } else if (backup != null && !backup.success) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(s.historyBulkCloudBackupFailed),
+                              ),
+                            );
+                          }
+                        } catch (_) {
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(s.errorFileMissing)),
+                          );
+                        }
+                      },
+                icon: const Icon(Icons.archive_outlined),
+              ),
+              IconButton(
+                tooltip: s.historyBulkCopyUrls,
+                onPressed: !enabled
+                    ? null
+                    : () async {
+                        final urls = filteredItems
+                            .where((i) => selectedIds.contains(i.id))
+                            .map((i) => i.sourceUrl)
+                            .join('\n');
+                        await Clipboard.setData(ClipboardData(text: urls));
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(s.historyBulkUrlsCopied)),
+                        );
+                      },
+                icon: const Icon(Icons.link),
+              ),
+              IconButton(
+                tooltip: s.historyBulkDelete,
+                onPressed: !enabled
+                    ? null
+                    : () async {
+                        await ref
+                            .read(historyProvider.notifier)
+                            .removeMany(selectedIds);
+                        ref.read(historySelectionProvider.notifier).state = {};
+                        ref.read(historyBulkModeProvider.notifier).state =
+                            false;
+                      },
+                icon: Icon(Icons.delete_outline, color: scheme.error),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -356,13 +602,22 @@ class _FilterChip extends StatelessWidget {
 class _HistoryGroupTile extends ConsumerWidget {
   final HistoryGroup group;
   final ColorScheme scheme;
+  final bool bulkMode;
 
-  const _HistoryGroupTile({required this.group, required this.scheme});
+  const _HistoryGroupTile({
+    required this.group,
+    required this.scheme,
+    this.bulkMode = false,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (!group.isBatch) {
-      return _HistoryTile(item: group.items.first, scheme: scheme);
+      return _HistoryTile(
+        item: group.items.first,
+        scheme: scheme,
+        bulkMode: bulkMode,
+      );
     }
 
     final s = S.of(context);
@@ -387,16 +642,21 @@ class _HistoryGroupTile extends ConsumerWidget {
                   await ExportService.instance.shareZip(group.items);
                 } catch (_) {
                   if (!context.mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(s.errorFileMissing)),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(s.errorFileMissing)));
                 }
               },
             ),
           ...group.items.map(
             (item) => Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: _HistoryTile(item: item, scheme: scheme, compact: true),
+              child: _HistoryTile(
+                item: item,
+                scheme: scheme,
+                compact: true,
+                bulkMode: bulkMode,
+              ),
             ),
           ),
         ],
@@ -409,18 +669,53 @@ class _HistoryTile extends ConsumerWidget {
   final DownloadItem item;
   final ColorScheme scheme;
   final bool compact;
+  final bool bulkMode;
 
   const _HistoryTile({
     required this.item,
     required this.scheme,
     this.compact = false,
+    this.bulkMode = false,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final s = S.of(context);
-    final exists = File(item.filePath).existsSync();
+    final exists = item.filePath.isNotEmpty && File(item.filePath).existsSync();
+    final missingFile = item.filePath.isNotEmpty && !exists && !item.isFailed;
     final collectionsAsync = ref.watch(collectionsProvider);
+    final selected = ref.watch(historySelectionProvider).contains(item.id);
+
+    if (bulkMode) {
+      return Card(
+        margin: compact ? EdgeInsets.zero : null,
+        child: CheckboxListTile(
+          value: selected,
+          onChanged: (v) {
+            final set = {...ref.read(historySelectionProvider)};
+            if (v == true) {
+              set.add(item.id);
+            } else {
+              set.remove(item.id);
+            }
+            ref.read(historySelectionProvider.notifier).state = set;
+          },
+          title: Text(item.author ?? 'Instagram'),
+          subtitle: Text(
+            missingFile ? s.historyMissingFile : formatDate(item.createdAt),
+          ),
+          secondary: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: CachedThumbnail(
+              imageUrl: item.thumbnailUrl,
+              width: 48,
+              height: 48,
+              fallback: _Thumb(scheme: scheme),
+            ),
+          ),
+        ),
+      );
+    }
 
     return Dismissible(
       key: ValueKey('hist_${item.id}'),
@@ -438,9 +733,9 @@ class _HistoryTile extends ConsumerWidget {
       onDismissed: (_) async {
         await ref.read(historyProvider.notifier).remove(item.id);
         if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(s.historyDeleted)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(s.historyDeleted)));
       },
       child: Card(
         margin: compact ? EdgeInsets.zero : null,
@@ -495,6 +790,26 @@ class _HistoryTile extends ConsumerWidget {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
+                          )
+                        else if (missingFile)
+                          Container(
+                            margin: const EdgeInsets.only(left: 8),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: scheme.tertiaryContainer,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              s.historyMissingFile,
+                              style: TextStyle(
+                                color: scheme.onTertiaryContainer,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
                       ],
                     ),
@@ -541,7 +856,11 @@ class _HistoryTile extends ConsumerWidget {
                     ),
                     Text(
                       '${formatBytes(item.fileSizeBytes)}'
-                      '${exists ? '' : ' • ${s.historyFileUnavailable}'}',
+                      '${exists
+                          ? ''
+                          : missingFile
+                          ? ' • ${s.historyMissingFile}'
+                          : ' • ${s.historyFileUnavailable}'}',
                       style: TextStyle(
                         color: exists ? scheme.onSurfaceVariant : scheme.error,
                         fontSize: 12,
@@ -564,6 +883,19 @@ class _HistoryTile extends ConsumerWidget {
                       ],
                     ),
                   ),
+                  if (missingFile &&
+                      item.mediaUrl != null &&
+                      item.mediaUrl!.isNotEmpty)
+                    PopupMenuItem(
+                      value: 'retry',
+                      child: Row(
+                        children: [
+                          const Icon(Icons.refresh),
+                          const SizedBox(width: 8),
+                          Text(s.historyRetryDownload),
+                        ],
+                      ),
+                    ),
                   if (item.isFailed &&
                       item.mediaUrl != null &&
                       item.mediaUrl!.isNotEmpty)
@@ -666,7 +998,9 @@ class _HistoryTile extends ConsumerWidget {
               FilledButton(
                 onPressed: () => Navigator.pop(context, true),
                 child: Text(
-                  deleteFile ? s.historyDeleteFileConfirm : s.historyClearConfirmYes,
+                  deleteFile
+                      ? s.historyDeleteFileConfirm
+                      : s.historyClearConfirmYes,
                 ),
               ),
             ],
@@ -686,9 +1020,9 @@ class _HistoryTile extends ConsumerWidget {
         final r = await OpenFilex.open(item.filePath);
         if (!context.mounted) return;
         if (r.type != ResultType.done) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(s.errorOpenFailed(r.message))),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(s.errorOpenFailed(r.message))));
         }
         break;
       case 'copy_caption':
@@ -696,16 +1030,18 @@ class _HistoryTile extends ConsumerWidget {
         if (caption == null || caption.isEmpty) return;
         await Clipboard.setData(ClipboardData(text: caption));
         if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(s.historyCaptionCopied)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(s.historyCaptionCopied)));
         break;
       case 'retry':
         if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(s.historyRetryStarted)),
-        );
-        final ok = await ref.read(historyProvider.notifier).retryFailed(item.id);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(s.historyRetryStarted)));
+        final ok = await ref
+            .read(historyProvider.notifier)
+            .retryFailed(item.id);
         if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -719,9 +1055,9 @@ class _HistoryTile extends ConsumerWidget {
       case 'share':
         if (!File(item.filePath).existsSync()) {
           if (!context.mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(s.errorFileMissing)),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(s.errorFileMissing)));
           return;
         }
         await Share.shareXFiles([XFile(item.filePath)], text: s.shareText);
@@ -732,25 +1068,24 @@ class _HistoryTile extends ConsumerWidget {
               .read(historyProvider.notifier)
               .remove(item.id, deleteFile: true);
           if (!context.mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(s.historyDeleted)),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(s.historyDeleted)));
         }
         break;
       case 'delete':
         await ref.read(historyProvider.notifier).remove(item.id);
         if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(s.historyDeleted)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(s.historyDeleted)));
         break;
     }
   }
 
   Future<void> _pickCollection(BuildContext context, WidgetRef ref) async {
     final s = S.of(context);
-    final collections =
-        await ref.read(collectionsProvider.future);
+    final collections = await ref.read(collectionsProvider.future);
     if (!context.mounted || collections.isEmpty) return;
 
     final picked = await showModalBottomSheet<String>(
@@ -777,9 +1112,9 @@ class _HistoryTile extends ConsumerWidget {
     await ref.read(historyProvider.notifier).addToCollection(picked, item.id);
     ref.invalidate(collectionsProvider);
     if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(s.historyAddedToCollection)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(s.historyAddedToCollection)));
   }
 }
 
@@ -793,8 +1128,11 @@ class _Thumb extends StatelessWidget {
       width: 64,
       height: 64,
       color: scheme.surfaceContainerHighest,
-      child: Icon(Icons.movie_outlined,
-          size: 28, color: scheme.onSurfaceVariant),
+      child: Icon(
+        Icons.movie_outlined,
+        size: 28,
+        color: scheme.onSurfaceVariant,
+      ),
     );
   }
 }

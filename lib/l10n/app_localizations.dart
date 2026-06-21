@@ -107,13 +107,13 @@ abstract class AppLocalizations {
   /// No description provided for @homeHeroTitle.
   ///
   /// In en, this message translates to:
-  /// **'Save Instagram media'**
+  /// **'Save & organize public Instagram media'**
   String get homeHeroTitle;
 
   /// No description provided for @homeHeroSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Share a link from Instagram to QuickSave'**
+  /// **'No login, no cookies — only content you share or paste'**
   String get homeHeroSubtitle;
 
   /// No description provided for @urlFieldHint.
@@ -482,6 +482,240 @@ abstract class AppLocalizations {
   /// **'Profiles'**
   String get historyFilterProfiles;
 
+  /// No description provided for @historyFilterReels.
+  ///
+  /// In en, this message translates to:
+  /// **'Reels'**
+  String get historyFilterReels;
+
+  /// No description provided for @historyFilterCarousels.
+  ///
+  /// In en, this message translates to:
+  /// **'Carousels'**
+  String get historyFilterCarousels;
+
+  /// No description provided for @historyFilterErrors.
+  ///
+  /// In en, this message translates to:
+  /// **'Errors'**
+  String get historyFilterErrors;
+
+  /// No description provided for @historyFilterRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent'**
+  String get historyFilterRecent;
+
+  /// No description provided for @historyFilterUncollected.
+  ///
+  /// In en, this message translates to:
+  /// **'No collection'**
+  String get historyFilterUncollected;
+
+  /// No description provided for @historyAlreadySaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Already saved'**
+  String get historyAlreadySaved;
+
+  /// No description provided for @historyMissingFile.
+  ///
+  /// In en, this message translates to:
+  /// **'File not found'**
+  String get historyMissingFile;
+
+  /// No description provided for @historySortSavedNewest.
+  ///
+  /// In en, this message translates to:
+  /// **'Newest first'**
+  String get historySortSavedNewest;
+
+  /// No description provided for @historySortSavedOldest.
+  ///
+  /// In en, this message translates to:
+  /// **'Oldest first'**
+  String get historySortSavedOldest;
+
+  /// No description provided for @historySortUsername.
+  ///
+  /// In en, this message translates to:
+  /// **'By username'**
+  String get historySortUsername;
+
+  /// No description provided for @historySortType.
+  ///
+  /// In en, this message translates to:
+  /// **'By type'**
+  String get historySortType;
+
+  /// No description provided for @historySortSize.
+  ///
+  /// In en, this message translates to:
+  /// **'By size'**
+  String get historySortSize;
+
+  /// No description provided for @historySortStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'By status'**
+  String get historySortStatus;
+
+  /// No description provided for @historyBulkSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get historyBulkSelect;
+
+  /// No description provided for @historyBulkExportZip.
+  ///
+  /// In en, this message translates to:
+  /// **'Export ZIP'**
+  String get historyBulkExportZip;
+
+  /// No description provided for @historyBulkDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete selected'**
+  String get historyBulkDelete;
+
+  /// No description provided for @historyBulkCopyUrls.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy URLs'**
+  String get historyBulkCopyUrls;
+
+  /// No description provided for @creatorReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Save only content you have the right to use. Respect creators.'**
+  String get creatorReminder;
+
+  /// No description provided for @diagnosticsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Diagnostics'**
+  String get diagnosticsTitle;
+
+  /// No description provided for @diagnosticsOpenSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'App version, backend status (no personal data)'**
+  String get diagnosticsOpenSubtitle;
+
+  /// No description provided for @diagnosticsAppVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'App version'**
+  String get diagnosticsAppVersion;
+
+  /// No description provided for @diagnosticsBackendMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Backend mode'**
+  String get diagnosticsBackendMode;
+
+  /// No description provided for @diagnosticsHostedStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Hosted backend'**
+  String get diagnosticsHostedStatus;
+
+  /// No description provided for @diagnosticsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get diagnosticsAvailable;
+
+  /// No description provided for @diagnosticsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Unavailable'**
+  String get diagnosticsUnavailable;
+
+  /// No description provided for @diagnosticsLatency.
+  ///
+  /// In en, this message translates to:
+  /// **'Latency'**
+  String get diagnosticsLatency;
+
+  /// No description provided for @diagnosticsBackendVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Backend version'**
+  String get diagnosticsBackendVersion;
+
+  /// No description provided for @diagnosticsPrivacyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Diagnostics never include your saved URLs or files.'**
+  String get diagnosticsPrivacyNote;
+
+  /// No description provided for @diagnosticsCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy diagnostics'**
+  String get diagnosticsCopy;
+
+  /// No description provided for @diagnosticsCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Diagnostics copied'**
+  String get diagnosticsCopied;
+
+  /// No description provided for @diagnosticsRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get diagnosticsRefresh;
+
+  /// No description provided for @watchlistTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Watchlist'**
+  String get watchlistTitle;
+
+  /// No description provided for @watchlistOpenSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Public profiles — low-frequency checks'**
+  String get watchlistOpenSubtitle;
+
+  /// No description provided for @watchlistDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Works only with publicly available content. Frequent checks may be rate-limited. No login or private access.'**
+  String get watchlistDisclaimer;
+
+  /// No description provided for @watchlistEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Add public profiles in Settings → Scheduler'**
+  String get watchlistEmpty;
+
+  /// No description provided for @watchlistFrequency.
+  ///
+  /// In en, this message translates to:
+  /// **'Frequency'**
+  String get watchlistFrequency;
+
+  /// No description provided for @watchlistLastChecked.
+  ///
+  /// In en, this message translates to:
+  /// **'Last checked'**
+  String get watchlistLastChecked;
+
+  /// No description provided for @watchlistCheckNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Check now'**
+  String get watchlistCheckNow;
+
+  /// No description provided for @watchlistCheckQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual check queued — open app to sync'**
+  String get watchlistCheckQueued;
+
   /// No description provided for @historyDeleteFileTitle.
   ///
   /// In en, this message translates to:
@@ -811,6 +1045,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Invalid license key'**
   String get settingsProInvalidKey;
+
+  /// No description provided for @settingsProSubscribe.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribe with Google Play'**
+  String get settingsProSubscribe;
+
+  /// No description provided for @settingsProSubscribePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Pro — {price}'**
+  String settingsProSubscribePrice(String price);
+
+  /// No description provided for @settingsProRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore purchases'**
+  String get settingsProRestore;
+
+  /// No description provided for @settingsProRestored.
+  ///
+  /// In en, this message translates to:
+  /// **'Pro subscription restored'**
+  String get settingsProRestored;
+
+  /// No description provided for @settingsProRestoreEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No active subscription found'**
+  String get settingsProRestoreEmpty;
+
+  /// No description provided for @settingsProBillingFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not start purchase'**
+  String get settingsProBillingFailed;
+
+  /// No description provided for @settingsProBillingUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Play billing is not available on this device. Use a license key for self-hosted Pro.'**
+  String get settingsProBillingUnavailable;
+
+  /// No description provided for @settingsProLicenseDivider.
+  ///
+  /// In en, this message translates to:
+  /// **'Or use a license key'**
+  String get settingsProLicenseDivider;
+
+  /// No description provided for @settingsProActivePlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Pro via Google Play subscription'**
+  String get settingsProActivePlay;
+
+  /// No description provided for @settingsProActiveDemo.
+  ///
+  /// In en, this message translates to:
+  /// **'Pro demo mode (review / beta)'**
+  String get settingsProActiveDemo;
+
+  /// No description provided for @settingsProActiveLicense.
+  ///
+  /// In en, this message translates to:
+  /// **'Pro license ••••{hint}'**
+  String settingsProActiveLicense(String hint);
+
+  /// No description provided for @settingsProDemoBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo'**
+  String get settingsProDemoBadge;
 
   /// No description provided for @settingsSchedulerTitle.
   ///
@@ -1153,6 +1459,486 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Author'**
   String get notificationDownloadAuthorPrefix;
+
+  /// No description provided for @watchlistCheckFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not check profile. Try again later.'**
+  String get watchlistCheckFailed;
+
+  /// No description provided for @watchlistNoNewItems.
+  ///
+  /// In en, this message translates to:
+  /// **'No new public posts ({saved} already in library)'**
+  String watchlistNoNewItems(int saved);
+
+  /// No description provided for @watchlistNewItemsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New public posts found'**
+  String get watchlistNewItemsTitle;
+
+  /// No description provided for @watchlistNewItemsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} new items ({saved} already saved). Open profile to download manually.'**
+  String watchlistNewItemsBody(int count, int saved);
+
+  /// No description provided for @watchlistOpenProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Open profile'**
+  String get watchlistOpenProfile;
+
+  /// No description provided for @watchlistNewItemsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} new on last check'**
+  String watchlistNewItemsCount(int count);
+
+  /// No description provided for @downloadStageAnalyzing.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyzing link…'**
+  String get downloadStageAnalyzing;
+
+  /// No description provided for @downloadStageResolving.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolving media…'**
+  String get downloadStageResolving;
+
+  /// No description provided for @downloadStagePreparing.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing download…'**
+  String get downloadStagePreparing;
+
+  /// No description provided for @downloadStageDownloading.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading…'**
+  String get downloadStageDownloading;
+
+  /// No description provided for @downloadStageSaving.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving…'**
+  String get downloadStageSaving;
+
+  /// No description provided for @downloadStageAddedToLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Added to library'**
+  String get downloadStageAddedToLibrary;
+
+  /// No description provided for @postSaveSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved to your media library'**
+  String get postSaveSubtitle;
+
+  /// No description provided for @postSaveMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Save another'**
+  String get postSaveMore;
+
+  /// No description provided for @historyBulkSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} selected'**
+  String historyBulkSelected(int count);
+
+  /// No description provided for @historyBulkUrlsCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'URLs copied'**
+  String get historyBulkUrlsCopied;
+
+  /// No description provided for @settingsFilenameTemplateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Filename template'**
+  String get settingsFilenameTemplateTitle;
+
+  /// No description provided for @settingsFilenameTemplateSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How saved files are named (Pro)'**
+  String get settingsFilenameTemplateSubtitle;
+
+  /// No description provided for @settingsFilenamePresetDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'username_type_shortcode_date'**
+  String get settingsFilenamePresetDefault;
+
+  /// No description provided for @settingsFilenamePresetDateFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'date_username_shortcode'**
+  String get settingsFilenamePresetDateFirst;
+
+  /// No description provided for @settingsFilenamePresetFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'username/type/shortcode'**
+  String get settingsFilenamePresetFolder;
+
+  /// No description provided for @settingsFilenamePresetCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom template'**
+  String get settingsFilenamePresetCustom;
+
+  /// No description provided for @settingsFilenameTemplateCustomHint.
+  ///
+  /// In en, this message translates to:
+  /// **'username_type_shortcode_date'**
+  String get settingsFilenameTemplateCustomHint;
+
+  /// No description provided for @settingsFilenameTemplateTokens.
+  ///
+  /// In en, this message translates to:
+  /// **'Tokens: username, type, shortcode, date'**
+  String get settingsFilenameTemplateTokens;
+
+  /// No description provided for @settingsFilenameTemplatePreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
+  String get settingsFilenameTemplatePreview;
+
+  /// No description provided for @settingsCloudBackupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud backup'**
+  String get settingsCloudBackupTitle;
+
+  /// No description provided for @settingsCloudBackupSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload ZIP exports to your storage (Pro). Credentials stay on device.'**
+  String get settingsCloudBackupSubtitle;
+
+  /// No description provided for @settingsCloudBackupEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup after export'**
+  String get settingsCloudBackupEnabled;
+
+  /// No description provided for @settingsCloudBackupEnabledSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'When exporting ZIP from library, also upload to cloud'**
+  String get settingsCloudBackupEnabledSubtitle;
+
+  /// No description provided for @settingsCloudBackupProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Destination'**
+  String get settingsCloudBackupProvider;
+
+  /// No description provided for @settingsCloudBackupProviderNone.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get settingsCloudBackupProviderNone;
+
+  /// No description provided for @settingsCloudBackupProviderWebDav.
+  ///
+  /// In en, this message translates to:
+  /// **'WebDAV (NAS, Nextcloud)'**
+  String get settingsCloudBackupProviderWebDav;
+
+  /// No description provided for @settingsCloudBackupProviderS3.
+  ///
+  /// In en, this message translates to:
+  /// **'S3-compatible'**
+  String get settingsCloudBackupProviderS3;
+
+  /// No description provided for @settingsCloudBackupProviderDrive.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Drive'**
+  String get settingsCloudBackupProviderDrive;
+
+  /// No description provided for @settingsCloudBackupWebDavUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'WebDAV URL'**
+  String get settingsCloudBackupWebDavUrl;
+
+  /// No description provided for @settingsCloudBackupWebDavUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get settingsCloudBackupWebDavUser;
+
+  /// No description provided for @settingsCloudBackupWebDavPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get settingsCloudBackupWebDavPassword;
+
+  /// No description provided for @settingsCloudBackupWebDavPath.
+  ///
+  /// In en, this message translates to:
+  /// **'Remote folder'**
+  String get settingsCloudBackupWebDavPath;
+
+  /// No description provided for @settingsCloudBackupS3Endpoint.
+  ///
+  /// In en, this message translates to:
+  /// **'Endpoint URL'**
+  String get settingsCloudBackupS3Endpoint;
+
+  /// No description provided for @settingsCloudBackupS3Bucket.
+  ///
+  /// In en, this message translates to:
+  /// **'Bucket'**
+  String get settingsCloudBackupS3Bucket;
+
+  /// No description provided for @settingsCloudBackupS3Region.
+  ///
+  /// In en, this message translates to:
+  /// **'Region'**
+  String get settingsCloudBackupS3Region;
+
+  /// No description provided for @settingsCloudBackupS3Prefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Key prefix'**
+  String get settingsCloudBackupS3Prefix;
+
+  /// No description provided for @settingsCloudBackupS3AccessKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Access key'**
+  String get settingsCloudBackupS3AccessKey;
+
+  /// No description provided for @settingsCloudBackupS3SecretKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Secret key'**
+  String get settingsCloudBackupS3SecretKey;
+
+  /// No description provided for @settingsCloudBackupDriveNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Drive requires OAuth sign-in — coming in a future update.'**
+  String get settingsCloudBackupDriveNote;
+
+  /// No description provided for @settingsCloudBackupTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Test connection'**
+  String get settingsCloudBackupTest;
+
+  /// No description provided for @settingsCloudBackupTestOk.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud backup connection OK'**
+  String get settingsCloudBackupTestOk;
+
+  /// No description provided for @settingsCloudBackupTestFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection failed: {reason}'**
+  String settingsCloudBackupTestFailed(String reason);
+
+  /// No description provided for @settingsCloudBackupComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'{feature} — coming soon'**
+  String settingsCloudBackupComingSoon(String feature);
+
+  /// No description provided for @historyBulkCloudBackupOk.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploaded to cloud backup'**
+  String get historyBulkCloudBackupOk;
+
+  /// No description provided for @historyBulkCloudBackupFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud backup failed'**
+  String get historyBulkCloudBackupFailed;
+
+  /// No description provided for @webDashboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'QuickSave Web'**
+  String get webDashboardTitle;
+
+  /// No description provided for @webNavResolve.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolve'**
+  String get webNavResolve;
+
+  /// No description provided for @webNavLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Library'**
+  String get webNavLibrary;
+
+  /// No description provided for @webNavSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get webNavSettings;
+
+  /// No description provided for @webResolveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolve public links'**
+  String get webResolveTitle;
+
+  /// No description provided for @webResolveSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste an Instagram URL you explicitly chose — preview only on web.'**
+  String get webResolveSubtitle;
+
+  /// No description provided for @webResolveHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolver uses your configured backend. Saving files requires the Android app.'**
+  String get webResolveHint;
+
+  /// No description provided for @webResolveSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} media items found'**
+  String webResolveSuccess(int count);
+
+  /// No description provided for @webResolveMediaItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Media item'**
+  String get webResolveMediaItem;
+
+  /// No description provided for @webOpenMedia.
+  ///
+  /// In en, this message translates to:
+  /// **'Open media URL'**
+  String get webOpenMedia;
+
+  /// No description provided for @webResolveMobileNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Install QuickSave on Android to save to your device library and gallery.'**
+  String get webResolveMobileNote;
+
+  /// No description provided for @webLibraryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Library metadata'**
+  String get webLibraryTitle;
+
+  /// No description provided for @webLibrarySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Import JSON exported from the Android app — stored locally in this browser.'**
+  String get webLibrarySubtitle;
+
+  /// No description provided for @webLibrarySearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search author, URL, caption…'**
+  String get webLibrarySearchHint;
+
+  /// No description provided for @webLibraryImportFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Import JSON file'**
+  String get webLibraryImportFile;
+
+  /// No description provided for @webLibraryExportCsv.
+  ///
+  /// In en, this message translates to:
+  /// **'Export CSV'**
+  String get webLibraryExportCsv;
+
+  /// No description provided for @webLibraryClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear local library'**
+  String get webLibraryClear;
+
+  /// No description provided for @webLibraryPasteJson.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste JSON'**
+  String get webLibraryPasteJson;
+
+  /// No description provided for @webLibraryPasteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste metadata.json or export array'**
+  String get webLibraryPasteHint;
+
+  /// No description provided for @webLibraryImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Import'**
+  String get webLibraryImport;
+
+  /// No description provided for @webLibraryImported.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported {count} items'**
+  String webLibraryImported(int count);
+
+  /// No description provided for @webLibraryImportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid JSON format'**
+  String get webLibraryImportFailed;
+
+  /// No description provided for @webLibraryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No items yet — export metadata from the Android app and import here.'**
+  String get webLibraryEmpty;
+
+  /// No description provided for @webSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Backend'**
+  String get webSettingsTitle;
+
+  /// No description provided for @webSettingsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose hosted QuickSave Cloud or your self-hosted resolver.'**
+  String get webSettingsSubtitle;
+
+  /// No description provided for @webSettingsCheckBackend.
+  ///
+  /// In en, this message translates to:
+  /// **'Check health'**
+  String get webSettingsCheckBackend;
+
+  /// No description provided for @webSettingsBackendOk.
+  ///
+  /// In en, this message translates to:
+  /// **'Backend is online'**
+  String get webSettingsBackendOk;
+
+  /// No description provided for @webSettingsBackendFail.
+  ///
+  /// In en, this message translates to:
+  /// **'Backend unreachable'**
+  String get webSettingsBackendFail;
+
+  /// No description provided for @webSettingsPrivacyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Web dashboard never logs into Instagram. Only URLs you paste are sent to your configured resolver.'**
+  String get webSettingsPrivacyNote;
 
   /// No description provided for @shareText.
   ///

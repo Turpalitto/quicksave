@@ -14,6 +14,8 @@ class StorageService {
 
   SharedPreferences? _prefs;
 
+  SharedPreferences get prefs => _p;
+
   Future<void> init() async {
     _prefs ??= await SharedPreferences.getInstance();
   }
@@ -78,8 +80,7 @@ class StorageService {
   }
 
   Future<void> saveCollections(List<MediaCollection> collections) async {
-    final encoded =
-        jsonEncode(collections.map((e) => e.toJson()).toList());
+    final encoded = jsonEncode(collections.map((e) => e.toJson()).toList());
     await _p.setString(AppConstants.collectionsPrefsKey, encoded);
   }
 
@@ -89,8 +90,7 @@ class StorageService {
     final raw = _p.getString(AppConstants.settingsPrefsKey);
     if (raw == null || raw.isEmpty) return const AppSettings();
     try {
-      return AppSettings.fromJson(
-          jsonDecode(raw) as Map<String, dynamic>);
+      return AppSettings.fromJson(jsonDecode(raw) as Map<String, dynamic>);
     } catch (_) {
       return const AppSettings();
     }
@@ -98,7 +98,9 @@ class StorageService {
 
   Future<void> saveSettings(AppSettings settings) async {
     await _p.setString(
-        AppConstants.settingsPrefsKey, jsonEncode(settings.toJson()));
+      AppConstants.settingsPrefsKey,
+      jsonEncode(settings.toJson()),
+    );
   }
 
   Future<void> setJson(String key, Map<String, dynamic> json) async {

@@ -69,15 +69,15 @@ void main() {
   });
 
   Widget wrap(Widget child, {List<Override>? overrides}) => ProviderScope(
-        overrides: overrides ?? [],
-        child: MaterialApp(
-          locale: const Locale('en'),
-          theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.blue),
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: child,
-        ),
-      );
+    overrides: overrides ?? [],
+    child: MaterialApp(
+      locale: const Locale('en'),
+      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.blue),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: child,
+    ),
+  );
 
   group('Accessibility', () {
     testWidgets('home screen exposes semantics tree', (tester) async {
@@ -86,7 +86,9 @@ void main() {
       expect(find.byType(Semantics), findsWidgets);
     });
 
-    testWidgets('primary icon buttons have adequate tap targets', (tester) async {
+    testWidgets('primary icon buttons have adequate tap targets', (
+      tester,
+    ) async {
       await tester.pumpWidget(wrap(const HomeScreen()));
       await tester.pumpAndSettle(const Duration(milliseconds: 200));
 
@@ -100,22 +102,30 @@ void main() {
       }
     });
 
-    testWidgets('theme primary on surface meets WCAG AA contrast', (tester) async {
+    testWidgets('theme primary on surface meets WCAG AA contrast', (
+      tester,
+    ) async {
       await tester.pumpWidget(wrap(const HomeScreen()));
       await tester.pumpAndSettle(const Duration(milliseconds: 200));
 
-      final scheme = Theme.of(tester.element(find.byType(HomeScreen))).colorScheme;
+      final scheme = Theme.of(
+        tester.element(find.byType(HomeScreen)),
+      ).colorScheme;
       final ratio = contrastRatio(scheme.onSurface, scheme.surface);
       expect(ratio, greaterThanOrEqualTo(4.5));
     });
 
-    testWidgets('history screen search field has semantics label', (tester) async {
+    testWidgets('history screen search field has semantics label', (
+      tester,
+    ) async {
       await tester.pumpWidget(wrap(const HistoryScreen()));
       await tester.pumpAndSettle(const Duration(milliseconds: 200));
       expect(find.byType(Semantics), findsWidgets);
     });
 
-    testWidgets('preview screen exposes download and cancel semantics', (tester) async {
+    testWidgets('preview screen exposes download and cancel semantics', (
+      tester,
+    ) async {
       final resolved = _sampleResolved();
       await tester.pumpWidget(
         wrap(
@@ -133,7 +143,9 @@ void main() {
       expect(find.bySemanticsLabel('Cancel preview'), findsOneWidget);
     });
 
-    testWidgets('preview stop button has semantics when downloading', (tester) async {
+    testWidgets('preview stop button has semantics when downloading', (
+      tester,
+    ) async {
       const progress = DownloadInProgress(
         completed: 0,
         total: 1,
@@ -155,11 +167,16 @@ void main() {
       expect(find.bySemanticsLabel('Stop download'), findsOneWidget);
     });
 
-    testWidgets('settings screen exposes toggle and pro semantics', (tester) async {
+    testWidgets('settings screen exposes toggle and pro semantics', (
+      tester,
+    ) async {
       await tester.pumpWidget(wrap(const SettingsScreen()));
       await tester.pumpAndSettle(const Duration(milliseconds: 500));
 
-      expect(find.bySemanticsLabel('Auto-download after Share'), findsOneWidget);
+      expect(
+        find.bySemanticsLabel('Auto-download after Share'),
+        findsOneWidget,
+      );
       expect(find.byType(SwitchListTile), findsWidgets);
 
       await tester.scrollUntilVisible(
@@ -186,7 +203,9 @@ void main() {
       }
     });
 
-    testWidgets('preview icon buttons have adequate tap targets', (tester) async {
+    testWidgets('preview icon buttons have adequate tap targets', (
+      tester,
+    ) async {
       final resolved = _sampleResolved();
       await tester.pumpWidget(
         wrap(
@@ -200,7 +219,9 @@ void main() {
       );
       await tester.pumpAndSettle(const Duration(milliseconds: 200));
 
-      for (final btn in tester.widgetList<IconButton>(find.byType(IconButton))) {
+      for (final btn in tester.widgetList<IconButton>(
+        find.byType(IconButton),
+      )) {
         final c = btn.constraints;
         if (c != null) {
           expect(c.minWidth, greaterThanOrEqualTo(40));
@@ -209,11 +230,15 @@ void main() {
       }
     });
 
-    testWidgets('settings icon buttons have adequate tap targets', (tester) async {
+    testWidgets('settings icon buttons have adequate tap targets', (
+      tester,
+    ) async {
       await tester.pumpWidget(wrap(const SettingsScreen()));
       await tester.pumpAndSettle(const Duration(milliseconds: 300));
 
-      for (final btn in tester.widgetList<IconButton>(find.byType(IconButton))) {
+      for (final btn in tester.widgetList<IconButton>(
+        find.byType(IconButton),
+      )) {
         final c = btn.constraints;
         if (c != null) {
           expect(c.minWidth, greaterThanOrEqualTo(40));

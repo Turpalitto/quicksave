@@ -7,9 +7,11 @@ const rateLimit = require('express-rate-limit');
 
 const config = require('./config');
 const { createLogger, requestIdMiddleware } = require('./middleware/logger');
+const { metricsAuthMiddleware } = require('./middleware/metricsAuth');
 const { createRedisClient, closeRedisClient } = require('./redisClient');
 const { resolveCache } = require('./services/resolveCache');
 const resolveRouter = require('./routes/resolve');
+const billingRouter = require('./routes/billing');
 const { getMetrics } = require('./services/resolveMetrics');
 
 const logger = createLogger();
@@ -86,8 +88,20 @@ app.get('/health', (_req, res) => {
   res.json({
     ok: true,
     service: 'quicksave-backend',
-    version: '1.0.0',
+    version: config.serviceVersion,
     uptime: process.uptime(),
+  });
+});
+
+app.get('/health/live', (_req, res) => {
+  res.json({ ok: true, live: true });
+});
+
+app.get('/version', (_req, res) => {
+  res.json({
+    ok: true,
+    service: 'quicksave-backend',
+    version: config.serviceVersion,
   });
 });
 
@@ -105,14 +119,22 @@ app.get('/health/ready', async (_req, res) => {
   res.json({ ok: true, ready: true, redis });
 });
 
-app.get('/health/metrics', (_req, res) => {
+app.get('/health/metrics', metricsAuthMiddleware, (_req, res) => {
   const m = getMetrics();
   res.json({ ok: true, metrics: m, alert: m.alert });
 });
 
 app.use('/resolve', resolveRouter);
+app.use('/billing', billingRouter);
 
-const webBuildDir = path.join(__dirname, '..', '..', 'build', 'web');
+const webBuildDir = (() => {
+  const packaged = path.join(__dirname, '..', 'public', 'web');
+  const local = path.join(__dirname, '..', '..', 'build', 'web');
+  // eslint-disable-next-line global-require
+  const fs = require('fs');
+  if (fs.existsSync(path.join(packaged, 'index.html'))) return packaged;
+  return local;
+})();
 app.use(express.static(webBuildDir));
 
 app.get(/^\/(?!api|resolve|health).*/, (req, res) => {
@@ -120,19 +142,39 @@ app.get(/^\/(?!api|resolve|health).*/, (req, res) => {
 });
 
 app.use((req, res) => {
-  res.status(404).json({ ok: false, error: 'not_found' });
+  res.status(404).json({
+    ok: false,
+    error: 'not_found',
+    code: 'NOT_FOUND',
+    requestId: req.id,
+  });
 });
 
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, _next) => {
   logger.error('unhandled_error', { reqId: req.id, err: String(err) });
   if (err.type === 'entity.parse.failed') {
-    return res.status(400).json({ ok: false, error: 'invalid_json' });
+    return res.status(400).json({
+      ok: false,
+      error: 'invalid_json',
+      code: 'INVALID_JSON',
+      requestId: req.id,
+    });
   }
   if (err.type === 'entity.too.large') {
-    return res.status(413).json({ ok: false, error: 'payload_too_large' });
+    return res.status(413).json({
+      ok: false,
+      error: 'payload_too_large',
+      code: 'PAYLOAD_TOO_LARGE',
+      requestId: req.id,
+    });
   }
-  res.status(500).json({ ok: false, error: 'internal' });
+  res.status(500).json({
+    ok: false,
+    error: 'internal',
+    code: 'INTERNAL',
+    requestId: req.id,
+  });
 });
 
 let server;

@@ -15,10 +15,14 @@ class DownloadQueuePanel extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tasks = ref.watch(downloadQueueTasksProvider);
-    final active = tasks.where((t) =>
-        t.status == DownloadTaskStatus.queued ||
-        t.status == DownloadTaskStatus.running ||
-        t.status == DownloadTaskStatus.paused).toList();
+    final active = tasks
+        .where(
+          (t) =>
+              t.status == DownloadTaskStatus.queued ||
+              t.status == DownloadTaskStatus.running ||
+              t.status == DownloadTaskStatus.paused,
+        )
+        .toList();
 
     if (active.isEmpty) return const SizedBox.shrink();
 

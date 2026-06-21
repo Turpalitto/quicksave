@@ -14,10 +14,7 @@ class LoadingView extends StatelessWidget {
           CircularProgressIndicator(color: scheme.primary),
           if (message != null) ...[
             const SizedBox(height: 16),
-            Text(
-              message!,
-              style: TextStyle(color: scheme.onSurfaceVariant),
-            ),
+            Text(message!, style: TextStyle(color: scheme.onSurfaceVariant)),
           ],
         ],
       ),

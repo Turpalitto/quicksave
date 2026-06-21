@@ -16,28 +16,29 @@ class InvalidUrlFailure extends Failure {
 
 class PrivatePostFailure extends Failure {
   const PrivatePostFailure()
-      : super('Пост приватный или требует входа в Instagram.');
+    : super('Пост приватный или требует входа в Instagram.');
 }
 
 class NotFoundPostFailure extends Failure {
-  const NotFoundPostFailure()
-      : super('Пост не найден. Проверьте ссылку.');
+  const NotFoundPostFailure() : super('Пост не найден. Проверьте ссылку.');
 }
 
 class ResolverFailure extends Failure {
   const ResolverFailure()
-      : super('Не удалось получить прямую ссылку. '
-            'Попробуйте другой публичный пост.');
+    : super(
+        'Не удалось получить прямую ссылку. '
+        'Попробуйте другой публичный пост.',
+      );
 }
 
 class ServerFailure extends Failure {
   const ServerFailure([String? message])
-      : super(message ?? 'Ошибка сервера. Попробуйте позже.');
+    : super(message ?? 'Ошибка сервера. Попробуйте позже.');
 }
 
 class RateLimitedFailure extends Failure {
   const RateLimitedFailure()
-      : super('Слишком много запросов. Подождите минуту.');
+    : super('Слишком много запросов. Подождите минуту.');
 }
 
 class NoSpaceFailure extends Failure {
@@ -54,7 +55,7 @@ class CancelledFailure extends Failure {
 
 class UnknownFailure extends Failure {
   const UnknownFailure([String? message])
-      : super(message ?? 'Неизвестная ошибка.');
+    : super(message ?? 'Неизвестная ошибка.');
 }
 
 /// Маппер исключений в Failure для presentation.

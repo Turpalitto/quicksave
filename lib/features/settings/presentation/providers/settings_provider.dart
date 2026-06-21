@@ -3,8 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/settings_repository.dart';
 import '../../domain/app_settings.dart';
 import '../../domain/scheduled_profile.dart';
+import '../../../../services/filename_template_engine.dart';
+import '../../../../features/settings/domain/cloud_backup_config.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../services/scheduler_service.dart';
+import '../../../../services/entitlement_service.dart';
 
 class SettingsNotifier extends StateNotifier<AppSettings> {
   SettingsNotifier(this._repo) : super(const AppSettings()) {
@@ -15,8 +18,13 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
 
   Future<void> _load() async {
     final loaded = await _repo.get();
-    state = loaded;
-    await SchedulerService.instance.syncFromSettings(loaded);
+    try {
+      final entitlement = await EntitlementService.instance.refresh();
+      state = loaded.copyWith(isPro: entitlement.isPro);
+    } catch (_) {
+      state = loaded;
+    }
+    await SchedulerService.instance.syncFromSettings(state);
   }
 
   Future<void> update(AppSettings updated) async {
@@ -31,8 +39,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
   Future<void> setNotifications(bool v) =>
       update(state.copyWith(notificationsEnabled: v));
 
-  Future<void> setSaveHistory(bool v) =>
-      update(state.copyWith(saveHistory: v));
+  Future<void> setSaveHistory(bool v) => update(state.copyWith(saveHistory: v));
 
   Future<void> setWatchClipboard(bool v) =>
       update(state.copyWith(watchClipboard: v));
@@ -66,23 +73,61 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
       username: username.replaceAll('@', ''),
       profileUrl: url,
     );
-    final exists = state.scheduledProfiles.any((p) => p.username == profile.username);
+    final exists = state.scheduledProfiles.any(
+      (p) => p.username == profile.username,
+    );
     if (exists) return;
-    await update(state.copyWith(
-      scheduledProfiles: [...state.scheduledProfiles, profile],
-    ));
+    await update(
+      state.copyWith(scheduledProfiles: [...state.scheduledProfiles, profile]),
+    );
   }
 
   Future<void> removeScheduledProfile(String username) async {
-    await update(state.copyWith(
-      scheduledProfiles: state.scheduledProfiles
-          .where((p) => p.username != username)
-          .toList(),
-    ));
+    await update(
+      state.copyWith(
+        scheduledProfiles: state.scheduledProfiles
+            .where((p) => p.username != username)
+            .toList(),
+      ),
+    );
+  }
+
+  Future<void> updateScheduledProfile(ScheduledProfile profile) async {
+    await update(
+      state.copyWith(
+        scheduledProfiles: state.scheduledProfiles
+            .map((p) => p.username == profile.username ? profile : p)
+            .toList(),
+      ),
+    );
+  }
+
+  Future<void> setFilenameTemplatePreset(FilenameTemplatePreset preset) async {
+    if (!state.canUseFilenameTemplates &&
+        preset != FilenameTemplatePreset.defaultTemplate) {
+      return;
+    }
+    await update(state.copyWith(filenameTemplatePreset: preset));
+  }
+
+  Future<void> setCustomFilenameTemplate(String template) async {
+    if (!state.canUseFilenameTemplates) return;
+    await update(state.copyWith(customFilenameTemplate: template));
+  }
+
+  Future<void> setCloudBackup(CloudBackupConfig config) async {
+    if (!state.canCloudBackup) return;
+    await update(state.copyWith(cloudBackup: config));
+  }
+
+  Future<void> updateCloudBackup(
+    CloudBackupConfig Function(CloudBackupConfig current) transform,
+  ) async {
+    if (!state.canCloudBackup) return;
+    await update(state.copyWith(cloudBackup: transform(state.cloudBackup)));
   }
 }
 
-final settingsProvider =
-    StateNotifierProvider<SettingsNotifier, AppSettings>(
+final settingsProvider = StateNotifierProvider<SettingsNotifier, AppSettings>(
   (ref) => SettingsNotifier(SettingsRepository.instance),
 );

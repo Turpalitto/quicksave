@@ -35,8 +35,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _sharedSub =
-        IntentService.instance.sharedTextStream.listen(_handleShared);
+    _sharedSub = IntentService.instance.sharedTextStream.listen(_handleShared);
     _loadRecentLinks();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -54,9 +53,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     if (settings.onboardingCompleted || !mounted) return;
     await showOnboarding(context);
     if (!mounted) return;
-    await ref
-        .read(settingsProvider.notifier)
-        .setOnboardingCompleted(true);
+    await ref.read(settingsProvider.notifier).setOnboardingCompleted(true);
   }
 
   @override
@@ -136,10 +133,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     ref.read(downloadProvider.notifier).reset();
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => PreviewScreen(
-          sourceUrl: url,
-          autoStart: autoStart,
-        ),
+        builder: (_) => PreviewScreen(sourceUrl: url, autoStart: autoStart),
       ),
     );
   }
@@ -259,8 +253,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                           ? '${link.substring(0, 28)}…'
                           : link;
                       return ActionChip(
-                        label:
-                            Text(label, style: const TextStyle(fontSize: 12)),
+                        label: Text(
+                          label,
+                          style: const TextStyle(fontSize: 12),
+                        ),
                         onPressed: () {
                           _urlController.text = link;
                           _openPreview(link);
@@ -299,10 +295,7 @@ class _Hero extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         gradient: LinearGradient(
-          colors: [
-            scheme.primaryContainer,
-            scheme.tertiaryContainer,
-          ],
+          colors: [scheme.primaryContainer, scheme.tertiaryContainer],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -315,8 +308,11 @@ class _Hero extends StatelessWidget {
               color: scheme.surface.withValues(alpha: 0.6),
               shape: BoxShape.circle,
             ),
-            child: Icon(Icons.collections_outlined,
-                size: 32, color: scheme.primary),
+            child: Icon(
+              Icons.collections_outlined,
+              size: 32,
+              color: scheme.primary,
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -335,8 +331,7 @@ class _Hero extends StatelessWidget {
                 Text(
                   subtitle,
                   style: TextStyle(
-                    color:
-                        scheme.onPrimaryContainer.withValues(alpha: 0.85),
+                    color: scheme.onPrimaryContainer.withValues(alpha: 0.85),
                     fontSize: 13,
                   ),
                 ),
@@ -387,10 +382,7 @@ class _Footer extends StatelessWidget {
     return Center(
       child: Text(
         text,
-        style: TextStyle(
-          color: scheme.onSurfaceVariant,
-          fontSize: 12,
-        ),
+        style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12),
       ),
     );
   }

@@ -21,9 +21,7 @@ void main() {
     });
 
     test('handles missing optional fields', () {
-      final info = VideoInfo.fromJson({
-        'videoUrl': 'https://cdn.test/v.mp4',
-      });
+      final info = VideoInfo.fromJson({'videoUrl': 'https://cdn.test/v.mp4'});
       expect(info.thumbnailUrl, isNull);
       expect(info.author, isNull);
       expect(info.durationSeconds, isNull);
@@ -32,10 +30,7 @@ void main() {
     });
 
     test('coerces numeric duration from double', () {
-      final info = VideoInfo.fromJson({
-        'videoUrl': 'x',
-        'duration': 12.7,
-      });
+      final info = VideoInfo.fromJson({'videoUrl': 'x', 'duration': 12.7});
       expect(info.durationSeconds, 12);
     });
   });

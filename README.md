@@ -40,9 +40,9 @@ Production deploy: см. [`backend/render.yaml`](backend/render.yaml) и [`store
 ```bash
 flutter pub get
 flutter run
-flutter test      # 106 tests
+flutter test      # 121 tests
 flutter analyze
-cd backend && npm test   # 105 tests
+cd backend && npm test   # 112 tests
 ```
 
 ### Release AAB (Google Play)

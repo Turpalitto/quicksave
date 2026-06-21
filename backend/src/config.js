@@ -16,6 +16,9 @@ const config = {
   upstreamPoolSize: parseInt(process.env.UPSTREAM_POOL_SIZE || '3', 10),
   redisUrl: process.env.REDIS_URL || '',
   logLevel: process.env.LOG_LEVEL || 'info',
+  metricsToken: process.env.METRICS_TOKEN || '',
+  metricsPublic: process.env.METRICS_PUBLIC === 'true',
+  serviceVersion: process.env.SERVICE_VERSION || '1.1.0',
 };
 
 module.exports = config;

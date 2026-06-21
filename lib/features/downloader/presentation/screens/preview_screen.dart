@@ -13,8 +13,10 @@ import '../../../../core/widgets/loading_view.dart';
 import '../../../../core/widgets/media_preview_dialog.dart';
 import '../../../history/domain/download_item.dart';
 import '../../domain/resolve_result.dart';
+import '../../domain/download_stage.dart';
 import '../providers/download_provider.dart';
 import '../widgets/download_queue_panel.dart';
+import '../widgets/post_save_actions_sheet.dart';
 
 class PreviewScreen extends ConsumerStatefulWidget {
   final String sourceUrl;
@@ -31,6 +33,7 @@ class PreviewScreen extends ConsumerStatefulWidget {
 
 class _PreviewScreenState extends ConsumerState<PreviewScreen> {
   bool _autoStartFired = false;
+  bool _postSaveSheetShown = false;
 
   @override
   void initState() {
@@ -45,6 +48,20 @@ class _PreviewScreenState extends ConsumerState<PreviewScreen> {
   Widget build(BuildContext context) {
     final s = S.of(context);
     ref.listen<DownloadState>(downloadProvider, (prev, next) {
+      if (next is DownloadSuccess &&
+          next.items.length == 1 &&
+          next.failedCount == 0 &&
+          !_postSaveSheetShown) {
+        _postSaveSheetShown = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          PostSaveActionsSheet.show(
+            context,
+            items: next.items,
+            onSaveMore: () => Navigator.of(context).popUntil((r) => r.isFirst),
+          );
+        });
+      }
       if (!widget.autoStart) return;
       if (_autoStartFired) return;
       if (next is DownloadResolved) {
@@ -60,7 +77,9 @@ class _PreviewScreenState extends ConsumerState<PreviewScreen> {
               .download(strings: _buildStrings(s));
         }
       }
-      if (widget.autoStart && next is DownloadSuccess && next.failedCount == 0) {
+      if (widget.autoStart &&
+          next is DownloadSuccess &&
+          next.failedCount == 0) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) Navigator.of(context).pop();
         });
@@ -82,20 +101,28 @@ class _PreviewScreenState extends ConsumerState<PreviewScreen> {
   }
 
   DownloadStrings _buildStrings(Strings s) => DownloadStrings(
-        completeTitle: s.notificationDownloadCompleteTitle,
-        completeBodyAuthorPrefix: s.notificationDownloadAuthorPrefix,
-        completeBodyFallback: s.notificationDownloadCompleteBodyFallback,
-        errorTitle: s.notificationDownloadErrorTitle,
-        batchCompleteBody: s.previewBatchSaved('{count}'),
-        channelName: s.notificationChannelDownloads,
-        channelDescription: s.notificationChannelDownloadsDesc,
-      );
+    completeTitle: s.notificationDownloadCompleteTitle,
+    completeBodyAuthorPrefix: s.notificationDownloadAuthorPrefix,
+    completeBodyFallback: s.notificationDownloadCompleteBodyFallback,
+    errorTitle: s.notificationDownloadErrorTitle,
+    batchCompleteBody: s.previewBatchSaved('{count}'),
+    channelName: s.notificationChannelDownloads,
+    channelDescription: s.notificationChannelDownloadsDesc,
+  );
 
   Widget _buildBody(DownloadState state, ColorScheme scheme, Strings s) {
     if (state is DownloadResolving) {
       return LoadingView(
         key: const ValueKey('resolving'),
         message: s.previewResolving,
+      );
+    }
+
+    if (state is DownloadAlreadySaved) {
+      return _AlreadySavedView(
+        key: const ValueKey('already_saved'),
+        item: state.existing,
+        scheme: scheme,
       );
     }
 
@@ -133,6 +160,87 @@ class _PreviewScreenState extends ConsumerState<PreviewScreen> {
     }
 
     return const SizedBox.shrink();
+  }
+}
+
+String _downloadStageLabel(Strings s, DownloadStage stage) {
+  switch (stage) {
+    case DownloadStage.analyzing:
+      return s.downloadStageAnalyzing;
+    case DownloadStage.resolvingMedia:
+      return s.downloadStageResolving;
+    case DownloadStage.preparing:
+      return s.downloadStagePreparing;
+    case DownloadStage.downloading:
+      return s.downloadStageDownloading;
+    case DownloadStage.saving:
+      return s.downloadStageSaving;
+    case DownloadStage.addedToLibrary:
+      return s.downloadStageAddedToLibrary;
+  }
+}
+
+class _AlreadySavedView extends StatelessWidget {
+  final DownloadItem item;
+  final ColorScheme scheme;
+
+  const _AlreadySavedView({
+    super.key,
+    required this.item,
+    required this.scheme,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.inventory_2_outlined, size: 72, color: scheme.primary),
+            const SizedBox(height: 16),
+            Text(
+              s.historyAlreadySaved,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: scheme.onSurface,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              item.displayFileName ?? item.sourceUrl,
+              style: TextStyle(color: scheme.onSurfaceVariant),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 24),
+            FilledButton.icon(
+              onPressed: () async {
+                final r = await OpenFilex.open(item.filePath);
+                if (!context.mounted) return;
+                if (r.type != ResultType.done && item.filePath.isNotEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(s.errorOpenFailed(r.message))),
+                  );
+                }
+              },
+              icon: const Icon(Icons.open_in_new),
+              label: Text(s.previewOpen),
+            ),
+            const SizedBox(height: 8),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(s.previewGoHome),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -206,8 +314,8 @@ class _CollectionPreview extends ConsumerWidget {
                   onPressed: resolved.selectedCount == 0
                       ? null
                       : () => ref
-                          .read(downloadProvider.notifier)
-                          .download(strings: strings),
+                            .read(downloadProvider.notifier)
+                            .download(strings: strings),
                   icon: const Icon(Icons.download_rounded),
                   label: Text(
                     isMulti
@@ -268,8 +376,10 @@ class _HeaderCard extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: scheme.primaryContainer,
                       borderRadius: BorderRadius.circular(20),
@@ -304,8 +414,11 @@ class _HeaderCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Icon(Icons.person_outline,
-                        size: 16, color: scheme.onSurfaceVariant),
+                    Icon(
+                      Icons.person_outline,
+                      size: 16,
+                      color: scheme.onSurfaceVariant,
+                    ),
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
@@ -324,10 +437,7 @@ class _HeaderCard extends StatelessWidget {
               const SizedBox(height: 6),
               Text(
                 s.previewSource(sourceUrl),
-                style: TextStyle(
-                  color: scheme.onSurfaceVariant,
-                  fontSize: 11,
-                ),
+                style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 11),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -386,15 +496,13 @@ class _SelectionToolbar extends ConsumerWidget {
           ActionChip(
             avatar: const Icon(Icons.select_all, size: 18),
             label: Text(s.previewSelectAll),
-            onPressed: () =>
-                ref.read(downloadProvider.notifier).selectAll(),
+            onPressed: () => ref.read(downloadProvider.notifier).selectAll(),
           ),
           const SizedBox(width: 8),
           ActionChip(
             avatar: const Icon(Icons.deselect, size: 18),
             label: Text(s.previewDeselectAll),
-            onPressed: () =>
-                ref.read(downloadProvider.notifier).deselectAll(),
+            onPressed: () => ref.read(downloadProvider.notifier).deselectAll(),
           ),
           const SizedBox(width: 8),
           ActionChip(
@@ -515,30 +623,29 @@ class _MediaTile extends StatelessWidget {
                 onTap: onToggle,
                 behavior: HitTestBehavior.opaque,
                 child: AnimatedContainer(
-                duration: const Duration(milliseconds: 150),
-                width: 22,
-                height: 22,
-                decoration: BoxDecoration(
-                  color: selected
-                      ? scheme.primary
-                      : scheme.surface.withValues(alpha: 0.85),
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: selected ? scheme.primary : scheme.outline,
+                  duration: const Duration(milliseconds: 150),
+                  width: 22,
+                  height: 22,
+                  decoration: BoxDecoration(
+                    color: selected
+                        ? scheme.primary
+                        : scheme.surface.withValues(alpha: 0.85),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: selected ? scheme.primary : scheme.outline,
+                    ),
                   ),
+                  child: selected
+                      ? Icon(Icons.check, size: 14, color: scheme.onPrimary)
+                      : null,
                 ),
-                child: selected
-                    ? Icon(Icons.check, size: 14, color: scheme.onPrimary)
-                    : null,
-              ),
               ),
             ),
             Positioned(
               left: 6,
               bottom: 6,
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
                   color: Colors.black54,
                   borderRadius: BorderRadius.circular(6),
@@ -569,8 +676,10 @@ class _MediaTile extends StatelessWidget {
                 right: 6,
                 bottom: 6,
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 5,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.black54,
                     borderRadius: BorderRadius.circular(4),
@@ -586,14 +695,19 @@ class _MediaTile extends StatelessWidget {
                 left: 6,
                 top: 6,
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 5,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: scheme.primary.withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(4),
                   ),
-                  child: Icon(Icons.cloud_download_outlined,
-                      size: 12, color: scheme.onPrimary),
+                  child: Icon(
+                    Icons.cloud_download_outlined,
+                    size: 12,
+                    color: scheme.onPrimary,
+                  ),
                 ),
               ),
           ],
@@ -661,10 +775,7 @@ class _BatchProgressView extends ConsumerWidget {
   final DownloadInProgress progress;
   final ColorScheme scheme;
 
-  const _BatchProgressView({
-    required this.progress,
-    required this.scheme,
-  });
+  const _BatchProgressView({required this.progress, required this.scheme});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -678,9 +789,22 @@ class _BatchProgressView extends ConsumerWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.cloud_download_outlined,
-                    size: 72, color: scheme.primary),
-                const SizedBox(height: 16),
+                Icon(
+                  Icons.cloud_download_outlined,
+                  size: 72,
+                  color: scheme.primary,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  _downloadStageLabel(s, progress.stage),
+                  style: TextStyle(
+                    color: scheme.primary,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
                 Text(
                   s.previewBatchProgress(
                     progress.completed + 1,
@@ -785,8 +909,8 @@ class _BatchSuccessView extends StatelessWidget {
                     failedCount,
                   )
                 : isBatch
-                    ? s.previewBatchSavedCount(items.length)
-                    : s.previewSavedTo,
+                ? s.previewBatchSavedCount(items.length)
+                : s.previewSavedTo,
             style: TextStyle(color: scheme.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
@@ -866,9 +990,9 @@ class _BatchSuccessView extends StatelessWidget {
     final s = S.of(context);
     if (!File(path).existsSync()) {
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(s.errorFileMissing)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(s.errorFileMissing)));
       return;
     }
     await Share.shareXFiles([XFile(path)], text: s.shareText);
@@ -882,9 +1006,9 @@ class _BatchSuccessView extends StatelessWidget {
         .toList();
     if (files.isEmpty) {
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(s.errorFileMissing)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(s.errorFileMissing)));
       return;
     }
     await Share.shareXFiles(files, text: s.shareText);

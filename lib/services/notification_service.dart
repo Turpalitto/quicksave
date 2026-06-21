@@ -29,8 +29,10 @@ class NotificationService {
           debugPrint('Notification permission error: $e');
         }
 
-        final android = _plugin.resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
+        final android = _plugin
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >();
         try {
           await android?.requestNotificationsPermission();
         } catch (e) {

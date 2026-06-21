@@ -15,7 +15,10 @@ services:
       - key: TRUST_PROXY
         value: "1"
       - key: RATE_LIMIT_MAX
-        value: "60"
+        value: "30"
+      - key: METRICS_PUBLIC
+        value: "false"
+      # Set METRICS_TOKEN in Render dashboard (secret) for protected /health/metrics
       - key: REDIS_URL
         fromService:
           type: redis

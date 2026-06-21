@@ -15,12 +15,12 @@ class DownloadPreflight {
   final String? rejectionReason;
 
   Map<String, dynamic> toJson() => {
-        'contentType': contentType,
-        'estimatedBytes': estimatedBytes,
-        'targetFileName': targetFileName,
-        'acceptable': acceptable,
-        'rejectionReason': rejectionReason,
-      };
+    'contentType': contentType,
+    'estimatedBytes': estimatedBytes,
+    'targetFileName': targetFileName,
+    'acceptable': acceptable,
+    'rejectionReason': rejectionReason,
+  };
 
   factory DownloadPreflight.fromJson(Map<String, dynamic> json) =>
       DownloadPreflight(

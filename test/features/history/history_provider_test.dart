@@ -50,9 +50,7 @@ void main() {
     test('clear empties the list', () async {
       final notifier = HistoryNotifier(HistoryRepository.instance);
       await Future<void>.delayed(const Duration(milliseconds: 10));
-      await notifier.add(
-        DownloadItem.create(sourceUrl: 'u', filePath: 'p'),
-      );
+      await notifier.add(DownloadItem.create(sourceUrl: 'u', filePath: 'p'));
       await notifier.clear();
       expect(notifier.state, isEmpty);
     });

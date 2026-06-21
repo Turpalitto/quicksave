@@ -72,8 +72,50 @@ jobs:
       - run: flutter gen-l10n
       - run: flutter build apk --release
 
+      - run: flutter build appbundle --release
+
       - uses: actions/upload-artifact@v4
         with:
           name: quicksave-release-apk
           path: build/app/outputs/flutter-apk/app-release.apk
           retention-days: 30
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: quicksave-release-aab
+          path: build/app/outputs/bundle/release/app-release.aab
+          retention-days: 30
+
+  web:
+    name: Build Web PWA
+    runs-on: ubuntu-latest
+    needs: test
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.44.2
+          cache: true
+
+      - run: flutter pub get
+      - run: flutter gen-l10n
+      - run: flutter build web --release
+
+      - name: Stage web for backend Docker
+        run: node scripts/stage-web-for-backend.mjs
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: quicksave-web-pwa
+          path: build/web
+          retention-days: 14
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: quicksave-web-staged-backend
+          path: backend/public/web
+          retention-days: 14

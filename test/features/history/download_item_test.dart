@@ -25,10 +25,7 @@ void main() {
     });
 
     test('copyWith keeps id and createdAt', () {
-      final item = DownloadItem.create(
-        sourceUrl: 'u',
-        filePath: '/tmp/a.mp4',
-      );
+      final item = DownloadItem.create(sourceUrl: 'u', filePath: '/tmp/a.mp4');
       final updated = item.copyWith(filePath: '/tmp/b.mp4', fileSizeBytes: 99);
       expect(updated.id, item.id);
       expect(updated.createdAt, item.createdAt);

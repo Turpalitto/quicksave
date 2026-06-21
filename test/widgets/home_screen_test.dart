@@ -15,11 +15,7 @@ void main() {
       const AppSettings(onboardingCompleted: true),
     );
 
-    await tester.pumpWidget(
-      const ProviderScope(
-        child: QuickSaveApp(),
-      ),
-    );
+    await tester.pumpWidget(const ProviderScope(child: QuickSaveApp()));
     // Дать провайдерам загрузиться.
     await tester.pump(const Duration(milliseconds: 50));
     await tester.pump(const Duration(milliseconds: 50));
@@ -36,11 +32,7 @@ void main() {
       const AppSettings(onboardingCompleted: true),
     );
 
-    await tester.pumpWidget(
-      const ProviderScope(
-        child: QuickSaveApp(),
-      ),
-    );
+    await tester.pumpWidget(const ProviderScope(child: QuickSaveApp()));
     await tester.pump(const Duration(milliseconds: 300));
     await tester.pumpAndSettle(const Duration(milliseconds: 300));
 
@@ -68,11 +60,7 @@ void main() {
       const AppSettings(onboardingCompleted: true),
     );
 
-    await tester.pumpWidget(
-      const ProviderScope(
-        child: QuickSaveApp(),
-      ),
-    );
+    await tester.pumpWidget(const ProviderScope(child: QuickSaveApp()));
     await tester.pump(const Duration(milliseconds: 300));
     await tester.pumpAndSettle(const Duration(milliseconds: 300));
 

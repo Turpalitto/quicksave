@@ -17,8 +17,9 @@ class ForegroundService {
   ForegroundService._();
   static final ForegroundService instance = ForegroundService._();
 
-  static const MethodChannel _channel =
-      MethodChannel(AppConstants.foregroundChannelName);
+  static const MethodChannel _channel = MethodChannel(
+    AppConstants.foregroundChannelName,
+  );
 
   bool _running = false;
 

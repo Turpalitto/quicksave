@@ -5,6 +5,65 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 этот проект следует [Semantic Versioning](https://semver.org/lang/ru/).
 
+## [1.3.1] - 2026-06-21
+
+### Added
+- **Chrome extension (MV3)** in `extension/`: popup, context menu, floating save on post/reel pages.
+- Deep link `?url=` auto-resolve in Web Dashboard (extension → web flow).
+- Extension CI: manifest validation + URL normalization tests.
+
+## [1.3.0] - 2026-06-21
+
+### Added
+- **Web Dashboard PWA** (`WebDashboardScreen`): resolve preview, library metadata import/export, backend settings.
+- Browser-local library storage via `WebLibraryRepository`.
+- CI job: `flutter build web --release`.
+- Web-safe app bootstrap (skips Android-only services on `kIsWeb`).
+
+## [1.2.3] - 2026-06-21
+
+### Added
+- **Google Play billing** for Pro subscriptions (monthly/yearly product IDs).
+- **CompositeEntitlementRepository** — Play + license keys + demo mode.
+- Pro settings UI: Subscribe, Restore purchases, license key fallback.
+- Backend `POST /billing/play/verify` stub for optional server validation.
+
+## [1.2.2] - 2026-06-21
+
+### Added
+- **Cloud backup adapters** (Pro): WebDAV and S3-compatible upload after library ZIP export.
+- **Cloud backup settings** UI with connection test; credentials stored locally on device.
+- Google Drive adapter stub (OAuth deferred).
+
+## [1.2.1] - 2026-06-21
+
+### Added
+- **Bulk selection** in History: export ZIP, copy URLs, delete (Pro).
+- **Download UX stages** with human-readable progress labels.
+- **Already saved** screen when dedupe detects existing library item.
+- **Post-save bottom sheet**: open, add to collection, share, save another.
+- **Filename templates** in Settings with live preview (Pro).
+- **Manual watchlist check** with real profile resolve and new-post dialog.
+- **Missing file** badge and retry in library.
+- **Android release minify/shrink** with ProGuard rules.
+
+## [1.2.0] - 2026-06-21
+
+### Added
+- **Media Library v2 foundation**: extended filters (reels, carousels, errors, recent, uncollected), sort options, dedupe by shortcode/media id, provenance metadata, missing-file status.
+- **Export layer**: ZIP with `metadata.json`, `source_urls.txt`, `README.txt`; JSON and CSV metadata export; cloud backup adapter stubs.
+- **Entitlements abstraction**: `EntitlementTier`, `EntitlementRepository`, demo + future remote stub.
+- **Watchlist screen** + scheduler frequency validation, Wi‑Fi/charging WorkManager constraints.
+- **Diagnostics screen** (privacy-safe, copy diagnostics).
+- **Backend**: protected `/health/metrics`, `/health/live`, `/version`, error codes, sanitized URL logging, cache/rate-limit metrics, ESLint + Prettier.
+- **Docs**: `docs/ROADMAP.md`, `PRODUCT_STRATEGY.md`, `SELF_HOSTING.md`, `ENTITLEMENTS.md`, `MONETIZATION.md`, `EXPORTS.md`, `PRIVACY_AND_COMPLIANCE.md`, `WEB_AND_EXTENSION_ROADMAP.md`.
+
+### Changed
+- Dependabot pub directory fixed to repo root.
+- `render.yaml` rate of `RATE_LIMIT_MAX` aligned to 30.
+- Product copy: privacy-first archiver positioning (RU/EN).
+- Version **1.2.0+3**.
+
 ## [1.1.0] - 2026-06-21
 
 ### Added

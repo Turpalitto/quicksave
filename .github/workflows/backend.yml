@@ -32,10 +32,10 @@ jobs:
         working-directory: backend
         run: npm test
 
-      - name: Lint (basic)
+      - name: Lint
         working-directory: backend
-        run: |
-          # Простая проверка синтаксиса через node --check
-          for f in $(find src -name '*.js'); do
-            node --check "$f" || exit 1
-          done
+        run: npm run lint
+
+      - name: Format check
+        working-directory: backend
+        run: npm run format:check

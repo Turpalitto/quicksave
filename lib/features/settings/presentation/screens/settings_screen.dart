@@ -4,11 +4,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/utils/strings.dart';
 import '../../../../services/app_info_service.dart';
 import '../../../../services/backend_health_service.dart';
-import '../../../../services/pro_service.dart';
+import '../../../../services/filename_template_engine.dart';
+import '../../../../services/export/cloud/cloud_backup_adapter.dart';
+import '../../../../services/export/cloud/cloud_backup_service.dart';
+import '../../domain/cloud_backup_config.dart';
 import '../../../legal/presentation/screens/privacy_policy_screen.dart';
+import 'diagnostics_screen.dart';
+import 'watchlist_screen.dart';
 import '../../../history/presentation/providers/history_provider.dart';
 import '../../domain/app_settings.dart';
+import '../../domain/entitlement.dart';
 import '../providers/settings_provider.dart';
+import '../providers/entitlement_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -69,10 +76,19 @@ class SettingsScreen extends ConsumerWidget {
             if (settings.isPro) ...[
               const SizedBox(height: 8),
               _SchedulerSection(settings: settings, notifier: notifier),
+              _FilenameTemplateSection(settings: settings, notifier: notifier),
+              _CloudBackupSection(settings: settings, notifier: notifier),
+              ListTile(
+                title: Text(s.watchlistTitle),
+                subtitle: Text(s.watchlistOpenSubtitle),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const WatchlistScreen()),
+                ),
+              ),
             ],
             const SizedBox(height: 16),
-            _SectionTitle(
-                text: s.settingsSectionAppearance, scheme: scheme),
+            _SectionTitle(text: s.settingsSectionAppearance, scheme: scheme),
             _ThemeSelector(
               current: settings.themeMode,
               onChanged: notifier.setThemeMode,
@@ -90,19 +106,22 @@ class SettingsScreen extends ConsumerWidget {
                 onSubmit: notifier.setBackendUrl,
               )
             else
-              _NoteCard(
-                scheme: scheme,
-                text: settings.effectiveBackendUrl,
-              ),
+              _NoteCard(scheme: scheme, text: settings.effectiveBackendUrl),
             const SizedBox(height: 8),
             _NoteCard(scheme: scheme, text: s.settingsBackendNote),
+            ListTile(
+              title: Text(s.diagnosticsTitle),
+              subtitle: Text(s.diagnosticsOpenSubtitle),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const DiagnosticsScreen()),
+              ),
+            ),
             ListTile(
               title: Text(s.settingsPrivacyPolicy),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const PrivacyPolicyScreen(),
-                ),
+                MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen()),
               ),
             ),
             const SizedBox(height: 24),
@@ -117,10 +136,7 @@ class SettingsScreen extends ConsumerWidget {
             Center(
               child: Text(
                 'QuickSave • v${AppInfoService.instance.version}',
-                style: TextStyle(
-                  color: scheme.onSurfaceVariant,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12),
               ),
             ),
           ],
@@ -151,9 +167,9 @@ class SettingsScreen extends ConsumerWidget {
     if (ok == true) {
       await ref.read(historyProvider.notifier).clear();
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(s.settingsCleared)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(s.settingsCleared)));
     }
   }
 }
@@ -204,8 +220,10 @@ class _SwitchTile extends StatelessWidget {
           onChanged: onChanged,
           title: Text(title),
           subtitle: Text(subtitle),
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 6,
+          ),
         ),
       ),
     );
@@ -256,8 +274,9 @@ class _BackendField extends StatefulWidget {
 }
 
 class _BackendFieldState extends State<_BackendField> {
-  late final TextEditingController _ctrl =
-      TextEditingController(text: widget.current);
+  late final TextEditingController _ctrl = TextEditingController(
+    text: widget.current,
+  );
   bool _testing = false;
 
   @override
@@ -385,6 +404,7 @@ class _ProSection extends ConsumerStatefulWidget {
 
 class _ProSectionState extends ConsumerState<_ProSection> {
   final _licenseCtrl = TextEditingController();
+  bool _busy = false;
 
   @override
   void dispose() {
@@ -392,20 +412,39 @@ class _ProSectionState extends ConsumerState<_ProSection> {
     super.dispose();
   }
 
+  Future<void> _run(Future<void> Function() action) async {
+    setState(() => _busy = true);
+    try {
+      await action();
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
-    final settings = widget.settings;
+    final entitlement = ref.watch(entitlementProvider);
+    final billingAvailable = ref.watch(playBillingAvailableProvider);
+    final products = ref.watch(playBillingProductsProvider);
+    final notifier = ref.read(entitlementProvider.notifier);
+    final settingsNotifier = widget.notifier;
 
-    if (settings.isPro) {
+    if (entitlement.isPro) {
+      final subtitle = _activeSubtitle(s, entitlement);
       return Card(
         child: ListTile(
           leading: const Icon(Icons.verified, color: Colors.amber),
           title: Text(s.settingsProActive),
-          subtitle: Text(s.settingsSchedulerSubtitle),
+          subtitle: Text(subtitle),
+          trailing: entitlement.isDemoMode
+              ? Chip(label: Text(s.settingsProDemoBadge))
+              : null,
         ),
       );
     }
+
+    final product = products.isNotEmpty ? products.first : null;
 
     return Card(
       child: Padding(
@@ -415,6 +454,70 @@ class _ProSectionState extends ConsumerState<_ProSection> {
           children: [
             Text(s.settingsProInactive),
             const SizedBox(height: 8),
+            if (billingAvailable && product != null) ...[
+              Text(
+                s.settingsProSubscribePrice(product.price),
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 8),
+              FilledButton(
+                onPressed: _busy
+                    ? null
+                    : () => _run(() async {
+                        final ok = await notifier.purchasePro();
+                        if (!context.mounted) return;
+                        if (ok) {
+                          await settingsNotifier.setPro(true);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(s.settingsProActivated)),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(s.settingsProBillingFailed)),
+                          );
+                        }
+                      }),
+                child: _busy
+                    ? const SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Text(s.settingsProSubscribe),
+              ),
+              TextButton(
+                onPressed: _busy
+                    ? null
+                    : () => _run(() async {
+                        await notifier.restorePurchases();
+                        if (!context.mounted) return;
+                        final active = ref.read(entitlementProvider).isPro;
+                        if (active) {
+                          await settingsNotifier.setPro(true);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(s.settingsProRestored)),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(s.settingsProRestoreEmpty)),
+                          );
+                        }
+                      }),
+                child: Text(s.settingsProRestore),
+              ),
+              const Divider(height: 24),
+              Text(
+                s.settingsProLicenseDivider,
+                style: Theme.of(context).textTheme.labelMedium,
+              ),
+              const SizedBox(height: 8),
+            ] else if (!billingAvailable) ...[
+              _NoteCard(
+                scheme: Theme.of(context).colorScheme,
+                text: s.settingsProBillingUnavailable,
+              ),
+              const SizedBox(height: 8),
+            ],
             TextField(
               controller: _licenseCtrl,
               decoration: InputDecoration(hintText: s.settingsProLicenseHint),
@@ -423,22 +526,24 @@ class _ProSectionState extends ConsumerState<_ProSection> {
             Semantics(
               label: s.semSettingsProActivate,
               button: true,
-              child: FilledButton(
-                onPressed: () async {
-                  final ok = ProService.instance
-                      .validateLicenseKey(_licenseCtrl.text);
-                  if (!ok) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(s.settingsProInvalidKey)),
-                    );
-                    return;
-                  }
-                  await widget.notifier.setPro(true);
-                  if (!context.mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(s.settingsProActivated)),
-                  );
-                },
+              child: FilledButton.tonal(
+                onPressed: _busy
+                    ? null
+                    : () => _run(() async {
+                        try {
+                          await notifier.activateLicense(_licenseCtrl.text);
+                          await settingsNotifier.setPro(true);
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(s.settingsProActivated)),
+                          );
+                        } on ArgumentError {
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(s.settingsProInvalidKey)),
+                          );
+                        }
+                      }),
                 child: Text(s.settingsProActivate),
               ),
             ),
@@ -447,16 +552,27 @@ class _ProSectionState extends ConsumerState<_ProSection> {
       ),
     );
   }
+
+  String _activeSubtitle(Strings s, EntitlementState entitlement) {
+    switch (entitlement.billingSource) {
+      case EntitlementBillingSource.googlePlay:
+        return s.settingsProActivePlay;
+      case EntitlementBillingSource.licenseKey:
+        if (entitlement.isDemoMode) return s.settingsProActiveDemo;
+        final hint = entitlement.licenseKeyHint;
+        if (hint != null) return s.settingsProActiveLicense(hint);
+        return s.settingsSchedulerSubtitle;
+      case EntitlementBillingSource.none:
+        return s.settingsSchedulerSubtitle;
+    }
+  }
 }
 
 class _SchedulerSection extends StatefulWidget {
   final AppSettings settings;
   final SettingsNotifier notifier;
 
-  const _SchedulerSection({
-    required this.settings,
-    required this.notifier,
-  });
+  const _SchedulerSection({required this.settings, required this.notifier});
 
   @override
   State<_SchedulerSection> createState() => _SchedulerSectionState();
@@ -526,33 +642,33 @@ class _SchedulerSectionState extends State<_SchedulerSection> {
                   ),
                 ],
               ),
-            if (profiles.isEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Text(
-                  s.settingsSchedulerAddHint,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                ),
-              )
-            else
-              ...profiles.map(
-                (p) => ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.alternate_email, size: 20),
-                  title: Text('@${p.username}'),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () =>
-                        widget.notifier.removeScheduledProfile(p.username),
+              if (profiles.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    s.settingsSchedulerAddHint,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                )
+              else
+                ...profiles.map(
+                  (p) => ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(Icons.alternate_email, size: 20),
+                    title: Text('@${p.username}'),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () =>
+                          widget.notifier.removeScheduledProfile(p.username),
+                    ),
                   ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
-    ),
     );
   }
 }
@@ -575,10 +691,7 @@ class _NoteCard extends StatelessWidget {
             Expanded(
               child: Text(
                 text,
-                style: TextStyle(
-                  color: scheme.onSurfaceVariant,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12),
               ),
             ),
           ],
@@ -610,6 +723,409 @@ class _DangerTile extends StatelessWidget {
         trailing: const Icon(Icons.chevron_right),
         onTap: onTap,
       ),
+    );
+  }
+}
+
+class _FilenameTemplateSection extends StatefulWidget {
+  final AppSettings settings;
+  final SettingsNotifier notifier;
+
+  const _FilenameTemplateSection({
+    required this.settings,
+    required this.notifier,
+  });
+
+  @override
+  State<_FilenameTemplateSection> createState() =>
+      _FilenameTemplateSectionState();
+}
+
+class _FilenameTemplateSectionState extends State<_FilenameTemplateSection> {
+  late final TextEditingController _customController;
+
+  @override
+  void initState() {
+    super.initState();
+    _customController = TextEditingController(
+      text: widget.settings.customFilenameTemplate,
+    );
+  }
+
+  @override
+  void dispose() {
+    _customController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    final scheme = Theme.of(context).colorScheme;
+    final preset = widget.settings.filenameTemplatePreset;
+    final preview = FilenameTemplateEngine.preview(
+      preset: preset,
+      customTemplate: _customController.text,
+    );
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              s.settingsFilenameTemplateTitle,
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                color: scheme.primary,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              s.settingsFilenameTemplateSubtitle,
+              style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12),
+            ),
+            const SizedBox(height: 12),
+            ...FilenameTemplatePreset.values.map(
+              (p) => RadioListTile<FilenameTemplatePreset>(
+                dense: true,
+                contentPadding: EdgeInsets.zero,
+                title: Text(_presetLabel(s, p)),
+                value: p,
+                groupValue: preset,
+                onChanged: (v) {
+                  if (v == null) return;
+                  widget.notifier.setFilenameTemplatePreset(v);
+                },
+              ),
+            ),
+            if (preset == FilenameTemplatePreset.custom) ...[
+              TextField(
+                controller: _customController,
+                decoration: InputDecoration(
+                  hintText: s.settingsFilenameTemplateCustomHint,
+                  helperText: s.settingsFilenameTemplateTokens,
+                ),
+                onChanged: (_) => setState(() {}),
+                onSubmitted: widget.notifier.setCustomFilenameTemplate,
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () => widget.notifier.setCustomFilenameTemplate(
+                    _customController.text,
+                  ),
+                  child: Text(s.settingsBackendSave),
+                ),
+              ),
+            ],
+            const SizedBox(height: 8),
+            Text(
+              s.settingsFilenameTemplatePreview,
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
+            ),
+            SelectableText(
+              preview,
+              style: TextStyle(
+                fontFamily: 'monospace',
+                color: scheme.onSurfaceVariant,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _presetLabel(Strings s, FilenameTemplatePreset p) {
+    switch (p) {
+      case FilenameTemplatePreset.defaultTemplate:
+        return s.settingsFilenamePresetDefault;
+      case FilenameTemplatePreset.dateFirst:
+        return s.settingsFilenamePresetDateFirst;
+      case FilenameTemplatePreset.folderStyle:
+        return s.settingsFilenamePresetFolder;
+      case FilenameTemplatePreset.custom:
+        return s.settingsFilenamePresetCustom;
+    }
+  }
+}
+
+class _CloudBackupSection extends StatefulWidget {
+  final AppSettings settings;
+  final SettingsNotifier notifier;
+
+  const _CloudBackupSection({required this.settings, required this.notifier});
+
+  @override
+  State<_CloudBackupSection> createState() => _CloudBackupSectionState();
+}
+
+class _CloudBackupSectionState extends State<_CloudBackupSection> {
+  late CloudBackupConfig _draft;
+  bool _testing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _draft = widget.settings.cloudBackup;
+  }
+
+  @override
+  void didUpdateWidget(covariant _CloudBackupSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.settings.cloudBackup != widget.settings.cloudBackup) {
+      _draft = widget.settings.cloudBackup;
+    }
+  }
+
+  Future<void> _saveDraft() async {
+    await widget.notifier.setCloudBackup(_draft);
+  }
+
+  Future<void> _testConnection() async {
+    final s = S.of(context);
+    setState(() => _testing = true);
+    try {
+      await CloudBackupService.instance.testConnection(_draft);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(s.settingsCloudBackupTestOk)),
+      );
+    } on CloudBackupUnavailableException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(s.settingsCloudBackupComingSoon(e.message))),
+      );
+    } on CloudBackupException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(s.settingsCloudBackupTestFailed(e.message))),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(s.settingsCloudBackupTestFailed('unknown'))),
+      );
+    } finally {
+      if (mounted) setState(() => _testing = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    final scheme = Theme.of(context).colorScheme;
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              s.settingsCloudBackupTitle,
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                color: scheme.primary,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              s.settingsCloudBackupSubtitle,
+              style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12),
+            ),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(s.settingsCloudBackupEnabled),
+              subtitle: Text(s.settingsCloudBackupEnabledSubtitle),
+              value: _draft.enabled,
+              onChanged: (v) async {
+                setState(() => _draft = _draft.copyWith(enabled: v));
+                await _saveDraft();
+              },
+            ),
+            DropdownButtonFormField<CloudBackupProvider>(
+              value: _draft.provider,
+              decoration: InputDecoration(labelText: s.settingsCloudBackupProvider),
+              items: [
+                DropdownMenuItem(
+                  value: CloudBackupProvider.none,
+                  child: Text(s.settingsCloudBackupProviderNone),
+                ),
+                DropdownMenuItem(
+                  value: CloudBackupProvider.webdav,
+                  child: Text(s.settingsCloudBackupProviderWebDav),
+                ),
+                DropdownMenuItem(
+                  value: CloudBackupProvider.s3,
+                  child: Text(s.settingsCloudBackupProviderS3),
+                ),
+                DropdownMenuItem(
+                  value: CloudBackupProvider.googleDrive,
+                  child: Text(s.settingsCloudBackupProviderDrive),
+                ),
+              ],
+              onChanged: (v) async {
+                if (v == null) return;
+                setState(() => _draft = _draft.copyWith(provider: v));
+                await _saveDraft();
+              },
+            ),
+            const SizedBox(height: 8),
+            if (_draft.provider == CloudBackupProvider.webdav) ...[
+              _CloudField(
+                label: s.settingsCloudBackupWebDavUrl,
+                initial: _draft.webDavUrl,
+                onSaved: (v) => _draft = _draft.copyWith(webDavUrl: v),
+              ),
+              _CloudField(
+                label: s.settingsCloudBackupWebDavUser,
+                initial: _draft.webDavUsername,
+                onSaved: (v) => _draft = _draft.copyWith(webDavUsername: v),
+              ),
+              _CloudField(
+                label: s.settingsCloudBackupWebDavPassword,
+                initial: _draft.webDavPassword,
+                obscure: true,
+                onSaved: (v) => _draft = _draft.copyWith(webDavPassword: v),
+              ),
+              _CloudField(
+                label: s.settingsCloudBackupWebDavPath,
+                initial: _draft.webDavBasePath,
+                onSaved: (v) => _draft = _draft.copyWith(webDavBasePath: v),
+              ),
+            ],
+            if (_draft.provider == CloudBackupProvider.s3) ...[
+              _CloudField(
+                label: s.settingsCloudBackupS3Endpoint,
+                initial: _draft.s3Endpoint,
+                onSaved: (v) => _draft = _draft.copyWith(s3Endpoint: v),
+              ),
+              _CloudField(
+                label: s.settingsCloudBackupS3Bucket,
+                initial: _draft.s3Bucket,
+                onSaved: (v) => _draft = _draft.copyWith(s3Bucket: v),
+              ),
+              _CloudField(
+                label: s.settingsCloudBackupS3Region,
+                initial: _draft.s3Region,
+                onSaved: (v) => _draft = _draft.copyWith(s3Region: v),
+              ),
+              _CloudField(
+                label: s.settingsCloudBackupS3Prefix,
+                initial: _draft.s3Prefix,
+                onSaved: (v) => _draft = _draft.copyWith(s3Prefix: v),
+              ),
+              _CloudField(
+                label: s.settingsCloudBackupS3AccessKey,
+                initial: _draft.s3AccessKey,
+                onSaved: (v) => _draft = _draft.copyWith(s3AccessKey: v),
+              ),
+              _CloudField(
+                label: s.settingsCloudBackupS3SecretKey,
+                initial: _draft.s3SecretKey,
+                obscure: true,
+                onSaved: (v) => _draft = _draft.copyWith(s3SecretKey: v),
+              ),
+            ],
+            if (_draft.provider == CloudBackupProvider.googleDrive)
+              _NoteCard(
+                scheme: scheme,
+                text: s.settingsCloudBackupDriveNote,
+              ),
+            if (_draft.provider != CloudBackupProvider.none &&
+                _draft.provider != CloudBackupProvider.googleDrive) ...[
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  TextButton(
+                    onPressed: () async {
+                      await _saveDraft();
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(s.settingsBackendSaved)),
+                      );
+                    },
+                    child: Text(s.settingsBackendSave),
+                  ),
+                  const Spacer(),
+                  FilledButton.tonal(
+                    onPressed: _testing || !_draft.isConfigured
+                        ? null
+                        : () async {
+                            await _saveDraft();
+                            await _testConnection();
+                          },
+                    child: _testing
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : Text(s.settingsCloudBackupTest),
+                  ),
+                ],
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CloudField extends StatefulWidget {
+  const _CloudField({
+    required this.label,
+    required this.initial,
+    required this.onSaved,
+    this.obscure = false,
+  });
+
+  final String label;
+  final String initial;
+  final ValueChanged<String> onSaved;
+  final bool obscure;
+
+  @override
+  State<_CloudField> createState() => _CloudFieldState();
+}
+
+class _CloudFieldState extends State<_CloudField> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initial);
+  }
+
+  @override
+  void didUpdateWidget(covariant _CloudField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.initial != widget.initial &&
+        _controller.text != widget.initial) {
+      _controller.text = widget.initial;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: _controller,
+      obscureText: widget.obscure,
+      decoration: InputDecoration(labelText: widget.label),
+      onChanged: (v) => widget.onSaved(v.trim()),
+      onSubmitted: widget.onSaved,
     );
   }
 }

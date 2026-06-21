@@ -3,9 +3,28 @@ class Validators {
   Validators._();
 
   static const _reservedUsernames = {
-    'reel', 'reels', 'p', 'tv', 'stories', 'explore', 'accounts', 'direct',
-    'about', 'legal', 'developer', 'privacy', 'terms', 'api', 'static',
-    'challenge', 'oauth', 'nametag', 'login', 'directory', 'web', 'help',
+    'reel',
+    'reels',
+    'p',
+    'tv',
+    'stories',
+    'explore',
+    'accounts',
+    'direct',
+    'about',
+    'legal',
+    'developer',
+    'privacy',
+    'terms',
+    'api',
+    'static',
+    'challenge',
+    'oauth',
+    'nametag',
+    'login',
+    'directory',
+    'web',
+    'help',
   };
 
   static final RegExp _publicPostRe = RegExp(
@@ -64,7 +83,8 @@ class Validators {
   static String normalize(String url) {
     var result = url.trim();
     if (result.startsWith('@') && result.length > 1) {
-      result = 'https://instagram.com/${result.substring(1).split(RegExp(r'\s')).first}';
+      result =
+          'https://instagram.com/${result.substring(1).split(RegExp(r'\s')).first}';
     }
     if (!result.startsWith('http://') && !result.startsWith('https://')) {
       result = 'https://$result';

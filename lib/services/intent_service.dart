@@ -14,8 +14,9 @@ class IntentService {
   IntentService._();
   static final IntentService instance = IntentService._();
 
-  static const MethodChannel _channel =
-      MethodChannel(AppConstants.shareChannelName);
+  static const MethodChannel _channel = MethodChannel(
+    AppConstants.shareChannelName,
+  );
 
   final _controller = StreamController<String>.broadcast();
   Stream<String> get sharedTextStream => _controller.stream;

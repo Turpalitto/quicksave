@@ -3,7 +3,6 @@ const {
   extractMetaTags,
   extractAuthor,
   extractDuration,
-  extractImageFromHtml,
   extractVideoQualitiesFromHtml,
 } = require('./postExtractor');
 

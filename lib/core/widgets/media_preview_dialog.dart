@@ -30,14 +30,15 @@ class _MediaPreviewDialogState extends State<MediaPreviewDialog> {
     super.initState();
     final item = widget.item;
     if (item.isVideo && item.mediaUrl.isNotEmpty) {
-      _controller = VideoPlayerController.networkUrl(
-        Uri.parse(item.mediaUrl),
-      )..initialize().then((_) {
-          if (mounted) setState(() {});
-          _controller?.play();
-        }).catchError((Object e) {
-          if (mounted) setState(() => _videoError = e.toString());
-        });
+      _controller = VideoPlayerController.networkUrl(Uri.parse(item.mediaUrl))
+        ..initialize()
+            .then((_) {
+              if (mounted) setState(() {});
+              _controller?.play();
+            })
+            .catchError((Object e) {
+              if (mounted) setState(() => _videoError = e.toString());
+            });
     }
   }
 
@@ -111,10 +112,7 @@ class _MediaPreviewDialogState extends State<MediaPreviewDialog> {
     if (c == null || !c.value.isInitialized) {
       return const CircularProgressIndicator();
     }
-    return AspectRatio(
-      aspectRatio: c.value.aspectRatio,
-      child: VideoPlayer(c),
-    );
+    return AspectRatio(aspectRatio: c.value.aspectRatio, child: VideoPlayer(c));
   }
 }
 
@@ -135,10 +133,7 @@ Future<VideoQuality?> showQualityPicker(
           children: [
             Padding(
               padding: const EdgeInsets.all(16),
-              child: Text(
-                title,
-                style: Theme.of(ctx).textTheme.titleMedium,
-              ),
+              child: Text(title, style: Theme.of(ctx).textTheme.titleMedium),
             ),
             ...item.qualities.map(
               (q) => ListTile(

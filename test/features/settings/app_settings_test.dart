@@ -56,12 +56,18 @@ void main() {
     });
 
     test('materialThemeMode conversion', () {
-      expect(const AppSettings(themeMode: AppThemeMode.system).materialThemeMode,
-          ThemeMode.system);
-      expect(const AppSettings(themeMode: AppThemeMode.light).materialThemeMode,
-          ThemeMode.light);
-      expect(const AppSettings(themeMode: AppThemeMode.dark).materialThemeMode,
-          ThemeMode.dark);
+      expect(
+        const AppSettings(themeMode: AppThemeMode.system).materialThemeMode,
+        ThemeMode.system,
+      );
+      expect(
+        const AppSettings(themeMode: AppThemeMode.light).materialThemeMode,
+        ThemeMode.light,
+      );
+      expect(
+        const AppSettings(themeMode: AppThemeMode.dark).materialThemeMode,
+        ThemeMode.dark,
+      );
     });
   });
 }

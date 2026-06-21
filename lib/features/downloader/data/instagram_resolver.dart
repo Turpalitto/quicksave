@@ -30,7 +30,8 @@ class InstagramResolver {
       throw const InvalidUrlException();
     }
 
-    final url = '${backendUrl.replaceAll(RegExp(r'/$'), '')}'
+    final url =
+        '${backendUrl.replaceAll(RegExp(r'/$'), '')}'
         '${AppConstants.resolveEndpoint}';
 
     final payload = <String, dynamic>{'url': instagramUrl};
@@ -39,10 +40,7 @@ class InstagramResolver {
 
     Response<dynamic> response;
     try {
-      response = await _dio.post(
-        url,
-        data: payload,
-      );
+      response = await _dio.post(url, data: payload);
     } on DioException catch (e) {
       if (e.type == DioExceptionType.connectionTimeout ||
           e.type == DioExceptionType.connectionError ||

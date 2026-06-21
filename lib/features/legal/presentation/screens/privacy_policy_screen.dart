@@ -15,8 +15,10 @@ class PrivacyPolicyScreen extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
-            Text(s.privacyIntro,
-                style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              s.privacyIntro,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
             const SizedBox(height: 16),
             Text(s.privacyBody),
           ],

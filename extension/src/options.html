@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>QuickSave Extension Settings</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main>
+      <h1>QuickSave Extension</h1>
+      <p class="lead">
+        Configure where saved links open. Only URLs you explicitly choose are sent to
+        your resolver.
+      </p>
+
+      <label for="dashboard-url">Web dashboard URL</label>
+      <input
+        id="dashboard-url"
+        type="url"
+        placeholder="https://quicksave-api.onrender.com"
+      />
+      <p class="hint">Opens QuickSave Web with resolve preview (<code>?url=</code>).</p>
+
+      <label for="backend-mode">Backend mode (reference)</label>
+      <select id="backend-mode">
+        <option value="hosted">QuickSave Cloud (hosted)</option>
+        <option value="selfHosted">Self-hosted</option>
+      </select>
+
+      <label for="backend-url">Self-hosted backend URL</label>
+      <input id="backend-url" type="url" placeholder="http://localhost:3000" />
+
+      <button id="save" type="button">Save settings</button>
+      <p id="status" role="status"></p>
+    </main>
+    <script type="module" src="options.js"></script>
+  </body>
+</html>
