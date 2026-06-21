@@ -12,7 +12,7 @@
 
 ## Backend + Web (Render)
 
-- [ ] Push `main` → Render Blueprint sync (`backend/render.yaml`)
+- [x] Push `main` → Render Blueprint sync (`backend/render.yaml`) — `d7c3393` on GitHub
 - [ ] Set secrets in Render dashboard: `METRICS_TOKEN` (or `METRICS_PUBLIC=true` for dev)
 - [ ] Optional: Redis from blueprint (`REDIS_URL` auto-wired)
 - [ ] After deploy: `GET https://<host>/health` → `{ ok: true }`
