@@ -15,7 +15,7 @@ dependencies:
   cupertino_icons: ^1.0.6
 
   # State management
-  flutter_riverpod: ^2.5.1
+  flutter_riverpod: ^3.3.2
 
   # HTTP
   dio: ^5.4.0
