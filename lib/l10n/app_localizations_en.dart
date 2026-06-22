@@ -56,6 +56,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get previewResolving => 'Fetching video info…';
 
   @override
+  String previewResolvingAttempt(int attempt, int maxAttempts) {
+    return 'Connecting to server… attempt $attempt of $maxAttempts';
+  }
+
+  @override
   String previewSource(String source) {
     return 'Source: $source';
   }
@@ -323,6 +328,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get diagnosticsRefresh => 'Refresh';
+
+  @override
+  String get diagnosticsError => 'Error';
+
+  @override
+  String get diagnosticsAttempts => 'Attempts';
+
+  @override
+  String get diagnosticsColdStartHint =>
+      'Hosted backend may sleep on free tier — tap Refresh and wait up to 60 seconds.';
 
   @override
   String get watchlistTitle => 'Watchlist';

@@ -19,6 +19,13 @@
   "errorNotRecognized": "Could not recognize the Instagram link.",
   "previewTitle": "Preview",
   "previewResolving": "Fetching video info\u2026",
+  "previewResolvingAttempt": "Connecting to server\u2026 attempt {attempt} of {maxAttempts}",
+  "@previewResolvingAttempt": {
+    "placeholders": {
+      "attempt": { "type": "int" },
+      "maxAttempts": { "type": "int" }
+    }
+  },
   "previewSource": "Source: {source}",
   "@previewSource": {
     "placeholders": {
@@ -146,6 +153,9 @@
   "diagnosticsCopy": "Copy diagnostics",
   "diagnosticsCopied": "Diagnostics copied",
   "diagnosticsRefresh": "Refresh",
+  "diagnosticsError": "Error",
+  "diagnosticsAttempts": "Attempts",
+  "diagnosticsColdStartHint": "Hosted backend may sleep on free tier — tap Refresh and wait up to 60 seconds.",
   "watchlistTitle": "Watchlist",
   "watchlistOpenSubtitle": "Public profiles — low-frequency checks",
   "watchlistDisclaimer": "Works only with publicly available content. Frequent checks may be rate-limited. No login or private access.",

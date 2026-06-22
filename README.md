@@ -1,48 +1,55 @@
 # QuickSave
 
-Android-приложение для сохранения **публичных** фото и видео из Instagram: Share Intent, профили, карусели, stories, Gallery, batch-download.
+Privacy-first archiver for **public** Instagram media: Android app, Web PWA, Chrome extension. Share Intent, profiles, carousels, stories, Gallery, batch download.
 
-> QuickSave работает **только с публичным контентом**, который пользователь сам передал через Share или вставил вручную. Без логина, без обхода антибот-защиты.
+> QuickSave works **only with public content** the user shared or pasted manually. No login, no anti-bot bypass.
 
-> **Требования:** Android 11 (API 30)+, target Android 16 (API 36).
+> **Android:** API 30+ (Android 11), target API 36.
 
 ---
 
-## Возможности
+## Features
 
-| Категория | Функции |
+| Category | Features |
 | --- | --- |
-| Ввод | Share Intent, Quick Settings tile, clipboard, @username / URL |
-| Контент | Посты, Reels, карусели, stories, highlights, профили + pagination |
-| Скачивание | Прогресс, HTTP Range resume, foreground service, уведомления |
-| Хранение | App folder + опционально Gallery (MediaStore) |
+| Input | Share Intent, Quick Settings tile, clipboard, @username / URL |
+| Content | Posts, Reels, carousels, stories, highlights, profiles + pagination |
+| Download | Progress, HTTP Range resume, foreground service, notifications |
+| Storage | App folder + optional Gallery (MediaStore) |
 | UX | Material 3, RU/EN, onboarding, home widget |
-| Pro | Scheduler UI, ZIP export, self-hosted backend, demo key `QS-PRO-DEMO1` |
-| Backend | Hosted zero-config или свой сервер; Redis cache, metrics |
+| Pro | Play billing, watchlist, filename templates, cloud backup (WebDAV/S3), ZIP export |
+| Web | PWA dashboard — resolve, library metadata, backend settings |
+| Extension | Chrome MV3 — save from instagram.com → Web `?url=` flow |
+| Backend | Hosted zero-config or self-hosted; Redis cache, metrics |
 
 ---
 
-## Быстрый старт
+## Quick start
 
-### Backend (локально)
+### Backend (local)
 
 ```bash
 cd backend
 npm install
 npm start    # http://localhost:3000
-npm test     # 105 tests
+npm test     # 115 tests
 ```
 
-Production deploy: см. [`backend/render.yaml`](backend/render.yaml) и [`store/RELEASE_CHECKLIST.md`](store/RELEASE_CHECKLIST.md).
+Production: [`backend/render.yaml`](backend/render.yaml), smoke check `npm run smoke:deploy`.
 
 ### Flutter
 
 ```bash
 flutter pub get
 flutter run
-flutter test      # 121 tests
+flutter test      # 141 tests
 flutter analyze
-cd backend && npm test   # 112 tests
+```
+
+### Extension
+
+```bash
+cd extension && npm test   # 6 tests
 ```
 
 ### Release AAB (Google Play)
@@ -54,53 +61,64 @@ cd backend && npm test   # 112 tests
 
 ## Backend URL
 
-| Режим | Где настроить |
+| Mode | Where |
 | --- | --- |
-| **Hosted** (по умолчанию) | `AppConstants.hostedBackendUrl` — после деплоя замените на ваш URL |
-| **Self-hosted** (Pro) | Settings → Backend → Self-hosted → URL |
+| **Hosted** (default) | `AppConstants.hostedBackendUrl` → `https://quicksave-api.onrender.com` |
+| **Self-hosted** (Pro) | Settings → Backend → Self-hosted |
 
-| Среда | URL |
+| Environment | URL |
 | --- | --- |
-| Эмулятор | `http://10.0.2.2:3000` |
+| Emulator | `http://10.0.2.2:3000` |
 | LAN | `http://<IP>:3000` |
+
+Free-tier hosted backends may cold-start ~30–60 s; the app retries health checks automatically.
 
 ---
 
-## Структура
+## Project layout
 
 ```
 quicksave/
-├── lib/                    # Flutter app
-├── android/                # Kotlin: MainActivity, Gallery, Widget, QS tile, FG service
-├── backend/                # Express resolver + Docker + render.yaml
-├── store/                  # Play listing, privacy policy, release checklist
-├── test/                   # Flutter tests
-└── .github/workflows/      # CI
+├── lib/                    # Flutter app + Web PWA
+├── android/                # Kotlin: Gallery, Widget, QS tile, FG service
+├── backend/                # Express resolver + Docker + staged Web PWA
+├── extension/              # Chrome MV3 extension
+├── store/                  # Play listing, billing, release checklist
+├── scripts/                # stage-web-for-backend.mjs, smoke-deploy.mjs
+└── .github/workflows/      # CI (Flutter, Backend, Extension)
 ```
 
 ---
 
-## Тестирование
+## Testing
 
 ```bash
 flutter test && flutter analyze
-cd backend && npm test
+cd backend && npm test && npm run lint
+cd extension && npm test
+node scripts/smoke-deploy.mjs https://quicksave-api.onrender.com
 ```
 
----
-
-## Документация
-
-| Файл | Описание |
+| Suite | Count |
 | --- | --- |
-| [CHANGELOG.md](CHANGELOG.md) | История версий |
-| [ARCHITECTURE.md](ARCHITECTURE.md) | Архитектура |
-| [backend/README.md](backend/README.md) | API resolver |
-| [store/RELEASE_CHECKLIST.md](store/RELEASE_CHECKLIST.md) | Чеклист публикации в Play |
-| [store/privacy_policy.md](store/privacy_policy.md) | Privacy policy |
+| Flutter | 141 |
+| Backend | 115 |
+| Extension | 6 |
 
 ---
 
-## Использование
+## Docs
 
-Скачивайте только контент, на который у вас есть право. Уважайте авторские права и условия Instagram.
+| File | Description |
+| --- | --- |
+| [CHANGELOG.md](CHANGELOG.md) | Version history |
+| [docs/ROADMAP.md](docs/ROADMAP.md) | Product roadmap |
+| [backend/README.md](backend/README.md) | Resolver API |
+| [store/RELEASE_CHECKLIST.md](store/RELEASE_CHECKLIST.md) | Play + Render checklist |
+| [store/BILLING_PRODUCTS.md](store/BILLING_PRODUCTS.md) | Play subscription IDs |
+
+---
+
+## Usage
+
+Download only content you have rights to. Respect copyright and Instagram Terms of Service.

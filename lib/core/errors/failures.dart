@@ -10,6 +10,14 @@ class NoInternetFailure extends Failure {
   const NoInternetFailure() : super('Нет подключения к интернету.');
 }
 
+class BackendUnreachableFailure extends Failure {
+  const BackendUnreachableFailure()
+    : super(
+        'Сервер QuickSave недоступен. '
+        'Подождите до минуты или проверьте Настройки → Backend.',
+      );
+}
+
 class InvalidUrlFailure extends Failure {
   const InvalidUrlFailure() : super('Неверная ссылка Instagram.');
 }
@@ -61,6 +69,9 @@ class UnknownFailure extends Failure {
 /// Маппер исключений в Failure для presentation.
 Failure mapExceptionToFailure(AppException ex) {
   if (ex is NoInternetException) return const NoInternetFailure();
+  if (ex is BackendUnreachableException) {
+    return const BackendUnreachableFailure();
+  }
   if (ex is InvalidUrlException) return const InvalidUrlFailure();
   if (ex is PrivatePostException) return const PrivatePostFailure();
   if (ex is NotFoundPostException) return const NotFoundPostFailure();

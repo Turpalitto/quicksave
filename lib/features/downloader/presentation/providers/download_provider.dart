@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
@@ -30,7 +31,10 @@ class DownloadIdle extends DownloadState {
 }
 
 class DownloadResolving extends DownloadState {
-  const DownloadResolving();
+  final int? attempt;
+  final int? maxAttempts;
+
+  const DownloadResolving({this.attempt, this.maxAttempts});
 }
 
 class DownloadResolved extends DownloadState {
@@ -142,6 +146,7 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
   void clearLoadMoreError() => _loadMoreFailed = false;
 
   bool _cancelRequested = false;
+  CancelToken? _resolveCancelToken;
 
   void _setResolved(DownloadResolved resolved) {
     _lastResolved = resolved;
@@ -149,12 +154,21 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
   }
 
   Future<void> resolve(String url) async {
+    _resolveCancelToken?.cancel('superseded');
+    final cancelToken = CancelToken();
+    _resolveCancelToken = cancelToken;
     state = const DownloadResolving();
     try {
       final backendUrl = ref.read(settingsProvider).effectiveBackendUrl;
       final result = await InstagramResolver.instance.resolve(
         instagramUrl: url,
         backendUrl: backendUrl,
+        cancelToken: cancelToken,
+        onAttempt: (attempt, maxAttempts) {
+          if (cancelToken.isCancelled) return;
+          if (maxAttempts <= 1) return;
+          state = DownloadResolving(attempt: attempt, maxAttempts: maxAttempts);
+        },
       );
       _batchGroupId = const Uuid().v4();
       _setResolved(
@@ -165,10 +179,24 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
         ),
       );
     } on AppException catch (e) {
+      if (e is DownloadCancelledException) {
+        state = const DownloadIdle();
+        return;
+      }
       state = DownloadFailureState(mapExceptionToFailure(e));
     } catch (e) {
       state = DownloadFailureState(UnknownFailure(e.toString()));
+    } finally {
+      if (identical(_resolveCancelToken, cancelToken)) {
+        _resolveCancelToken = null;
+      }
     }
+  }
+
+  void cancelResolve() {
+    _resolveCancelToken?.cancel('user_cancelled');
+    _resolveCancelToken = null;
+    state = const DownloadIdle();
   }
 
   void toggleSelection(String id) {
@@ -564,6 +592,8 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
   }
 
   void reset() {
+    _resolveCancelToken?.cancel('reset');
+    _resolveCancelToken = null;
     _batchGroupId = null;
     _lastResolved = null;
     _cancelRequested = false;

@@ -99,6 +99,23 @@ class _DiagnosticsScreenState extends ConsumerState<DiagnosticsScreen> {
                   _row(s.diagnosticsLatency, '${_hostedHealth!.latencyMs} ms'),
                 if (_hostedHealth?.version != null)
                   _row(s.diagnosticsBackendVersion, _hostedHealth!.version!),
+                if (_hostedHealth?.attempts != null && _hostedHealth!.attempts > 1)
+                  _row(s.diagnosticsAttempts, '${_hostedHealth!.attempts}'),
+                if (_hostedHealth?.error != null &&
+                    _hostedHealth!.available != true)
+                  _row(s.diagnosticsError, _hostedHealth!.error!),
+                if (_hostedHealth?.available != true &&
+                    backendNeedsWarmUp(settings.effectiveBackendUrl))
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: Text(
+                      s.diagnosticsColdStartHint,
+                      style: TextStyle(
+                        color: scheme.onSurfaceVariant,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
                 const SizedBox(height: 24),
                 Text(
                   s.diagnosticsPrivacyNote,

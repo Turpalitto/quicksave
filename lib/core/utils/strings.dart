@@ -72,6 +72,10 @@ class Strings {
   String get previewTitle => _s((l) => l.previewTitle, 'Предпросмотр');
   String get previewResolving =>
       _s((l) => l.previewResolving, 'Получаем информацию о видео…');
+  String previewResolvingAttempt(int attempt, int maxAttempts) => _s(
+    (l) => l.previewResolvingAttempt(attempt, maxAttempts),
+    'Подключение к серверу… попытка $attempt из $maxAttempts',
+  );
   String previewSource(String url) =>
       _s((l) => l.previewSource(url), 'Источник: $url');
   String get previewDownload => _s((l) => l.previewDownload, 'Скачать');
@@ -215,6 +219,12 @@ class Strings {
   String get diagnosticsCopied =>
       _s((l) => l.diagnosticsCopied, 'Диагностика скопирована');
   String get diagnosticsRefresh => _s((l) => l.diagnosticsRefresh, 'Обновить');
+  String get diagnosticsError => _s((l) => l.diagnosticsError, 'Ошибка');
+  String get diagnosticsAttempts => _s((l) => l.diagnosticsAttempts, 'Попыток');
+  String get diagnosticsColdStartHint => _s(
+    (l) => l.diagnosticsColdStartHint,
+    'Hosted backend на free tier может «засыпать» — подождите до 60 секунд.',
+  );
   String get watchlistTitle => _s((l) => l.watchlistTitle, 'Watchlist');
   String get watchlistOpenSubtitle =>
       _s((l) => l.watchlistOpenSubtitle, 'Публичные профили — редкие проверки');

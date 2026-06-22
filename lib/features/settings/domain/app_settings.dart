@@ -52,7 +52,7 @@ class AppSettings {
 
   bool get canUseScheduler => isPro;
   bool get canExportZip => isPro;
-  bool get canSelfHost => isPro;
+  bool get canSelfHost => true;
   bool get canUseFilenameTemplates => isPro;
   bool get canBulkActions => isPro;
   bool get canCloudBackup => isPro;

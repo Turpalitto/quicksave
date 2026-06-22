@@ -13,8 +13,8 @@ function createLogger() {
       msg,
       ...meta,
     });
-    if (lvl === 'error') console.error(line);
-    else console.log(line);
+    if (lvl === 'error') process.stderr.write(`${line}\n`);
+    else process.stdout.write(`${line}\n`);
   }
 
   return {

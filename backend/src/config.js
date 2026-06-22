@@ -2,6 +2,13 @@
  * Application configuration from environment variables.
  */
 
+const { readFileSync } = require('fs');
+const { join } = require('path');
+
+const pkg = JSON.parse(
+  readFileSync(join(__dirname, '..', 'package.json'), 'utf8'),
+);
+
 const config = {
   port: parseInt(process.env.PORT || '3000', 10),
   nodeEnv: process.env.NODE_ENV || 'development',
@@ -18,7 +25,7 @@ const config = {
   logLevel: process.env.LOG_LEVEL || 'info',
   metricsToken: process.env.METRICS_TOKEN || '',
   metricsPublic: process.env.METRICS_PUBLIC === 'true',
-  serviceVersion: process.env.SERVICE_VERSION || '1.1.0',
+  serviceVersion: process.env.SERVICE_VERSION || pkg.version,
 };
 
 module.exports = config;

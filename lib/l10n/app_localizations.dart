@@ -182,6 +182,12 @@ abstract class AppLocalizations {
   /// **'Fetching video info…'**
   String get previewResolving;
 
+  /// No description provided for @previewResolvingAttempt.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting to server… attempt {attempt} of {maxAttempts}'**
+  String previewResolvingAttempt(int attempt, int maxAttempts);
+
   /// No description provided for @previewSource.
   ///
   /// In en, this message translates to:
@@ -667,6 +673,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Refresh'**
   String get diagnosticsRefresh;
+
+  /// No description provided for @diagnosticsError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get diagnosticsError;
+
+  /// No description provided for @diagnosticsAttempts.
+  ///
+  /// In en, this message translates to:
+  /// **'Attempts'**
+  String get diagnosticsAttempts;
+
+  /// No description provided for @diagnosticsColdStartHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Hosted backend may sleep on free tier — tap Refresh and wait up to 60 seconds.'**
+  String get diagnosticsColdStartHint;
 
   /// No description provided for @watchlistTitle.
   ///

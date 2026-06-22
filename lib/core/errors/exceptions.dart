@@ -7,10 +7,19 @@ sealed class AppException implements Exception {
   String toString() => message;
 }
 
-/// Нет интернета.
+/// Нет интернета на устройстве.
 class NoInternetException extends AppException {
   const NoInternetException()
     : super('Нет подключения к интернету. Проверьте сеть.');
+}
+
+/// Backend resolver недоступен (таймаут, cold start, сервер выключен).
+class BackendUnreachableException extends AppException {
+  const BackendUnreachableException()
+    : super(
+        'Сервер QuickSave недоступен. '
+        'Подождите до минуты (cold start) или проверьте Настройки → Backend.',
+      );
 }
 
 /// Ссылка не похожа на Instagram.

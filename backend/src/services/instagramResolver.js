@@ -34,6 +34,7 @@ const {
 } = require('./resultAssembler');
 const { isLoginWall } = require('./resolverErrors');
 const { resolveProfileUrl, checkLoginWall } = require('./profileExtractorFacade');
+const { fetchGraphqlShortcodeMedia } = require('./graphqlShortcodeClient');
 
 function isLoginWallHtml(html) {
   return isLoginWall(html, !!extractVideoFromHtml(html));
@@ -64,6 +65,35 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
     const shortcode = extractShortcode(url);
     const urlKind = getUrlKind(url);
     const embedUrl = buildEmbedUrl(url);
+
+    // GraphQL shortcode query (works when HTML no longer embeds video_versions).
+    if (shortcode && urlKind !== 'story' && urlKind !== 'highlight') {
+      for (const ua of USER_AGENTS.slice(0, 2)) {
+        const gqlMedia = await fetchGraphqlShortcodeMedia(url, shortcode, ua);
+        if (gqlMedia.videoUrl) {
+          let result = buildSuccessResult(
+            { videoUrl: gqlMedia.videoUrl, thumbnailUrl: gqlMedia.thumbnailUrl },
+            null,
+            shortcode,
+            { thumbnailUrl: gqlMedia.thumbnailUrl },
+          );
+          const oembed = await fetchOembedMetadata(url, ua);
+          result = enrichCollectionWithOembed(result, oembed);
+          return result;
+        }
+        const mediaNode =
+          gqlMedia.rawData?.data?.xdt_shortcode_media ||
+          gqlMedia.rawData?.data?.xdt_api__v1__media__shortcode__web_info?.items?.[0];
+        if (mediaNode && mediaNode.is_video === false && mediaNode.display_url) {
+          let result = buildImageSuccessResult(mediaNode.display_url, null, shortcode, {
+            thumbnailUrl: mediaNode.thumbnail_src || mediaNode.display_url,
+          });
+          const oembed = await fetchOembedMetadata(url, ua);
+          result = enrichCollectionWithOembed(result, oembed);
+          return result;
+        }
+      }
+    }
 
     let sawLoginWall = false;
     let saw404 = false;

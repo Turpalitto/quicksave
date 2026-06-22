@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app.dart';
+import 'core/constants/app_constants.dart';
 import 'services/app_info_service.dart';
+import 'services/backend_health_service.dart';
 import 'services/entitlement_service.dart';
 import 'services/intent_service.dart';
 import 'services/notification_service.dart';
@@ -21,6 +25,11 @@ Future<void> main() async {
     await NotificationService.instance.init();
     IntentService.instance.initialize();
     await EntitlementService.instance.bootstrap();
+    unawaited(
+      BackendHealthService.instance.checkHealth(
+        AppConstants.hostedBackendUrl,
+      ),
+    );
   }
 
   runApp(const ProviderScope(child: QuickSaveApp()));

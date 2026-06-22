@@ -58,6 +58,11 @@ class AppLocalizationsRu extends AppLocalizations {
   String get previewResolving => 'Получаем информацию о видео…';
 
   @override
+  String previewResolvingAttempt(int attempt, int maxAttempts) {
+    return 'Подключение к серверу… попытка $attempt из $maxAttempts';
+  }
+
+  @override
   String previewSource(String source) {
     return 'Источник: $source';
   }
@@ -326,6 +331,16 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get diagnosticsRefresh => 'Обновить';
+
+  @override
+  String get diagnosticsError => 'Ошибка';
+
+  @override
+  String get diagnosticsAttempts => 'Попыток';
+
+  @override
+  String get diagnosticsColdStartHint =>
+      'Hosted backend на free tier может «засыпать» — нажмите Обновить и подождите до 60 секунд.';
 
   @override
   String get watchlistTitle => 'Watchlist';

@@ -112,9 +112,31 @@ class _PreviewScreenState extends ConsumerState<PreviewScreen> {
 
   Widget _buildBody(DownloadState state, ColorScheme scheme, Strings s) {
     if (state is DownloadResolving) {
-      return LoadingView(
+      final attempt = state.attempt;
+      final maxAttempts = state.maxAttempts;
+      return Column(
         key: const ValueKey('resolving'),
-        message: s.previewResolving,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          LoadingView(
+            message: s.previewResolving,
+            detailMessage: attempt != null && maxAttempts != null
+                ? s.previewResolvingAttempt(attempt, maxAttempts)
+                : null,
+          ),
+          const SizedBox(height: 24),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: OutlinedButton.icon(
+              onPressed: () {
+                ref.read(downloadProvider.notifier).cancelResolve();
+                Navigator.of(context).pop();
+              },
+              icon: const Icon(Icons.close),
+              label: Text(s.previewCancel),
+            ),
+          ),
+        ],
       );
     }
 

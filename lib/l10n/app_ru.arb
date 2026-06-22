@@ -19,6 +19,13 @@
   "errorNotRecognized": "Не удалось распознать ссылку Instagram.",
   "previewTitle": "Предпросмотр",
   "previewResolving": "Получаем информацию о видео…",
+  "previewResolvingAttempt": "Подключение к серверу… попытка {attempt} из {maxAttempts}",
+  "@previewResolvingAttempt": {
+    "placeholders": {
+      "attempt": { "type": "int" },
+      "maxAttempts": { "type": "int" }
+    }
+  },
   "previewSource": "Источник: {source}",
   "@previewSource": {
     "placeholders": {
@@ -146,6 +153,9 @@
   "diagnosticsCopy": "Копировать диагностику",
   "diagnosticsCopied": "Диагностика скопирована",
   "diagnosticsRefresh": "Обновить",
+  "diagnosticsError": "Ошибка",
+  "diagnosticsAttempts": "Попыток",
+  "diagnosticsColdStartHint": "Hosted backend на free tier может «засыпать» — нажмите Обновить и подождите до 60 секунд.",
   "watchlistTitle": "Watchlist",
   "watchlistOpenSubtitle": "Публичные профили — редкие проверки",
   "watchlistDisclaimer": "Работает только с публичным контентом. Частые проверки могут быть ограничены. Без логина и приватного доступа.",

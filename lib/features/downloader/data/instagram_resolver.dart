@@ -1,23 +1,71 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/errors/exceptions.dart';
+import '../../../core/network/backend_warmup.dart';
+import '../../../services/network_connectivity_service.dart';
 import '../domain/resolve_result.dart';
 
 /// Клиент, который обращается к backend endpoint POST /resolve.
 class InstagramResolver {
-  InstagramResolver._();
+  InstagramResolver._({
+    Dio? dio,
+    Future<bool> Function()? hasConnection,
+    Future<Response<dynamic>> Function(
+      String url,
+      Map<String, dynamic> payload, {
+      required Duration connectTimeout,
+      required Duration receiveTimeout,
+      required Duration sendTimeout,
+      CancelToken? cancelToken,
+    })?
+    postOverride,
+  }) : _dio =
+           dio ??
+           Dio(
+             BaseOptions(
+               headers: {'Content-Type': 'application/json'},
+               validateStatus: (s) => s != null && s < 600,
+             ),
+           ),
+       _hasConnection =
+           hasConnection ??
+           (() => NetworkConnectivityService.instance.hasConnection),
+       _postOverride = postOverride;
+
   static final InstagramResolver instance = InstagramResolver._();
 
-  final Dio _dio = Dio(
-    BaseOptions(
-      connectTimeout: AppConstants.networkTimeout,
-      receiveTimeout: AppConstants.networkTimeout,
-      sendTimeout: AppConstants.networkTimeout,
-      headers: {'Content-Type': 'application/json'},
-      validateStatus: (s) => s != null && s < 500,
-    ),
+  @visibleForTesting
+  factory InstagramResolver.test({
+    Dio? dio,
+    Future<bool> Function()? hasConnection,
+    Future<Response<dynamic>> Function(
+      String url,
+      Map<String, dynamic> payload, {
+      required Duration connectTimeout,
+      required Duration receiveTimeout,
+      required Duration sendTimeout,
+      CancelToken? cancelToken,
+    })?
+    postOverride,
+  }) => InstagramResolver._(
+    dio: dio,
+    hasConnection: hasConnection,
+    postOverride: postOverride,
   );
+
+  final Dio _dio;
+  final Future<bool> Function() _hasConnection;
+  final Future<Response<dynamic>> Function(
+    String url,
+    Map<String, dynamic> payload, {
+    required Duration connectTimeout,
+    required Duration receiveTimeout,
+    required Duration sendTimeout,
+    CancelToken? cancelToken,
+  })?
+  _postOverride;
 
   /// Резолвит Instagram-ссылку через backend (single / carousel / story).
   Future<ResolveResult> resolve({
@@ -25,9 +73,15 @@ class InstagramResolver {
     required String backendUrl,
     String? cursor,
     String? userId,
+    CancelToken? cancelToken,
+    void Function(int attempt, int maxAttempts)? onAttempt,
   }) async {
     if (instagramUrl.isEmpty) {
       throw const InvalidUrlException();
+    }
+
+    if (!await _hasConnection()) {
+      throw const NoInternetException();
     }
 
     final url =
@@ -38,16 +92,70 @@ class InstagramResolver {
     if (cursor != null && cursor.isNotEmpty) payload['cursor'] = cursor;
     if (userId != null && userId.isNotEmpty) payload['userId'] = userId;
 
-    Response<dynamic> response;
-    try {
-      response = await _dio.post(url, data: payload);
-    } on DioException catch (e) {
-      if (e.type == DioExceptionType.connectionTimeout ||
-          e.type == DioExceptionType.connectionError ||
-          e.type == DioExceptionType.receiveTimeout) {
-        throw const NoInternetException();
+    final maxAttempts = backendResolveMaxAttempts(backendUrl);
+    final perAttemptTimeout = backendResolveTimeout(backendUrl);
+    final deadline = DateTime.now().add(backendResolveOverallTimeout(backendUrl));
+    Response<dynamic>? response;
+
+    for (var attempt = 1; attempt <= maxAttempts; attempt++) {
+      onAttempt?.call(attempt, maxAttempts);
+
+      if (attempt > 1) {
+        final backoff = Duration(seconds: attempt * 2);
+        final remaining = deadline.difference(DateTime.now());
+        if (remaining <= Duration.zero) {
+          throw const BackendUnreachableException();
+        }
+        await Future<void>.delayed(
+          backoff < remaining ? backoff : remaining,
+        );
       }
-      throw const ServerException();
+
+      final remaining = deadline.difference(DateTime.now());
+      if (remaining <= Duration.zero) {
+        throw const BackendUnreachableException();
+      }
+      final attemptTimeout = remaining < perAttemptTimeout
+          ? remaining
+          : perAttemptTimeout;
+
+      try {
+        final post = _postOverride;
+        response = post != null
+            ? await post(
+                url,
+                payload,
+                connectTimeout: attemptTimeout,
+                receiveTimeout: attemptTimeout,
+                sendTimeout: attemptTimeout,
+                cancelToken: cancelToken,
+              )
+            : await _dio.post<Map<String, dynamic>>(
+                url,
+                data: payload,
+                options: Options(
+                  connectTimeout: attemptTimeout,
+                  receiveTimeout: attemptTimeout,
+                  sendTimeout: attemptTimeout,
+                ),
+                cancelToken: cancelToken,
+              );
+        break;
+      } on DioException catch (e) {
+        if (e.type == DioExceptionType.cancel) {
+          throw const DownloadCancelledException();
+        }
+        final retry = attempt < maxAttempts && shouldRetryBackendRequest(e.type);
+        if (retry) continue;
+        if (shouldRetryBackendRequest(e.type)) {
+          throw const BackendUnreachableException();
+        }
+        throw const ServerException();
+      }
+    }
+
+    if (response == null) {
+      throw const BackendUnreachableException();
     }
 
     final status = response.statusCode ?? 0;
