@@ -33,7 +33,8 @@ const {
   buildImageSuccessResult,
 } = require('./resultAssembler');
 const { isLoginWall } = require('./resolverErrors');
-const { resolveProfileUrl, checkLoginWall } = require('./profileExtractorFacade');
+const { checkLoginWall } = require('./profileExtractorFacade');
+const { runSpareResolveStrategies } = require('./resolverSpareStrategies');
 const { fetchGraphqlShortcodeMedia } = require('./graphqlShortcodeClient');
 
 function isLoginWallHtml(html) {
@@ -44,6 +45,9 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
   const url = normalizeUrl(inputUrl);
 
   if (!isValidPublicUrl(url)) {
+    if (require('./profileExtractor').isProfileUrl(url)) {
+      return { ok: false, error: 'profile_not_supported' };
+    }
     return { ok: false, error: 'invalid_url' };
   }
 
@@ -59,7 +63,7 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
 
   const runResolve = async () => {
     if (getUrlKind(url) === 'profile') {
-      return resolveProfileUrl(url, options);
+      return { ok: false, error: 'profile_not_supported' };
     }
 
     const shortcode = extractShortcode(url);
@@ -68,12 +72,12 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
 
     // GraphQL shortcode query (works when HTML no longer embeds video_versions).
     if (shortcode && urlKind !== 'story' && urlKind !== 'highlight') {
-      for (const ua of USER_AGENTS.slice(0, 2)) {
+      for (const ua of USER_AGENTS.slice(0, 3)) {
         const gqlMedia = await fetchGraphqlShortcodeMedia(url, shortcode, ua);
         if (gqlMedia.videoUrl) {
           let result = buildSuccessResult(
             { videoUrl: gqlMedia.videoUrl, thumbnailUrl: gqlMedia.thumbnailUrl },
-            null,
+            gqlMedia.pageHtml || null,
             shortcode,
             { thumbnailUrl: gqlMedia.thumbnailUrl },
           );
@@ -243,6 +247,16 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
     if (sawLoginWall) {
       return { ok: false, error: 'private' };
     }
+
+    const spare = await runSpareResolveStrategies({
+      url,
+      shortcode,
+      urlKind,
+      bestHtml,
+      embedUrl,
+    });
+    if (spare) return spare;
+
     if (lastNetworkError || sawHardError) {
       return { ok: false, error: 'resolver_failed' };
     }

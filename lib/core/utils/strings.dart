@@ -154,6 +154,22 @@ class Strings {
       _s((l) => l.errorCancelled, 'Скачивание отменено.');
   String get errorUnknown => _s((l) => l.errorUnknown, 'Неизвестная ошибка.');
   String get errorRetry => _s((l) => l.errorRetry, 'Повторить');
+  String get pendingDownloadLater =>
+      _s((l) => l.pendingDownloadLater, 'Скачать позже');
+  String get pendingDownloadQueued => _s(
+    (l) => l.pendingDownloadQueued,
+    'Добавлено в очередь — повторим автоматически',
+  );
+  String get pendingDownloadsTitle =>
+      _s((l) => l.pendingDownloadsTitle, 'Очередь скачивания');
+  String pendingDownloadsSubtitle(int count) => _s(
+    (l) => l.pendingDownloadsSubtitle(count),
+    '$count ссылок ждут повтора',
+  );
+  String get pendingDownloadsRetryNow =>
+      _s((l) => l.pendingDownloadsRetryNow, 'Повторить сейчас');
+  String get pendingDownloadsRemove =>
+      _s((l) => l.pendingDownloadsRemove, 'Убрать');
   String errorOpenFailed(String message) =>
       _s((l) => l.errorOpenFailed(message), 'Не удалось открыть: $message');
   String get errorFileMissing =>

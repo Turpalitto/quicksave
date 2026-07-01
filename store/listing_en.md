@@ -4,33 +4,42 @@
 QuickSave — IG Media Saver
 
 ## Short description (80 chars)
-Save public Instagram photos & videos. Share → download. Gallery, profiles, batch.
+Reliable Reels, posts & stories saver. Share → download. No Instagram login.
 
 ## Full description
 
-QuickSave lets you save **public** Instagram posts, Reels, stories, and profile grids — fast and without login.
+QuickSave is a **stable** downloader for **public** Instagram posts, Reels, carousels, and stories. No login required.
 
-**How it works**
-1. Tap Share in Instagram → QuickSave
-2. Media saves automatically (or pick items from carousel/profile)
-3. Files appear in your Gallery (optional)
+**Why QuickSave**
+• Multiple fallback strategies to resolve media — fewer breaks after Instagram updates
+• Auto-retry when the server is temporarily unavailable (“download later” queue)
+• Resume interrupted downloads
+• Clear error messages — not just “doesn’t work”
+
+**How to use**
+1. In Instagram: **Share** → QuickSave
+2. Or paste a link to a **post / Reel / story**
+3. Files save in QuickSave and optionally to Gallery
+
+**Supported links**
+• Reels (`/reel/…`)
+• Posts & photos (`/p/…`)
+• IGTV (`/tv/…`)
+• Stories & highlights
+• Carousels (multiple photos/videos in one post)
+
+**Not supported:** whole profile links — use a link to a specific Reel or post instead.
 
 **Features**
-• Share Intent — one tap from Instagram
-• Quick Settings tile & home widget
-• Profile grid with batch download
-• Carousel, stories, highlights
-• Resume interrupted downloads
-• History with search & filters
-• Dark mode • EN/RU
+• Share Intent, Quick Settings tile, home widget
+• Auto-download & retry queue on network failures
+• History with search & metadata
+• Dark mode • EN / RU
 
 **QuickSave Pro**
-• Profile scheduler (daily check for new posts)
-• Export batch as ZIP
-• Self-hosted resolver
-
-**Privacy**
-Only public content you explicitly share. No Instagram account required.
+• File name templates
+• Export ZIP
+• Self-hosted server
 
 ## Category
 Tools
@@ -39,7 +48,7 @@ Tools
 Everyone (user-generated content from Instagram)
 
 ## Keywords (ASO)
-instagram downloader, save reel, story saver, ig video download, share intent, gallery save, batch download, profile saver
+instagram downloader, save reel, story saver, ig video download, gallery save, reels no watermark
 
 ## Privacy policy URL
 https://quicksave.app/privacy (host store/privacy_policy.md)
@@ -51,9 +60,9 @@ https://quicksave.app/privacy (host store/privacy_policy.md)
 - User can delete: history + local files
 
 ## Compliance & permissions
-- **Permissions**: Internet (resolve/download), Storage/Media (save to gallery), Notifications (optional download complete)
+- **Permissions**: Internet (resolve/download), Notifications (optional download complete)
 - **No login**: QuickSave does not request Instagram credentials
-- **Public content only**: Users must explicitly share URLs; no scraping of private accounts
-- **Data retention**: All media and history stored locally on device; user can clear history and delete files
-- **Children**: Not directed at children under 13; UGC from Instagram subject to platform policies
-- **Open-source resolver**: Self-hosted backend option documented in README for Pro users
+- **Public content only**: Users share links to specific posts
+- **Data retention**: Media and history stored locally; user can clear
+- **Children**: Not directed at children under 13
+- **Cloud**: URL sent to resolver to obtain public media link (see privacy policy)

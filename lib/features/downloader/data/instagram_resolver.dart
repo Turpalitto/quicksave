@@ -186,6 +186,8 @@ class InstagramResolver {
   /// на 4xx/5xx — как серверная ошибка.
   AppException _exceptionForError(String? code, {bool is2xx = true}) {
     switch (code) {
+      case 'profile_not_supported':
+        return const ProfileNotSupportedException();
       case 'invalid_url':
         return const InvalidUrlException();
       case 'private':

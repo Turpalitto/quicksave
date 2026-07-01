@@ -4,6 +4,9 @@ class AppConstants {
 
   static const String appName = 'QuickSave';
 
+  /// Profile watchlist (Pro) — off while backend returns profile_not_supported.
+  static const bool profileWatchlistEnabled = false;
+
   /// Публичный hosted resolver (zero-config).
   /// После деплоя backend замените на ваш production URL.
   static const String hostedBackendUrl = 'https://quicksave-api.onrender.com';
@@ -28,6 +31,8 @@ class AppConstants {
   static const String historyV2PrefsKey = 'quicksave.history.v2';
   static const String collectionsPrefsKey = 'quicksave.collections.v1';
   static const String settingsPrefsKey = 'quicksave.settings.v1';
+  static const String pendingDownloadsPrefsKey = 'quicksave.pending_downloads.v1';
+  static const String pendingRetryTaskName = 'quicksavePendingRetry';
 
   /// Max single-file download size (500 MB).
   static const int maxDownloadBytes = 500 * 1024 * 1024;

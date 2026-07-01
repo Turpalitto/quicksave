@@ -20,7 +20,7 @@ class AppLocalizationsRu extends AppLocalizations {
       'Без логина и cookies — только то, что вы сами поделились или вставили';
 
   @override
-  String get urlFieldHint => 'Пост, reel, story или @профиль';
+  String get urlFieldHint => 'Ссылка на пост, Reel или story';
 
   @override
   String get urlFieldPaste => 'Вставить';
@@ -30,7 +30,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get homeTip =>
-      'Поделитесь из Instagram, вставьте ссылку или введите @username для сетки постов профиля.';
+      'Поделитесь из Instagram → QuickSave или вставьте ссылку на пост / Reel / story.';
 
   @override
   String get homeClipboardDetected =>
@@ -46,7 +46,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get errorInvalidUrl =>
-      'Ссылка должна вести на публичный пост, story, highlights или профиль Instagram.';
+      'Ссылка должна вести на публичный пост, Reel, story или highlights Instagram (не профиль).';
 
   @override
   String get errorNotRecognized => 'Не удалось распознать ссылку Instagram.';
@@ -197,6 +197,35 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get errorRetry => 'Повторить';
+
+  @override
+  String get pendingDownloadLater => 'Скачать позже';
+
+  @override
+  String get pendingDownloadQueued =>
+      'Добавлено в очередь — повторим автоматически';
+
+  @override
+  String get pendingDownloadsTitle => 'Очередь скачивания';
+
+  @override
+  String pendingDownloadsSubtitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ссылок ждут повтора',
+      many: '$count ссылок ждут повтора',
+      few: '$count ссылки ждут повтора',
+      one: '1 ссылка ждёт повтора',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get pendingDownloadsRetryNow => 'Повторить сейчас';
+
+  @override
+  String get pendingDownloadsRemove => 'Убрать';
 
   @override
   String errorOpenFailed(String message) {
@@ -482,7 +511,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get settingsBackendNote =>
-      'Для эмулятора: http://10.0.2.2:3000.\nДля реального устройства: http://ВАШ-IP:3000.';
+      'Для эмулятора: http://10.0.2.2:3000.\nДля телефона: http://ВАШ-IP:3000 (ПК и телефон в одной Wi‑Fi).\n\nВ РФ Instagram заблокирован: VPN на телефоне не помогает resolve — включите VPN и на ПК, где запущен backend (npm start).';
 
   @override
   String get settingsSectionData => 'Данные';

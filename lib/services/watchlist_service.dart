@@ -1,3 +1,4 @@
+import '../core/errors/exceptions.dart';
 import '../features/downloader/data/instagram_resolver.dart';
 import '../features/downloader/domain/resolve_result.dart';
 import '../features/history/data/history_repository.dart';
@@ -69,6 +70,8 @@ class WatchlistService {
         alreadySavedCount: alreadySaved,
         totalFound: result.items.length,
       );
+    } on ProfileNotSupportedException {
+      return const WatchlistCheckResult(errorCode: 'profile_not_supported');
     } catch (_) {
       return const WatchlistCheckResult(errorCode: 'resolve_failed');
     }

@@ -10,11 +10,20 @@ class NoInternetFailure extends Failure {
   const NoInternetFailure() : super('Нет подключения к интернету.');
 }
 
+class ProfileNotSupportedFailure extends Failure {
+  const ProfileNotSupportedFailure()
+    : super(
+        'Ссылки на профиль не поддерживаются. '
+        'Откройте конкретный Reel или пост → Поделиться → QuickSave.',
+      );
+}
+
 class BackendUnreachableFailure extends Failure {
   const BackendUnreachableFailure()
     : super(
         'Сервер QuickSave недоступен. '
-        'Подождите до минуты или проверьте Настройки → Backend.',
+        'В Настройках выберите «Свой сервер» и укажите http://IP-ПК:3000 '
+        '(не облако QuickSave).',
       );
 }
 
@@ -34,8 +43,9 @@ class NotFoundPostFailure extends Failure {
 class ResolverFailure extends Failure {
   const ResolverFailure()
     : super(
-        'Не удалось получить прямую ссылку. '
-        'Попробуйте другой публичный пост.',
+        'Не удалось получить медиа. '
+        'Ссылка на профиль? Откройте конкретный рил и поделитесь им. '
+        'Для рила при своём сервере нужен VPN на ПК.',
       );
 }
 
@@ -66,11 +76,22 @@ class UnknownFailure extends Failure {
     : super(message ?? 'Неизвестная ошибка.');
 }
 
+class UrlExpiredFailure extends Failure {
+  const UrlExpiredFailure()
+    : super(
+        'Ссылка на медиа устарела. '
+        'Не удалось обновить — попробуйте снова.',
+      );
+}
+
 /// Маппер исключений в Failure для presentation.
 Failure mapExceptionToFailure(AppException ex) {
   if (ex is NoInternetException) return const NoInternetFailure();
   if (ex is BackendUnreachableException) {
     return const BackendUnreachableFailure();
+  }
+  if (ex is ProfileNotSupportedException) {
+    return const ProfileNotSupportedFailure();
   }
   if (ex is InvalidUrlException) return const InvalidUrlFailure();
   if (ex is PrivatePostException) return const PrivatePostFailure();
@@ -82,4 +103,10 @@ Failure mapExceptionToFailure(AppException ex) {
   if (ex is FileWriteException) return const FileWriteFailure();
   if (ex is DownloadCancelledException) return const CancelledFailure();
   return UnknownFailure(ex.message);
+}
+
+Failure mapAnyExceptionToFailure(Object ex) {
+  if (ex is UrlExpiredException) return const UrlExpiredFailure();
+  if (ex is AppException) return mapExceptionToFailure(ex);
+  return UnknownFailure(ex.toString());
 }

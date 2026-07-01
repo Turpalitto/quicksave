@@ -12,6 +12,7 @@ import '../../../../core/widgets/error_view.dart';
 import '../../../../core/widgets/loading_view.dart';
 import '../../../../core/widgets/media_preview_dialog.dart';
 import '../../../history/domain/download_item.dart';
+import '../../../../core/errors/failures.dart';
 import '../../domain/resolve_result.dart';
 import '../../domain/download_stage.dart';
 import '../providers/download_provider.dart';
@@ -149,12 +150,31 @@ class _PreviewScreenState extends ConsumerState<PreviewScreen> {
     }
 
     if (state is DownloadFailureState) {
+      final failure = state.failure;
+      final canQueue =
+          failure is BackendUnreachableFailure ||
+          failure is ResolverFailure ||
+          failure is RateLimitedFailure ||
+          failure is ServerFailure;
       return ErrorView(
         key: const ValueKey('error'),
         message: state.failure.message,
         retryLabel: s.errorRetry,
         onRetry: () =>
             ref.read(downloadProvider.notifier).resolve(widget.sourceUrl),
+        secondaryLabel: canQueue ? s.pendingDownloadLater : null,
+        onSecondary: canQueue
+            ? () async {
+                await ref
+                    .read(downloadProvider.notifier)
+                    .enqueuePending(widget.sourceUrl, error: failure.message);
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(s.pendingDownloadQueued)),
+                );
+                Navigator.of(context).pop();
+              }
+            : null,
       );
     }
 

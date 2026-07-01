@@ -9,6 +9,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../../services/export_service.dart';
 import '../../data/history_repository.dart';
 import '../../../../core/utils/formatters.dart';
+import '../../../../core/utils/media_path.dart';
 import '../../../settings/presentation/providers/settings_provider.dart';
 import '../../../../core/utils/strings.dart';
 import '../../../../core/widgets/cached_thumbnail.dart';
@@ -682,7 +683,8 @@ class _HistoryTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final s = S.of(context);
-    final exists = item.filePath.isNotEmpty && File(item.filePath).existsSync();
+    final exists =
+        item.filePath.isNotEmpty && localMediaPathExists(item.filePath);
     final missingFile = item.filePath.isNotEmpty && !exists && !item.isFailed;
     final collectionsAsync = ref.watch(collectionsProvider);
     final selected = ref.watch(historySelectionProvider).contains(item.id);

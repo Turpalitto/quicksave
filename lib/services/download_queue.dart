@@ -84,6 +84,9 @@ class DownloadQueue {
   DownloadQueue._();
   static final DownloadQueue instance = DownloadQueue._();
 
+  /// Маркер ошибки в [DownloadQueueTask.errorMessage] при истёкшем CDN URL.
+  static const urlExpiredError = 'url_expired';
+
   final _dio = Dio(
     BaseOptions(
       connectTimeout: const Duration(seconds: 15),
@@ -329,6 +332,15 @@ class DownloadQueue {
         );
         return true;
       } on DownloadCancelledException {
+        return false;
+      } on UrlExpiredException {
+        final idx = _tasks.indexWhere((t) => t.id == task.id);
+        if (idx < 0) return false;
+        _tasks[idx] = _tasks[idx].copyWith(
+          status: DownloadTaskStatus.failed,
+          errorMessage: urlExpiredError,
+        );
+        _emit();
         return false;
       } catch (e) {
         final idx = _tasks.indexWhere((t) => t.id == task.id);

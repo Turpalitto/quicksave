@@ -1,7 +1,7 @@
 name: quicksave
-description: QuickSave — save public Instagram photos and videos via Share Intent. Gallery, profiles, batch download.
+description: QuickSave — save public Instagram Reels, posts and stories via Share Intent. Gallery, batch download, download-later queue.
 publish_to: "none"
-version: 1.3.4+11
+version: 1.5.0+18
 
 environment:
   sdk: ">=3.10.0 <4.0.0"

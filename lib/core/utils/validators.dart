@@ -50,11 +50,8 @@ class Validators {
   static String? extractInstagramUrl(String text) {
     if (text.isEmpty) return null;
     final trimmed = text.trim();
-    if (trimmed.startsWith('@') && trimmed.length > 1) {
-      final user = trimmed.substring(1).split(RegExp(r'\s')).first;
-      if (_isValidUsername(user)) {
-        return 'https://instagram.com/$user';
-      }
+    if (trimmed.startsWith('@')) {
+      return null;
     }
     final match = _extractRe.firstMatch(trimmed);
     return match?.group(0);
@@ -76,7 +73,7 @@ class Validators {
   static bool isValidInstagramUrl(String url) {
     if (url.isEmpty) return false;
     final normalized = normalize(url);
-    if (isProfileUrl(normalized)) return true;
+    if (isProfileUrl(normalized)) return false;
     return _publicPostRe.hasMatch(normalized);
   }
 

@@ -14,6 +14,7 @@ const {
   REQUEST_TIMEOUT,
   fetchHtml,
   fetchProfileWebInfo,
+  fetchSessionCookies,
 } = require('./upstreamClient');
 
 function checkLoginWall(html) {
@@ -57,7 +58,8 @@ async function resolveProfileUrl(url, options = {}) {
 
   for (const ua of USER_AGENTS) {
     try {
-      const res = await fetchHtml(url.endsWith('/') ? url : `${url}/`, ua, 2);
+      const { jar } = await fetchSessionCookies(ua);
+      const res = await fetchHtml(url.endsWith('/') ? url : `${url}/`, ua, 2, jar);
       const html = typeof res.data === 'string' ? res.data : '';
       if (html.length > bestHtml.length) bestHtml = html;
       if (checkLoginWall(html)) sawLoginWall = true;

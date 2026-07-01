@@ -50,7 +50,7 @@ describe('isValidPublicUrl', () => {
     ['https://instagr.am/reel/ABC123/', true],
     ['https://instagr.am/p/POST1/', true],
     ['https://www.instagram.com/explore', false],
-    ['https://www.instagram.com/natgeo', true],
+    ['https://www.instagram.com/natgeo', false],
     ['https://www.instagram.com/stories/', false],
     ['https://example.com/', false],
     ['https://www.instagram.com/reel/ABC123/extra', false],
@@ -95,7 +95,7 @@ describe('extractShortcode / buildEmbedUrl', () => {
   });
   test('builds embed url', () => {
     expect(buildEmbedUrl('https://instagram.com/reel/ABC123')).toBe(
-      'https://www.instagram.com/reel/ABC123/embed/captioned/',
+      'https://www.instagram.com/reel/ABC123/embed/',
     );
   });
 });
@@ -182,7 +182,7 @@ describe('resolveInstagramUrl', () => {
       if (url.includes('oembed')) {
         return { data: { author_name: 'Alice' }, status: 200 };
       }
-      if (url.includes('__a=1')) return { data: null, status: 200 };
+      if (url.includes('/api/v1/media/shortcode/')) return { data: null, status: 200 };
       return htmlResponse(
         '<meta property="og:video:secure_url" content="https://cdn.example.com/reel.mp4">',
       );
@@ -197,26 +197,15 @@ describe('resolveInstagramUrl', () => {
     expect(r).toEqual({ ok: false, error: 'invalid_url' });
   });
 
-  test('resolves public profile URL', async () => {
-    const html =
-      '"edge_owner_to_timeline_media":{"edges":[' +
-      '{"node":{"shortcode":"PROF1","is_video":true,"video_versions":[{"url":"https://cdn.example.com/p.mp4","width":720}]}}' +
-      ']}';
-    axios.get.mockImplementation(async (url) => {
-      if (url.includes('web_profile_info')) return { data: { data: { user: null } }, status: 200 };
-      if (url.includes('oembed')) return { data: {}, status: 200 };
-      return htmlResponse(`<html>${html}</html>`);
-    });
+  test('returns profile_not_supported for username profile URL', async () => {
     const r = await resolveInstagramUrl('https://www.instagram.com/natgeo');
-    expect(r.ok).toBe(true);
-    expect(r.type).toBe('profile');
-    expect(r.items.length).toBeGreaterThan(0);
+    expect(r).toEqual({ ok: false, error: 'profile_not_supported' });
   });
 
   test('success via og:video on first UA', async () => {
     axios.get.mockImplementation(async (url) => {
       if (url.includes('oembed')) return { data: {}, status: 200 };
-      if (url.includes('__a=1')) return { data: null, status: 200 };
+      if (url.includes('/api/v1/media/shortcode/')) return { data: null, status: 200 };
       return htmlResponse(
         '<meta property="og:video:secure_url" content="https://cdn.example.com/reel.mp4">' +
           '<meta property="og:image" content="https://cdn.example.com/thumb.jpg">' +
@@ -234,7 +223,7 @@ describe('resolveInstagramUrl', () => {
   test('success via embedded video_url when og:video absent', async () => {
     axios.get.mockImplementation(async (url) => {
       if (url.includes('oembed')) return { data: {}, status: 200 };
-      if (url.includes('__a=1')) return { data: null, status: 200 };
+      if (url.includes('/api/v1/media/shortcode/')) return { data: null, status: 200 };
       return htmlResponse(
         '<html><body>"video_url":"https:\\/\\/cdn.example.com\\/v.mp4"</body></html>',
       );
@@ -247,7 +236,7 @@ describe('resolveInstagramUrl', () => {
   test('success via GraphQL fallback when HTML has no video and no login wall', async () => {
     axios.get.mockImplementation(async (url) => {
       if (url.includes('oembed')) return { data: {}, status: 200 };
-      if (url.includes('__a=1')) {
+      if (url.includes('/api/v1/media/shortcode/')) {
         return {
           data: {
             items: [{ video_versions: [{ url: 'https://cdn.example.com/gql.mp4', width: 720 }] }],
@@ -270,7 +259,7 @@ describe('resolveInstagramUrl', () => {
 
   test('returns private when login wall and GraphQL 404', async () => {
     axios.get.mockImplementation(async (url) => {
-      if (url.includes('__a=1')) {
+      if (url.includes('/api/v1/media/shortcode/')) {
         const e = new Error('HTTP 404');
         e.response = { status: 404 };
         throw e;
@@ -284,7 +273,7 @@ describe('resolveInstagramUrl', () => {
   test('returns private when all UAs hit login wall and GraphQL empty', async () => {
     axios.get.mockImplementation(async (url) => {
       if (url.includes('oembed')) return { data: {}, status: 200 };
-      if (url.includes('__a=1')) {
+      if (url.includes('/api/v1/media/shortcode/')) {
         return { data: null, status: 200 };
       }
       return htmlResponse('<html>accounts/login form here</html>');
@@ -314,7 +303,7 @@ describe('resolveInstagramUrl', () => {
   test('embed page succeeds when main page has no video', async () => {
     axios.get.mockImplementation(async (url) => {
       if (url.includes('oembed')) return { data: {}, status: 200 };
-      if (url.includes('__a=1')) return { data: null, status: 200 };
+      if (url.includes('/api/v1/media/shortcode/')) return { data: null, status: 200 };
       if (url.includes('/embed/')) {
         return htmlResponse(
           '<meta property="og:video" content="https://cdn.example.com/embed.mp4">',
@@ -332,7 +321,7 @@ describe('resolveInstagramUrl', () => {
       if (url.includes('oembed')) {
         return { data: { author_name: 'photo_user' }, status: 200 };
       }
-      if (url.includes('__a=1')) return { data: null, status: 200 };
+      if (url.includes('/api/v1/media/shortcode/')) return { data: null, status: 200 };
       return htmlResponse(
         '<meta property="og:image" content="https://cdn.example.com/photo.jpg">' +
           '<meta property="og:title" content="User on Instagram">',

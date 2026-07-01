@@ -28,7 +28,7 @@ describe('Integration: resolver extracts videoUrl from realistic HTML', () => {
   test('Reel with og:video:secure_url → direct CDN url', async () => {
     axios.get.mockImplementation(async (url) => {
       if (url.includes('oembed')) return { data: { author_name: 'Alice' }, status: 200 };
-      if (url.includes('__a=1')) return jsonOk(null);
+      if (url.includes('/api/v1/media/shortcode/')) return jsonOk(null);
       return htmlOk(F.REEL_OG_VIDEO);
     });
     const r = await resolveInstagramUrl('https://www.instagram.com/reel/Cabc123/');
@@ -72,7 +72,7 @@ describe('Integration: resolver extracts videoUrl from realistic HTML', () => {
       '<!DOCTYPE html><html><head><meta property="og:title" content="x"></head>' +
       '<body>no video here</body></html>';
     axios.get.mockImplementation(async (url) => {
-      if (url.includes('__a=1')) return jsonOk(JSON.parse(F.GRAPHQL_JSON));
+      if (url.includes('/api/v1/media/shortcode/')) return jsonOk(JSON.parse(F.GRAPHQL_JSON));
       return htmlOk(noVideoHtml);
     });
     const r = await resolveInstagramUrl('https://www.instagram.com/reel/Mno345/');
@@ -83,7 +83,7 @@ describe('Integration: resolver extracts videoUrl from realistic HTML', () => {
   test('GraphQL fallback finds deeply nested video_url (shortcode_media)', async () => {
     const noVideoHtml = '<html><body>nothing</body></html>';
     axios.get.mockImplementation(async (url) => {
-      if (url.includes('__a=1')) return jsonOk(JSON.parse(F.GRAPHQL_NESTED_JSON));
+      if (url.includes('/api/v1/media/shortcode/')) return jsonOk(JSON.parse(F.GRAPHQL_NESTED_JSON));
       return htmlOk(noVideoHtml);
     });
     const r = await resolveInstagramUrl('https://www.instagram.com/p/Pqr678/');
@@ -93,7 +93,7 @@ describe('Integration: resolver extracts videoUrl from realistic HTML', () => {
 
   test('Login wall on all UAs → private (no GraphQL video)', async () => {
     axios.get.mockImplementation(async (url) => {
-      if (url.includes('__a=1')) return jsonOk(null); // GraphQL тоже пусто/блок
+      if (url.includes('/api/v1/media/shortcode/')) return jsonOk(null); // GraphQL тоже пусто/блок
       return htmlOk(F.LOGIN_WALL);
     });
     const r = await resolveInstagramUrl('https://www.instagram.com/reel/Priv1/');
@@ -109,7 +109,7 @@ describe('Integration: resolver extracts videoUrl from realistic HTML', () => {
   test('first source login wall, embed returns og:video → success', async () => {
     axios.get.mockImplementation(async (url) => {
       if (url.includes('oembed')) return { data: {}, status: 200 };
-      if (url.includes('__a=1')) return jsonOk(null);
+      if (url.includes('/api/v1/media/shortcode/')) return jsonOk(null);
       if (url.includes('/embed/')) return htmlOk(F.REEL_OG_VIDEO);
       return htmlOk(F.LOGIN_WALL);
     });
@@ -142,7 +142,10 @@ describe('Integration: URL normalization with real-world inputs', () => {
     const r = await resolveInstagramUrl(input);
     expect(r.ok).toBe(true);
     // axios.get должен вызываться с нормализованным URL без query
-    const calledUrl = axios.get.mock.calls[0][0];
+    const calledUrl = axios.get.mock.calls
+      .map((c) => c[0])
+      .find((u) => String(u).includes('/reel/Cabc123'));
+    expect(calledUrl).toBeDefined();
     expect(calledUrl).not.toContain('igshid');
     expect(calledUrl).not.toContain('utm_source');
     expect(calledUrl).toBe('https://www.instagram.com/reel/Cabc123');

@@ -19,7 +19,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'No login, no cookies — only content you share or paste';
 
   @override
-  String get urlFieldHint => 'Post, reel, story or @profile';
+  String get urlFieldHint => 'Link to post, Reel, or story';
 
   @override
   String get urlFieldPaste => 'Paste';
@@ -29,7 +29,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeTip =>
-      'Share from Instagram, paste a link, or enter @username to browse a profile grid.';
+      'Share from Instagram → QuickSave, or paste a post / Reel / story link.';
 
   @override
   String get homeClipboardDetected => 'Instagram link detected in clipboard';
@@ -44,7 +44,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorInvalidUrl =>
-      'The link must point to a public Instagram post, story, highlight, or profile.';
+      'Link must point to a public post, Reel, story, or highlight (not a profile).';
 
   @override
   String get errorNotRecognized => 'Could not recognize the Instagram link.';
@@ -194,6 +194,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errorRetry => 'Retry';
+
+  @override
+  String get pendingDownloadLater => 'Download later';
+
+  @override
+  String get pendingDownloadQueued => 'Queued — we\'ll retry automatically';
+
+  @override
+  String get pendingDownloadsTitle => 'Download queue';
+
+  @override
+  String pendingDownloadsSubtitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count links waiting to retry',
+      one: '1 link waiting to retry',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get pendingDownloadsRetryNow => 'Retry now';
+
+  @override
+  String get pendingDownloadsRemove => 'Remove';
 
   @override
   String errorOpenFailed(String message) {

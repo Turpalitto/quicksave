@@ -3,10 +3,10 @@
   "appTitle": "QuickSave",
   "homeHeroTitle": "Сохраняйте и организуйте публичный контент Instagram",
   "homeHeroSubtitle": "Без логина и cookies — только то, что вы сами поделились или вставили",
-  "urlFieldHint": "Пост, reel, story или @профиль",
+  "urlFieldHint": "Ссылка на пост, Reel или story",
   "urlFieldPaste": "Вставить",
   "downloadButton": "Скачать",
-  "homeTip": "Поделитесь из Instagram, вставьте ссылку или введите @username для сетки постов профиля.",
+  "homeTip": "Поделитесь из Instagram → QuickSave или вставьте ссылку на пост / Reel / story.",
   "homeClipboardDetected": "В буфере обмена найдена ссылка Instagram",
   "homeFooter": "Только публичные посты • v{version}",
   "@homeFooter": {
@@ -15,7 +15,7 @@
     }
   },
   "errorEnterUrl": "Введите ссылку.",
-  "errorInvalidUrl": "Ссылка должна вести на публичный пост, story, highlights или профиль Instagram.",
+  "errorInvalidUrl": "Ссылка должна вести на публичный пост, Reel, story или highlights Instagram (не профиль).",
   "errorNotRecognized": "Не удалось распознать ссылку Instagram.",
   "previewTitle": "Предпросмотр",
   "previewResolving": "Получаем информацию о видео…",
@@ -105,6 +105,17 @@
   "errorCancelled": "Скачивание отменено.",
   "errorUnknown": "Неизвестная ошибка.",
   "errorRetry": "Повторить",
+  "pendingDownloadLater": "Скачать позже",
+  "pendingDownloadQueued": "Добавлено в очередь — повторим автоматически",
+  "pendingDownloadsTitle": "Очередь скачивания",
+  "pendingDownloadsSubtitle": "{count, plural, =1{1 ссылка ждёт повтора} few{{count} ссылки ждут повтора} many{{count} ссылок ждут повтора} other{{count} ссылок ждут повтора}}",
+  "@pendingDownloadsSubtitle": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "pendingDownloadsRetryNow": "Повторить сейчас",
+  "pendingDownloadsRemove": "Убрать",
   "errorOpenFailed": "Не удалось открыть: {message}",
   "@errorOpenFailed": {
     "placeholders": {
@@ -202,7 +213,7 @@
   "settingsBackendTest": "Проверить связь",
   "settingsBackendOnline": "Backend доступен.",
   "settingsBackendOffline": "Не удалось подключиться к backend. Проверьте URL и сеть.",
-  "settingsBackendNote": "Для эмулятора: http://10.0.2.2:3000.\nДля реального устройства: http://ВАШ-IP:3000.",
+  "settingsBackendNote": "Для эмулятора: http://10.0.2.2:3000.\nДля телефона: http://ВАШ-IP:3000 (ПК и телефон в одной Wi‑Fi).\n\nВ РФ Instagram заблокирован: VPN на телефоне не помогает resolve — включите VPN и на ПК, где запущен backend (npm start).",
   "settingsSectionData": "Данные",
   "settingsClearHistory": "Очистить историю",
   "settingsClearHistorySubtitle": "Удалить все записи. Файлы останутся.",

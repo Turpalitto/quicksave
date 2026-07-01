@@ -1,3 +1,4 @@
+import '../../../core/utils/media_path.dart';
 import '../../../services/storage_service.dart';
 import '../domain/download_item.dart';
 import '../domain/media_collection.dart';
@@ -10,7 +11,14 @@ class HistoryRepository {
 
   static const recentWindow = Duration(days: 7);
 
-  Future<List<DownloadItem>> getAll() => StorageService.instance.loadHistory();
+  Future<List<DownloadItem>> getAll() async {
+    final items = await StorageService.instance.loadHistory();
+    final repaired = await repairLegacyGalleryPaths(items);
+    if (repaired != items) {
+      await save(repaired);
+    }
+    return repaired;
+  }
 
   Future<List<MediaCollection>> getCollections() =>
       StorageService.instance.loadCollections();

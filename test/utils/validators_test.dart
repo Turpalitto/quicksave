@@ -151,15 +151,15 @@ void main() {
         isFalse,
       );
     });
-    test('accepts public profile URL', () {
+    test('rejects public profile URL', () {
       expect(
         Validators.isValidInstagramUrl('https://www.instagram.com/natgeo'),
-        isTrue,
+        isFalse,
       );
     });
 
-    test('accepts @username shorthand', () {
-      expect(Validators.prepareUrl('@natgeo'), 'https://instagram.com/natgeo');
+    test('rejects @username shorthand', () {
+      expect(Validators.prepareUrl('@natgeo'), isNull);
     });
 
     test('rejects empty string', () {

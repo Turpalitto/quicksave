@@ -15,6 +15,9 @@ import '../../../history/presentation/screens/history_screen.dart';
 import '../../../onboarding/presentation/screens/onboarding_screen.dart';
 import '../../../settings/presentation/providers/settings_provider.dart';
 import '../../../settings/presentation/screens/settings_screen.dart';
+import '../widgets/pending_downloads_section.dart';
+import '../../../../services/pending_download_service.dart';
+import '../../../downloader/presentation/providers/pending_download_provider.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -69,6 +72,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       _checkClipboard();
+      _processPendingQueue();
+    }
+  }
+
+  Future<void> _processPendingQueue() async {
+    await ref.read(pendingDownloadsProvider.notifier).refresh();
+    final pending = ref.read(pendingDownloadsProvider);
+    if (pending.isEmpty) return;
+    for (final item in pending) {
+      if (item.attempts >= PendingDownloadService.maxAttempts) continue;
+      final ok = await ref
+          .read(downloadProvider.notifier)
+          .retryPendingUrl(item.sourceUrl);
+      if (ok) {
+        await ref
+            .read(pendingDownloadsProvider.notifier)
+            .removeByUrl(item.sourceUrl);
+        if (ref.read(settingsProvider).autoDownload) {
+          await ref
+              .read(downloadProvider.notifier)
+              .download(strings: DownloadStrings.fallback);
+        }
+        break;
+      }
     }
   }
 
@@ -204,6 +231,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 title: s.homeHeroTitle,
                 subtitle: s.homeHeroSubtitle,
               ),
+              const PendingDownloadsSection(),
               const SizedBox(height: 24),
               TextField(
                 controller: _urlController,

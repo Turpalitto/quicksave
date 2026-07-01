@@ -99,8 +99,74 @@ function extractBestFromVideoVersions(html) {
   return bestUrl;
 }
 
+function extractVideoFromJsonScripts(html) {
+  if (!html) return null;
+
+  const scriptRe = /<script[^>]+type=["']application\/json["'][^>]*>([\s\S]*?)<\/script>/gi;
+  let sm;
+  while ((sm = scriptRe.exec(html)) !== null) {
+    try {
+      const j = JSON.parse(sm[1].trim());
+      const videoUrl = findVideoUrlInJson(j);
+      if (videoUrl) {
+        const thumb = findThumbnailInJson(j);
+        return { videoUrl, thumbnailUrl: thumb };
+      }
+      const media =
+        j?.data?.xdt_shortcode_media ||
+        j?.data?.xdt_api__v1__media__shortcode__web_info?.items?.[0] ||
+        j?.graphql?.shortcode_media ||
+        j?.shortcode_media ||
+        null;
+      if (media?.video_url) {
+        return {
+          videoUrl: unescapeJsonString(media.video_url),
+          thumbnailUrl:
+            media.thumbnail_src ||
+            media.display_url ||
+            findThumbnailInJson(media) ||
+            null,
+        };
+      }
+    } catch (_) {}
+  }
+
+  const additionalRe =
+    /window\.__additionalDataLoaded\s*\(\s*[^,]+,\s*(\{[\s\S]*?\})\s*\)\s*;?/g;
+  let am;
+  while ((am = additionalRe.exec(html)) !== null) {
+    try {
+      const j = JSON.parse(am[1]);
+      const media =
+        j?.graphql?.shortcode_media ||
+        j?.items?.[0] ||
+        j?.shortcode_media ||
+        null;
+      if (media) {
+        const videoUrl =
+          media.video_url || findVideoUrlInJson(media);
+        if (videoUrl) {
+          return {
+            videoUrl: unescapeJsonString(videoUrl),
+            thumbnailUrl:
+              media.thumbnail_src ||
+              media.display_url ||
+              findThumbnailInJson(media) ||
+              null,
+          };
+        }
+      }
+    } catch (_) {}
+  }
+
+  return null;
+}
+
 function extractVideoFromHtml(html) {
   if (!html) return null;
+
+  const fromScripts = extractVideoFromJsonScripts(html);
+  if (fromScripts?.videoUrl) return fromScripts;
 
   const meta = extractMetaTags(html);
   const ogVideo = meta.videoSecure || meta.video || meta.videoUrl;
@@ -160,7 +226,7 @@ function extractVideoFromHtml(html) {
   }
 
   const xdtMatch = html.match(
-    /"xdt_api__v1__media__shortcode__web_info"[\s\S]{0,8000}?"video_versions"\s*:\s*(\[[\s\S]*?\])/,
+    /"xdt_api__v1__media__shortcode__web_info"[\s\S]{0,60000}?"video_versions"\s*:\s*(\[[\s\S]*?\])/,
   );
   if (xdtMatch) {
     try {
@@ -168,6 +234,19 @@ function extractVideoFromHtml(html) {
       const u = pickBestVideoUrl(versions);
       if (u) return { videoUrl: u, thumbnailUrl: meta.image || null };
     } catch (_) {}
+  } else {
+    const fallbackUrl = extractBestFromVideoVersions(html);
+    if (fallbackUrl) {
+      const thumb =
+        safeMatch(
+          html,
+          /"image_versions2"\s*:\s*\{[^}]*"candidates"\s*:\s*\[\s*\{[^\}]*?"url"\s*:\s*"([^"]+)"/,
+        ) || safeMatch(html, /"image_versions"\s*:\s*\[\s*\{[^\}]*?"url"\s*:\s*"([^"]+)"/);
+      return {
+        videoUrl: fallbackUrl,
+        thumbnailUrl: thumb ? unescapeJsonString(thumb) : meta.image || null,
+      };
+    }
   }
 
   return null;
@@ -274,6 +353,7 @@ module.exports = {
   extractDuration,
   pickBestVideoUrl,
   extractBestFromVideoVersions,
+  extractVideoFromJsonScripts,
   extractVideoFromHtml,
   extractImageFromHtml,
   findVideoUrlInJson,

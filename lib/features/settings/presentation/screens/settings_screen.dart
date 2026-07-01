@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/strings.dart';
 import '../../../../services/app_info_service.dart';
 import '../../../../services/backend_health_service.dart';
@@ -75,17 +76,19 @@ class SettingsScreen extends ConsumerWidget {
             _ProSection(settings: settings, notifier: notifier),
             if (settings.isPro) ...[
               const SizedBox(height: 8),
-              _SchedulerSection(settings: settings, notifier: notifier),
+              if (AppConstants.profileWatchlistEnabled)
+                _SchedulerSection(settings: settings, notifier: notifier),
               _FilenameTemplateSection(settings: settings, notifier: notifier),
               _CloudBackupSection(settings: settings, notifier: notifier),
-              ListTile(
-                title: Text(s.watchlistTitle),
-                subtitle: Text(s.watchlistOpenSubtitle),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const WatchlistScreen()),
+              if (AppConstants.profileWatchlistEnabled)
+                ListTile(
+                  title: Text(s.watchlistTitle),
+                  subtitle: Text(s.watchlistOpenSubtitle),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const WatchlistScreen()),
+                  ),
                 ),
-              ),
             ],
             const SizedBox(height: 16),
             _SectionTitle(text: s.settingsSectionAppearance, scheme: scheme),

@@ -44,7 +44,7 @@ describe('Golden resolver scenarios', () => {
       if (String(url).includes('oembed')) {
         return Promise.resolve({ data: { author_name: 'Dave' } });
       }
-      if (String(url).includes('__a=1')) {
+      if (String(url).includes('/api/v1/media/shortcode/')) {
         return Promise.resolve({ data: {} });
       }
       return Promise.resolve(htmlResponse(carouselHtml));
@@ -108,21 +108,10 @@ describe('Golden resolver scenarios', () => {
     expect(result.items.length).toBeGreaterThanOrEqual(1);
   });
 
-  test('profile — timeline grid extraction', async () => {
-    axios.get.mockImplementation((url) => {
-      const u = String(url);
-      if (u.includes('oembed')) {
-        return Promise.resolve({ data: { author_name: 'natgeo' } });
-      }
-      if (u.includes('web_profile_info')) {
-        return Promise.resolve({ data: { data: { user: null } } });
-      }
-      return Promise.resolve(htmlResponse(PROFILE_GRID_HTML));
-    });
+  test('profile URL returns profile_not_supported', async () => {
     const result = await resolveInstagramUrl('https://www.instagram.com/natgeo/');
-    expect(result.ok).toBe(true);
-    expect(result.type).toBe('profile');
-    expect(result.items.length).toBeGreaterThanOrEqual(2);
+    expect(result.ok).toBe(false);
+    expect(result.error).toBe('profile_not_supported');
   });
 });
 

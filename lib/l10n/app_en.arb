@@ -3,10 +3,10 @@
   "appTitle": "QuickSave",
   "homeHeroTitle": "Save & organize public Instagram media",
   "homeHeroSubtitle": "No login, no cookies — only content you share or paste",
-  "urlFieldHint": "Post, reel, story or @profile",
+  "urlFieldHint": "Link to post, Reel, or story",
   "urlFieldPaste": "Paste",
   "downloadButton": "Download",
-  "homeTip": "Share from Instagram, paste a link, or enter @username to browse a profile grid.",
+  "homeTip": "Share from Instagram → QuickSave, or paste a post / Reel / story link.",
   "homeClipboardDetected": "Instagram link detected in clipboard",
   "homeFooter": "Only public posts \u2022 v{version}",
   "@homeFooter": {
@@ -15,7 +15,7 @@
     }
   },
   "errorEnterUrl": "Enter a link.",
-  "errorInvalidUrl": "The link must point to a public Instagram post, story, highlight, or profile.",
+  "errorInvalidUrl": "Link must point to a public post, Reel, story, or highlight (not a profile).",
   "errorNotRecognized": "Could not recognize the Instagram link.",
   "previewTitle": "Preview",
   "previewResolving": "Fetching video info\u2026",
@@ -105,6 +105,17 @@
   "errorCancelled": "Download cancelled.",
   "errorUnknown": "Unknown error.",
   "errorRetry": "Retry",
+  "pendingDownloadLater": "Download later",
+  "pendingDownloadQueued": "Queued — we'll retry automatically",
+  "pendingDownloadsTitle": "Download queue",
+  "pendingDownloadsSubtitle": "{count, plural, =1{1 link waiting to retry} other{{count} links waiting to retry}}",
+  "@pendingDownloadsSubtitle": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "pendingDownloadsRetryNow": "Retry now",
+  "pendingDownloadsRemove": "Remove",
   "errorOpenFailed": "Could not open: {message}",
   "@errorOpenFailed": {
     "placeholders": {

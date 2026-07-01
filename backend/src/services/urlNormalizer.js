@@ -3,6 +3,9 @@ const { isProfileUrl } = require('./profileExtractor');
 const PUBLIC_PATTERNS = [
   /^https?:\/\/(www\.)?instagram\.com\/(reel|p|tv)\/[A-Za-z0-9_\-]+$/i,
   /^https?:\/\/(www\.)?instagr\.am\/(reel|p|tv)\/[A-Za-z0-9_\-]+$/i,
+  /^https?:\/\/(www\.)?instagram\.com\/share\/reel\/[A-Za-z0-9_\-]+$/i,
+  /^https?:\/\/(www\.)?instagram\.com\/clips\/c\/[A-Za-z0-9_\-]+$/i,
+  /^https?:\/\/(www\.)?instagram\.com\/s\/[A-Za-z0-9_\-]+$/i,
   /^https?:\/\/(www\.)?instagram\.com\/stories\/[^/]+\/\d+$/i,
   /^https?:\/\/(www\.)?instagram\.com\/stories\/highlights\/\d+$/i,
 ];
@@ -29,6 +32,8 @@ function normalizeUrl(url) {
 
   u = u.replace(/instagram\.com\/(?:video\/|share\/)?(reels|reel|p|tv)\//gi, 'instagram.com/$1/');
   u = u.replace(/instagram\.com\/reels\//gi, 'instagram.com/reel/');
+  u = u.replace(/instagram\.com\/share\/reel\//gi, 'instagram.com/reel/');
+  u = u.replace(/instagram\.com\/clips\/c\//gi, 'instagram.com/reel/');
   u = u.replace(/instagr\.am\/(?:video\/|share\/)?(reels|reel|p|tv)\//gi, 'instagr.am/$1/');
   u = u.replace(/instagr\.am\/reels\//gi, 'instagr.am/reel/');
   u = u.replace(/instagram\.com\/stories\/([^/]+)\/(\d+)\/[^/]+/gi, 'instagram.com/stories/$1/$2');
@@ -39,7 +44,7 @@ function normalizeUrl(url) {
 
 function isValidPublicUrl(url) {
   const normalized = normalizeUrl(url);
-  if (isProfileUrl(normalized)) return true;
+  if (isProfileUrl(normalized)) return false;
   return POST_PATTERNS.some((re) => re.test(normalized));
 }
 
@@ -49,8 +54,13 @@ function extractShortcode(url) {
     const id = storyMatch[2] || storyMatch[1];
     return id.replace(/[^A-Za-z0-9_\-]/g, '') || 'story';
   }
-  const m = url.match(/\/(reel|p|tv)\/([A-Za-z0-9_\-]+)/i);
-  return m ? m[2] : url.split('/').filter(Boolean).pop() || 'media';
+  const m = url.match(/\/(reel|p|tv|s)\/([A-Za-z0-9_\-]+)/i);
+  if (m) return m[2];
+  const clipsMatch = url.match(/\/clips\/c\/([A-Za-z0-9_\-]+)/i);
+  if (clipsMatch) return clipsMatch[1];
+  const shareMatch = url.match(/\/share\/reel\/([A-Za-z0-9_\-]+)/i);
+  if (shareMatch) return shareMatch[1];
+  return url.split('/').filter(Boolean).pop() || 'media';
 }
 
 function getUrlKind(url) {
@@ -78,7 +88,7 @@ function buildEmbedUrl(canonicalUrl) {
   const type = typeMatch ? typeMatch[1] : 'reel';
   const shortcode = extractShortcode(canonicalUrl);
   const host = canonicalUrl.includes('instagr.am') ? 'www.instagr.am' : 'www.instagram.com';
-  return `https://${host}/${type}/${shortcode}/embed/captioned/`;
+  return `https://${host}/${type}/${shortcode}/embed/`;
 }
 
 module.exports = {

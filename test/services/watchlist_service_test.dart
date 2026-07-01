@@ -38,6 +38,11 @@ void main() {
       const r = WatchlistCheckResult(errorCode: 'resolve_failed');
       expect(r.ok, isFalse);
     });
+
+    test('not ok when profiles disabled', () {
+      const r = WatchlistCheckResult(errorCode: 'profile_not_supported');
+      expect(r.ok, isFalse);
+    });
   });
 
   group('applyCheckResult', () {

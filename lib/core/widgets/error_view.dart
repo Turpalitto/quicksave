@@ -4,12 +4,16 @@ class ErrorView extends StatelessWidget {
   final String message;
   final VoidCallback? onRetry;
   final String? retryLabel;
+  final VoidCallback? onSecondary;
+  final String? secondaryLabel;
 
   const ErrorView({
     super.key,
     required this.message,
     this.onRetry,
     this.retryLabel,
+    this.onSecondary,
+    this.secondaryLabel,
   });
 
   @override
@@ -34,6 +38,14 @@ class ErrorView extends StatelessWidget {
                 onPressed: onRetry,
                 icon: const Icon(Icons.refresh),
                 label: Text(retryLabel ?? 'Retry'),
+              ),
+            ],
+            if (onSecondary != null) ...[
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                onPressed: onSecondary,
+                icon: const Icon(Icons.schedule),
+                label: Text(secondaryLabel ?? 'Later'),
               ),
             ],
           ],

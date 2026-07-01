@@ -119,7 +119,7 @@ abstract class AppLocalizations {
   /// No description provided for @urlFieldHint.
   ///
   /// In en, this message translates to:
-  /// **'Post, reel, story or @profile'**
+  /// **'Link to post, Reel, or story'**
   String get urlFieldHint;
 
   /// No description provided for @urlFieldPaste.
@@ -137,7 +137,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeTip.
   ///
   /// In en, this message translates to:
-  /// **'Share from Instagram, paste a link, or enter @username to browse a profile grid.'**
+  /// **'Share from Instagram → QuickSave, or paste a post / Reel / story link.'**
   String get homeTip;
 
   /// No description provided for @homeClipboardDetected.
@@ -161,7 +161,7 @@ abstract class AppLocalizations {
   /// No description provided for @errorInvalidUrl.
   ///
   /// In en, this message translates to:
-  /// **'The link must point to a public Instagram post, story, highlight, or profile.'**
+  /// **'Link must point to a public post, Reel, story, or highlight (not a profile).'**
   String get errorInvalidUrl;
 
   /// No description provided for @errorNotRecognized.
@@ -415,6 +415,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retry'**
   String get errorRetry;
+
+  /// No description provided for @pendingDownloadLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Download later'**
+  String get pendingDownloadLater;
+
+  /// No description provided for @pendingDownloadQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'Queued — we\'ll retry automatically'**
+  String get pendingDownloadQueued;
+
+  /// No description provided for @pendingDownloadsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Download queue'**
+  String get pendingDownloadsTitle;
+
+  /// No description provided for @pendingDownloadsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 link waiting to retry} other{{count} links waiting to retry}}'**
+  String pendingDownloadsSubtitle(int count);
+
+  /// No description provided for @pendingDownloadsRetryNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry now'**
+  String get pendingDownloadsRetryNow;
+
+  /// No description provided for @pendingDownloadsRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get pendingDownloadsRemove;
 
   /// No description provided for @errorOpenFailed.
   ///

@@ -12,6 +12,7 @@ import '../../../../services/app_info_service.dart';
 import '../../../../services/gallery_save_service.dart';
 import '../../../../services/download_service.dart';
 import '../../../../services/notification_service.dart';
+import '../../../../services/pending_download_service.dart';
 import '../../../history/data/history_repository.dart';
 import '../../../history/domain/download_item.dart';
 import '../../../history/domain/library_filter.dart';
@@ -20,6 +21,7 @@ import '../../domain/download_stage.dart';
 import '../../../history/presentation/providers/history_provider.dart';
 import '../../../settings/presentation/providers/settings_provider.dart';
 import '../../data/instagram_resolver.dart';
+import '../providers/pending_download_provider.dart';
 import '../../domain/resolve_result.dart';
 
 sealed class DownloadState {
@@ -183,6 +185,11 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
         state = const DownloadIdle();
         return;
       }
+      if (PendingDownloadService.isRetriable(e)) {
+        await ref
+            .read(pendingDownloadsProvider.notifier)
+            .enqueue(url, error: e.message);
+      }
       state = DownloadFailureState(mapExceptionToFailure(e));
     } catch (e) {
       state = DownloadFailureState(UnknownFailure(e.toString()));
@@ -197,6 +204,16 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
     _resolveCancelToken?.cancel('user_cancelled');
     _resolveCancelToken = null;
     state = const DownloadIdle();
+  }
+
+  /// Повторяет resolve для очереди «скачать позже» (вызывается с главного экрана).
+  Future<bool> retryPendingUrl(String url) async {
+    await resolve(url);
+    return state is DownloadResolved;
+  }
+
+  Future<void> enqueuePending(String url, {String? error}) async {
+    await ref.read(pendingDownloadsProvider.notifier).enqueue(url, error: error);
   }
 
   void toggleSelection(String id) {
@@ -397,31 +414,26 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
         );
 
         try {
-          final taskId = DownloadQueue.instance.enqueue(
-            url: item.mediaUrl,
+          final savedPath = await _downloadMediaWithReResolve(
+            media: item,
+            current: current,
+            backendUrl: backendUrl,
             fileName: fileName,
             subfolder: settings.saveInAuthorFolder
                 ? _sanitizeFolderName(current.result.author)
                 : null,
+            onProgress: (progress) {
+              state = DownloadInProgress(
+                completed: i,
+                total: queue.length,
+                currentProgress: progress,
+                currentLabel: fileName,
+                stage: DownloadStage.downloading,
+              );
+            },
           );
 
-          DownloadQueueTask finished = await DownloadQueue.instance.waitForTask(
-            taskId,
-          );
-          while (finished.status == DownloadTaskStatus.running ||
-              finished.status == DownloadTaskStatus.queued) {
-            state = DownloadInProgress(
-              completed: i,
-              total: queue.length,
-              currentProgress: finished.progress,
-              currentLabel: fileName,
-              stage: DownloadStage.downloading,
-            );
-            finished = await DownloadQueue.instance.waitForTask(taskId);
-          }
-
-          if (finished.status != DownloadTaskStatus.completed ||
-              finished.resultPath == null) {
+          if (savedPath == null) {
             failedCount++;
             if (settings.saveHistory) {
               await ref
@@ -445,8 +457,6 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
             continue;
           }
 
-          var savedPath = finished.resultPath!;
-
           state = DownloadInProgress(
             completed: i,
             total: queue.length,
@@ -456,7 +466,7 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
           );
 
           if (settings.saveToGallery) {
-            savedPath = await GallerySaveService.instance.saveToGallery(
+            await GallerySaveService.instance.saveToGallery(
               savedPath,
               isVideo: item.isVideo,
             );
@@ -505,6 +515,8 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
           saved.add(downloadItem);
         } on DownloadCancelledException {
           rethrow;
+        } on UrlExpiredException {
+          rethrow;
         } catch (_) {
           failedCount++;
         }
@@ -549,13 +561,27 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
       if (_lastResolved != null) {
         state = _lastResolved!;
       }
+    } on UrlExpiredException catch (_) {
+      if (saved.isNotEmpty) {
+        state = DownloadSuccess(saved, failedCount: failedCount + 1);
+        return;
+      }
+      const failure = UrlExpiredFailure();
+      state = const DownloadFailureState(UrlExpiredFailure());
+      if (settings.notificationsEnabled) {
+        await NotificationService.instance.showDownloadError(
+          failure.message,
+          title: strings.errorTitle,
+          channelName: strings.channelName,
+          channelDescription: strings.channelDescription,
+        );
+      }
     } on AppException catch (e) {
       if (saved.isNotEmpty || failedCount > 0) {
         if (saved.isNotEmpty) {
           state = DownloadSuccess(saved, failedCount: failedCount);
         } else {
-          final failure = mapExceptionToFailure(e);
-          state = DownloadFailureState(failure);
+          state = DownloadFailureState(mapExceptionToFailure(e));
         }
         return;
       }
@@ -570,6 +596,23 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
         );
       }
     } catch (e) {
+      if (e is UrlExpiredException) {
+        if (saved.isNotEmpty) {
+          state = DownloadSuccess(saved, failedCount: failedCount + 1);
+          return;
+        }
+        const failure = UrlExpiredFailure();
+        state = const DownloadFailureState(UrlExpiredFailure());
+        if (settings.notificationsEnabled) {
+          await NotificationService.instance.showDownloadError(
+            failure.message,
+            title: strings.errorTitle,
+            channelName: strings.channelName,
+            channelDescription: strings.channelDescription,
+          );
+        }
+        return;
+      }
       if (saved.isNotEmpty || failedCount > 0) {
         if (saved.isNotEmpty) {
           state = DownloadSuccess(saved, failedCount: failedCount);
@@ -598,6 +641,148 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
     _lastResolved = null;
     _cancelRequested = false;
     state = const DownloadIdle();
+  }
+
+  /// Скачивает медиа через очередь; при истёкшем CDN URL — один auto re-resolve.
+  Future<String?> _downloadMediaWithReResolve({
+    required MediaItem media,
+    required DownloadResolved current,
+    required String backendUrl,
+    required String fileName,
+    String? subfolder,
+    void Function(double progress)? onProgress,
+  }) async {
+    var activeMedia = media;
+
+    for (var attempt = 0; attempt < 2; attempt++) {
+      try {
+        final path = await _runQueueDownload(
+          url: activeMedia.mediaUrl,
+          fileName: fileName,
+          subfolder: subfolder,
+          onProgress: onProgress,
+        );
+        return path;
+      } on UrlExpiredException {
+        if (attempt == 1) rethrow;
+        activeMedia = await _refreshExpiredMediaUrl(
+          activeMedia,
+          current,
+          backendUrl,
+        );
+        _applyRefreshedMedia(current, activeMedia);
+      }
+    }
+
+    return null;
+  }
+
+  Future<String?> _runQueueDownload({
+    required String url,
+    required String fileName,
+    String? subfolder,
+    void Function(double progress)? onProgress,
+  }) async {
+    final taskId = DownloadQueue.instance.enqueue(
+      url: url,
+      fileName: fileName,
+      subfolder: subfolder,
+    );
+
+    DownloadQueueTask finished = await DownloadQueue.instance.waitForTask(
+      taskId,
+    );
+    while (finished.status == DownloadTaskStatus.running ||
+        finished.status == DownloadTaskStatus.queued) {
+      onProgress?.call(finished.progress);
+      finished = await DownloadQueue.instance.waitForTask(taskId);
+    }
+
+    if (finished.status == DownloadTaskStatus.completed &&
+        finished.resultPath != null) {
+      return finished.resultPath;
+    }
+    if (finished.status == DownloadTaskStatus.failed &&
+        finished.errorMessage == DownloadQueue.urlExpiredError) {
+      throw const UrlExpiredException();
+    }
+    return null;
+  }
+
+  Future<MediaItem> _refreshExpiredMediaUrl(
+    MediaItem item,
+    DownloadResolved current,
+    String backendUrl,
+  ) async {
+    final target = item.postUrl ?? current.sourceUrl;
+    final resolved = await InstagramResolver.instance.resolve(
+      instagramUrl: target,
+      backendUrl: backendUrl,
+    );
+
+    MediaItem? fresh;
+    for (final m in resolved.items) {
+      if (m.id == item.id) {
+        fresh = m;
+        break;
+      }
+    }
+    if (fresh == null) {
+      for (final m in resolved.items) {
+        if (m.index == item.index && m.isVideo == item.isVideo) {
+          fresh = m;
+          break;
+        }
+      }
+    }
+    if (fresh == null && item.isVideo) {
+      fresh = resolved.firstVideo;
+    }
+    if (fresh == null) {
+      for (final m in resolved.items) {
+        if (m.mediaUrl.isNotEmpty) {
+          fresh = m;
+          break;
+        }
+      }
+    }
+
+    if (fresh == null || fresh.mediaUrl.isEmpty) {
+      throw const ResolverException();
+    }
+
+    return item.copyWith(
+      mediaUrl: fresh.mediaUrl,
+      fileName: fresh.fileName.isNotEmpty ? fresh.fileName : item.fileName,
+      thumbnailUrl: fresh.thumbnailUrl ?? item.thumbnailUrl,
+      needsResolve: false,
+    );
+  }
+
+  void _applyRefreshedMedia(DownloadResolved current, MediaItem refreshed) {
+    final items = current.result.items
+        .map((m) => m.id == refreshed.id ? refreshed : m)
+        .toList();
+    _setResolved(
+      DownloadResolved(
+        result: ResolveResult(
+          type: current.result.type,
+          sourceUrl: current.result.sourceUrl,
+          items: items,
+          author: current.result.author,
+          shortcode: current.result.shortcode,
+          videoCount: current.result.videoCount,
+          imageCount: current.result.imageCount,
+          userId: current.result.userId,
+          nextCursor: current.result.nextCursor,
+          hasMore: current.result.hasMore,
+          caption: current.result.caption,
+          postDate: current.result.postDate,
+        ),
+        sourceUrl: current.sourceUrl,
+        selectedIds: current.selectedIds,
+      ),
+    );
   }
 
   /// Резолвит элемент профиля; для карусели возвращает все слайды.

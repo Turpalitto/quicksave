@@ -18,7 +18,16 @@ class BackendUnreachableException extends AppException {
   const BackendUnreachableException()
     : super(
         'Сервер QuickSave недоступен. '
-        'Подождите до минуты (cold start) или проверьте Настройки → Backend.',
+        'Подождите до минуту (cold start) или проверьте Настройки → Backend.',
+      );
+}
+
+/// Ссылка на профиль Instagram (не поддерживается).
+class ProfileNotSupportedException extends AppException {
+  const ProfileNotSupportedException()
+    : super(
+        'Ссылки на профиль не поддерживаются. '
+        'Откройте конкретный Reel или пост и поделитесь им.',
       );
 }
 
@@ -75,6 +84,17 @@ class FileWriteException extends AppException {
 /// Отмена пользователем.
 class DownloadCancelledException extends AppException {
   const DownloadCancelledException() : super('Скачивание отменено.');
+}
+
+/// CDN-ссылка Instagram истекла — нужен повторный resolve.
+class UrlExpiredException implements Exception {
+  final String message;
+  const UrlExpiredException({
+    this.message = 'CDN URL expired, please re-resolve',
+  });
+
+  @override
+  String toString() => message;
 }
 
 /// Неизвестная ошибка.

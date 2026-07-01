@@ -28,7 +28,17 @@ app.use(
 );
 
 const corsOptions = {
-  origin: NODE_ENV === 'development' ? true : false,
+  origin:
+    NODE_ENV === 'development'
+      ? true
+      : (() => {
+          const raw = process.env.ALLOWED_ORIGINS || '';
+          const list = raw
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean);
+          return list.length === 0 ? true : list;
+        })(),
 };
 app.use(cors(corsOptions));
 

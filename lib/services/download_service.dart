@@ -26,12 +26,25 @@ class DownloadService {
       connectTimeout: const Duration(seconds: 20),
       receiveTimeout: const Duration(minutes: 5),
       followRedirects: true,
-      validateStatus: (s) => s != null && s < 500,
+      validateStatus: (s) => s != null && s >= 200 && s < 300,
     ),
   );
 
   CancelToken? _activeToken;
   final Map<String, CancelToken> _taskTokens = {};
+
+  bool _isCdnUrlExpired(String url) {
+    try {
+      final oe = Uri.parse(url).queryParameters['oe'];
+      if (oe == null || oe.isEmpty) return false;
+      final expiry = int.tryParse(oe, radix: 16);
+      if (expiry == null) return false;
+      final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+      return now >= expiry;
+    } catch (_) {
+      return false;
+    }
+  }
 
   /// Скачивает файл по [url]. Возвращает путь к сохранённому файлу.
   ///
@@ -46,6 +59,10 @@ class DownloadService {
   }) async {
     if (url.isEmpty) {
       throw const InvalidUrlException();
+    }
+
+    if (_isCdnUrlExpired(url)) {
+      throw const UrlExpiredException();
     }
 
     final dir = await _resolveDownloadDir(subfolder: subfolder);
@@ -71,6 +88,9 @@ class DownloadService {
     // Попытка возобновить.
     int existingBytes = 0;
     if (resume && File(part).existsSync()) {
+      if (_isCdnUrlExpired(url)) {
+        throw const UrlExpiredException();
+      }
       existingBytes = await File(part).length();
     }
 
@@ -151,6 +171,9 @@ class DownloadService {
               resume: false,
             );
           }
+          if (e.response?.statusCode == 403 && _isCdnUrlExpired(url)) {
+            throw const UrlExpiredException();
+          }
           throw const ServerException();
         }
         throw UnknownException(e.message);
@@ -222,6 +245,9 @@ class DownloadService {
       } catch (_) {}
     }
   }
+
+  Future<Directory> quickSaveDirectory({String? subfolder}) =>
+      _resolveDownloadDir(subfolder: subfolder);
 
   // ---------------- helpers ----------------
 

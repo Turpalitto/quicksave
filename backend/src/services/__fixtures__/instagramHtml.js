@@ -102,7 +102,7 @@ const LOGIN_WALL = `<!DOCTYPE html>
 /** Пустой HTML (нестандартный ответ). */
 const EMPTY_HTML = '';
 
-/** GraphQL JSON-ответ для fallback (имитация ?__a=1&__d=dis). */
+/** GraphQL JSON-ответ для fallback (имитация /api/v1/media/shortcode/). */
 const GRAPHQL_JSON = JSON.stringify({
   items: [
     {
