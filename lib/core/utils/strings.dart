@@ -713,6 +713,119 @@ class Strings {
 
   // ===== Share =====
   String get shareText => _s((l) => l.shareText, 'Видео из QuickSave');
+
+  // ===== iOS shell =====
+  String get tabHome => _s((l) => l.tabHome, 'Главная');
+  String get homeOnline => _s((l) => l.homeOnline, 'онлайн');
+  String get homeFindMedia => _s((l) => l.homeFindMedia, 'Найти медиа');
+  String get homeExamples => _s((l) => l.homeExamples, 'Примеры:');
+  String get homeInputFooter => _s(
+    (l) => l.homeInputFooter,
+    'Вставьте ссылку на пост, Reels, историю или профиль Instagram.',
+  );
+  String get homeHowItWorks => _s((l) => l.homeHowItWorks, 'Как это работает');
+  String get homeHowStep1Title =>
+      _s((l) => l.homeHowStep1Title, 'Скопируйте ссылку в Instagram');
+  String get homeHowStep1Sub =>
+      _s((l) => l.homeHowStep1Sub, 'Поделиться → Копировать ссылку');
+  String get homeHowStep2Title => _s((l) => l.homeHowStep2Title, 'Вставьте её сюда');
+  String get homeHowStep2Sub =>
+      _s((l) => l.homeHowStep2Sub, 'Или введите @username профиля');
+  String get homeHowStep3Title =>
+      _s((l) => l.homeHowStep3Title, 'Скачайте одним нажатием');
+  String get homeHowStep3Sub =>
+      _s((l) => l.homeHowStep3Sub, 'Карусели сохраняются целиком');
+  String get homeHowFooter => _s(
+    (l) => l.homeHowFooter,
+    'Работает только с публичным контентом. Без входа в аккаунт.',
+  );
+  String get libraryTitle => _s((l) => l.libraryTitle, 'Библиотека');
+  String get libraryFilterAll => _s((l) => l.libraryFilterAll, 'Все');
+  String get libraryFilterPosts => _s((l) => l.libraryFilterPosts, 'Посты');
+  String get libraryFilterReels => _s((l) => l.libraryFilterReels, 'Reels');
+  String get libraryFilterStories => _s((l) => l.libraryFilterStories, 'Истории');
+  String get libraryEdit => _s((l) => l.libraryEdit, 'Править');
+  String get libraryDone => _s((l) => l.libraryDone, 'Готово');
+  String libraryStats(int count, int files) =>
+      _s((l) => l.libraryStats(count, files), '$count сохранений · $files файлов');
+  String get libraryEmptyTitle => _s((l) => l.libraryEmptyTitle, 'Нет сохранений');
+  String get libraryEmptySubtitle => _s(
+    (l) => l.libraryEmptySubtitle,
+    'Сохранённые фото и видео появятся здесь.',
+  );
+  String get libraryFooter =>
+      _s((l) => l.libraryFooter, 'Файлы хранятся в папке приложения и Галерее.');
+  String get libraryFooterEdit => _s(
+    (l) => l.libraryFooterEdit,
+    'Файлы хранятся в папке приложения. Нажмите − чтобы удалить.',
+  );
+  String get watchlistAddPlaceholder =>
+      _s((l) => l.watchlistAddPlaceholder, 'username');
+  String get watchlistEmptyTitle => _s((l) => l.watchlistEmptyTitle, 'Список пуст');
+  String get watchlistEmptySubtitle => _s(
+    (l) => l.watchlistEmptySubtitle,
+    'Отслеживаемые профили появятся здесь.',
+  );
+  String watchlistTracking(int count) =>
+      _s((l) => l.watchlistTracking(count), 'Отслеживаются · $count');
+  String get watchlistNoNewPosts =>
+      _s((l) => l.watchlistNoNewPosts, 'Нет новых постов');
+  String watchlistNewPosts(int count) =>
+      _s((l) => l.watchlistNewPosts(count), '$count новых поста');
+  String get watchlistFooter => _s(
+    (l) => l.watchlistFooter,
+    'Уведомление придёт, когда в профиле появятся новые публикации.',
+  );
+  String get settingsProTitle => _s((l) => l.settingsProTitle, 'QuickSave Pro');
+  String get settingsProSubtitle => _s(
+    (l) => l.settingsProSubtitle,
+    'Watchlist, ZIP-экспорт, облачный бэкап',
+  );
+  String get settingsProPrice => _s((l) => l.settingsProPrice, '199 ₽');
+  String get settingsSectionStorage => _s((l) => l.settingsSectionStorage, 'Сохранение');
+  String get settingsStorageFooter => _s(
+    (l) => l.settingsStorageFooter,
+    'Файлы всегда доступны в библиотеке приложения, даже если Галерея выключена.',
+  );
+  String get settingsSectionServer => _s((l) => l.settingsSectionServer, 'Сервер');
+  String get settingsHostedOn => _s((l) => l.settingsHostedOn, 'Вкл.');
+  String get settingsHostedFooter => _s(
+    (l) => l.settingsHostedFooter,
+    'Подключён hosted-сервер — работает без настройки.',
+  );
+  String get settingsSectionLanguage => _s((l) => l.settingsSectionLanguage, 'Язык');
+  String get settingsSectionAndroid =>
+      _s((l) => l.settingsSectionAndroid, 'Приложение для Android');
+  String get settingsWaitlistHint => _s(
+    (l) => l.settingsWaitlistHint,
+    'Оставьте e-mail — пришлём ссылку на Google Play, когда выйдет релиз.',
+  );
+  String get settingsWaitlistOk => _s(
+    (l) => l.settingsWaitlistOk,
+    'Готово! Ссылка на приложение придёт на почту.',
+  );
+  String get settingsVersion => _s((l) => l.settingsVersion, 'Версия');
+  String get settingsGithub =>
+      _s((l) => l.settingsGithub, 'Исходный код на GitHub');
+  String get settingsLegalFooter => _s(
+    (l) => l.settingsLegalFooter,
+    'Скачивайте только контент, на который у вас есть права.\n'
+        'QuickSave работает только с публичным контентом.',
+  );
+  String get settingsAdvanced =>
+      _s((l) => l.settingsAdvanced, 'Расширенные настройки');
+  String get examplePost => _s((l) => l.examplePost, 'Пост');
+  String get exampleReels => _s((l) => l.exampleReels, 'Reels');
+  String get exampleProfile => _s((l) => l.exampleProfile, '@natgeo');
+  String get homeSaved => _s((l) => l.homeSaved, 'Сохранено');
+  String get homeGoToLibrary => _s((l) => l.homeGoToLibrary, 'В библиотеку ›');
+  String get homeDownloading => _s((l) => l.homeDownloading, 'Загрузка…');
+  String get homeResumeNote =>
+      _s((l) => l.homeResumeNote, 'Докачка при обрыве соединения');
+  String get libraryOpenHistory =>
+      _s((l) => l.libraryOpenHistory, 'Полная история');
+  String get settingsSectionAppearance =>
+      _s((l) => l.settingsSectionAppearance, 'Оформление');
 }
 
 /// Удобный shortcut: `S.of(context)`.

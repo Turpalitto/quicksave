@@ -1067,4 +1067,197 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get shareText => 'Видео из QuickSave';
+
+  @override
+  String get tabHome => 'Главная';
+
+  @override
+  String get homeOnline => 'онлайн';
+
+  @override
+  String get homeFindMedia => 'Найти медиа';
+
+  @override
+  String get homeExamples => 'Примеры:';
+
+  @override
+  String get homeInputFooter =>
+      'Вставьте ссылку на пост, Reels, историю или профиль Instagram.';
+
+  @override
+  String get homeFound => 'Найдено';
+
+  @override
+  String get homePublic => 'Публичный';
+
+  @override
+  String get homeHowItWorks => 'Как это работает';
+
+  @override
+  String get homeHowStep1Title => 'Скопируйте ссылку в Instagram';
+
+  @override
+  String get homeHowStep1Sub => 'Поделиться → Копировать ссылку';
+
+  @override
+  String get homeHowStep2Title => 'Вставьте её сюда';
+
+  @override
+  String get homeHowStep2Sub => 'Или введите @username профиля';
+
+  @override
+  String get homeHowStep3Title => 'Скачайте одним нажатием';
+
+  @override
+  String get homeHowStep3Sub => 'Карусели сохраняются целиком';
+
+  @override
+  String get homeHowFooter =>
+      'Работает только с публичным контентом. Без входа в аккаунт.';
+
+  @override
+  String get libraryTitle => 'Библиотека';
+
+  @override
+  String get libraryFilterAll => 'Все';
+
+  @override
+  String get libraryFilterPosts => 'Посты';
+
+  @override
+  String get libraryFilterReels => 'Reels';
+
+  @override
+  String get libraryFilterStories => 'Истории';
+
+  @override
+  String get libraryEdit => 'Править';
+
+  @override
+  String get libraryDone => 'Готово';
+
+  @override
+  String libraryStats(int count, int files) => '$count сохранений · $files файлов';
+
+  @override
+  String get libraryEmptyTitle => 'Нет сохранений';
+
+  @override
+  String get libraryEmptySubtitle =>
+      'Сохранённые фото и видео появятся здесь.';
+
+  @override
+  String get libraryFooter =>
+      'Файлы хранятся в папке приложения и Галерее.';
+
+  @override
+  String get libraryFooterEdit =>
+      'Файлы хранятся в папке приложения. Нажмите − чтобы удалить.';
+
+  @override
+  String get watchlistAddPlaceholder => 'username';
+
+  @override
+  String get watchlistEmptyTitle => 'Список пуст';
+
+  @override
+  String get watchlistEmptySubtitle =>
+      'Отслеживаемые профили появятся здесь.';
+
+  @override
+  String watchlistTracking(int count) => 'Отслеживаются · $count';
+
+  @override
+  String get watchlistNoNewPosts => 'Нет новых постов';
+
+  @override
+  String watchlistNewPosts(int count) => '$count новых поста';
+
+  @override
+  String get watchlistFooter =>
+      'Уведомление придёт, когда в профиле появятся новые публикации.';
+
+  @override
+  String get settingsProTitle => 'QuickSave Pro';
+
+  @override
+  String get settingsProSubtitle =>
+      'Watchlist, ZIP-экспорт, облачный бэкап';
+
+  @override
+  String get settingsProPrice => '199 ₽';
+
+  @override
+  String get settingsSectionStorage => 'Сохранение';
+
+  @override
+  String get settingsStorageFooter =>
+      'Файлы всегда доступны в библиотеке приложения, даже если Галерея выключена.';
+
+  @override
+  String get settingsSectionServer => 'Сервер';
+
+  @override
+  String get settingsHostedOn => 'Вкл.';
+
+  @override
+  String get settingsHostedFooter =>
+      'Подключён hosted-сервер — работает без настройки.';
+
+  @override
+  String get settingsSectionLanguage => 'Язык';
+
+  @override
+  String get settingsSectionAndroid => 'Приложение для Android';
+
+  @override
+  String get settingsWaitlistHint =>
+      'Оставьте e-mail — пришлём ссылку на Google Play, когда выйдет релиз.';
+
+  @override
+  String get settingsWaitlistOk =>
+      'Готово! Ссылка на приложение придёт на почту.';
+
+  @override
+  String get settingsWaitlistError => 'Ошибка';
+
+  @override
+  String get settingsVersion => 'Версия';
+
+  @override
+  String get settingsGithub => 'Исходный код на GitHub';
+
+  @override
+  String get settingsLegalFooter =>
+      'Скачивайте только контент, на который у вас есть права.\nQuickSave работает только с публичным контентом.';
+
+  @override
+  String get settingsAdvanced => 'Расширенные настройки';
+
+  @override
+  String get examplePost => 'Пост';
+
+  @override
+  String get exampleReels => 'Reels';
+
+  @override
+  String get exampleProfile => '@natgeo';
+
+  @override
+  String get homeSaved => 'Сохранено';
+
+  @override
+  String get homeGoToLibrary => 'В библиотеку ›';
+
+  @override
+  String get homeDownloading => 'Загрузка…';
+
+  @override
+  String get homeResumeNote => 'Докачка при обрыве соединения';
+
+  @override
+  String get libraryOpenHistory => 'Полная история';
+
+  @override
+  String get settingsSectionAppearance => 'Оформление';
 }

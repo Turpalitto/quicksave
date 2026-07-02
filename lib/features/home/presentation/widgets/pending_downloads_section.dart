@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/theme/ios_tokens.dart';
 import '../../../../core/utils/strings.dart';
+import '../../../../core/widgets/ios/ios_button.dart';
+import '../../../../core/widgets/ios/ios_card.dart';
 import '../../../downloader/domain/pending_download.dart';
 import '../../../downloader/presentation/providers/download_provider.dart';
 import '../../../downloader/presentation/providers/pending_download_provider.dart';
@@ -17,77 +20,46 @@ class PendingDownloadsSection extends ConsumerWidget {
     if (pending.isEmpty) return const SizedBox.shrink();
 
     final s = S.of(context);
-    final scheme = Theme.of(context).colorScheme;
 
-    final tiles = <Widget>[
-      Row(
+    return IosCard(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Icon(Icons.schedule, color: scheme.primary),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              s.pendingDownloadsTitle,
-              style: Theme.of(context).textTheme.titleSmall,
+          Row(
+            children: [
+              const Icon(Icons.schedule, color: IosTokens.orange, size: 18),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(s.pendingDownloadsTitle, style: IosTokens.subhead),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(s.pendingDownloadsSubtitle(pending.length), style: IosTokens.footnote),
+          const SizedBox(height: 8),
+          for (final item in pending.take(3)) ...[
+            _PendingRow(
+              item: item,
+              onRemove: () =>
+                  ref.read(pendingDownloadsProvider.notifier).remove(item.id),
+              onTap: () => _openRetry(context, ref, item.sourceUrl),
+            ),
+          ],
+          if (pending.length > 3)
+            Text('+${pending.length - 3}', style: IosTokens.footnote),
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.centerRight,
+            child: IosPressable(
+              onTap: () => _retryAll(ref, pending),
+              child: Text(
+                s.pendingDownloadsRetryNow,
+                style: IosTokens.subhead.copyWith(color: IosTokens.blue),
+              ),
             ),
           ),
         ],
-      ),
-      const SizedBox(height: 4),
-      Text(
-        s.pendingDownloadsSubtitle(pending.length),
-        style: Theme.of(context).textTheme.bodySmall,
-      ),
-      const SizedBox(height: 8),
-    ];
-
-    for (final item in pending.take(3)) {
-      final short = item.sourceUrl.length > 48
-          ? '${item.sourceUrl.substring(0, 48)}…'
-          : item.sourceUrl;
-      tiles.add(
-        ListTile(
-          dense: true,
-          contentPadding: EdgeInsets.zero,
-          title: Text(short, maxLines: 1, overflow: TextOverflow.ellipsis),
-          trailing: IconButton(
-            tooltip: s.pendingDownloadsRemove,
-            icon: const Icon(Icons.close, size: 20),
-            onPressed: () =>
-                ref.read(pendingDownloadsProvider.notifier).remove(item.id),
-          ),
-          onTap: () => _openRetry(context, ref, item.sourceUrl),
-        ),
-      );
-    }
-
-    if (pending.length > 3) {
-      tiles.add(
-        Text(
-          '+${pending.length - 3}',
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
-      );
-    }
-
-    tiles.add(
-      Align(
-        alignment: Alignment.centerRight,
-        child: TextButton.icon(
-          onPressed: () => _retryAll(ref, pending),
-          icon: const Icon(Icons.refresh),
-          label: Text(s.pendingDownloadsRetryNow),
-        ),
-      ),
-    );
-
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: tiles,
-        ),
       ),
     );
   }
@@ -115,5 +87,49 @@ class PendingDownloadsSection extends ConsumerWidget {
             .removeByUrl(item.sourceUrl);
       }
     }
+  }
+}
+
+class _PendingRow extends StatelessWidget {
+  const _PendingRow({
+    required this.item,
+    required this.onRemove,
+    required this.onTap,
+  });
+
+  final PendingDownload item;
+  final VoidCallback onRemove;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    final short = item.sourceUrl.length > 48
+        ? '${item.sourceUrl.substring(0, 48)}…'
+        : item.sourceUrl;
+
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                short,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: IosTokens.footnote,
+              ),
+            ),
+            IconButton(
+              tooltip: s.pendingDownloadsRemove,
+              icon: const Icon(Icons.close, size: 18, color: IosTokens.label3),
+              onPressed: onRemove,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

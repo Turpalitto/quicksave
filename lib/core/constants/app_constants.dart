@@ -4,8 +4,8 @@ class AppConstants {
 
   static const String appName = 'QuickSave';
 
-  /// Profile watchlist (Pro) — off while backend returns profile_not_supported.
-  static const bool profileWatchlistEnabled = false;
+  /// Profile watchlist UI (checks may fail if backend lacks profile support).
+  static const bool profileWatchlistEnabled = true;
 
   /// Публичный hosted resolver (zero-config).
   /// После деплоя backend замените на ваш production URL.

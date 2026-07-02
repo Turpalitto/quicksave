@@ -9,6 +9,9 @@ enum AppThemeMode { system, light, dark }
 
 enum BackendMode { hosted, selfHosted }
 
+/// User-facing locale override (`system` follows device).
+enum AppLocale { system, ru, en }
+
 /// Настройки приложения.
 class AppSettings {
   final bool autoDownload;
@@ -21,6 +24,7 @@ class AppSettings {
   final bool isPro;
   final BackendMode backendMode;
   final AppThemeMode themeMode;
+  final AppLocale locale;
   final String backendUrl;
   final List<ScheduledProfile> scheduledProfiles;
   final FilenameTemplatePreset filenameTemplatePreset;
@@ -38,6 +42,7 @@ class AppSettings {
     this.isPro = false,
     this.backendMode = BackendMode.hosted,
     this.themeMode = AppThemeMode.system,
+    this.locale = AppLocale.system,
     this.backendUrl = AppConstants.defaultSelfHostedBackendUrl,
     this.scheduledProfiles = const [],
     this.filenameTemplatePreset = FilenameTemplatePreset.defaultTemplate,
@@ -68,6 +73,12 @@ class AppSettings {
     }
   }
 
+  Locale? get materialLocale => switch (locale) {
+    AppLocale.system => null,
+    AppLocale.ru => const Locale('ru'),
+    AppLocale.en => const Locale('en'),
+  };
+
   AppSettings copyWith({
     bool? autoDownload,
     bool? notificationsEnabled,
@@ -79,6 +90,7 @@ class AppSettings {
     bool? isPro,
     BackendMode? backendMode,
     AppThemeMode? themeMode,
+    AppLocale? locale,
     String? backendUrl,
     List<ScheduledProfile>? scheduledProfiles,
     FilenameTemplatePreset? filenameTemplatePreset,
@@ -95,6 +107,7 @@ class AppSettings {
     isPro: isPro ?? this.isPro,
     backendMode: backendMode ?? this.backendMode,
     themeMode: themeMode ?? this.themeMode,
+    locale: locale ?? this.locale,
     backendUrl: backendUrl ?? this.backendUrl,
     scheduledProfiles: scheduledProfiles ?? this.scheduledProfiles,
     filenameTemplatePreset:
@@ -115,6 +128,7 @@ class AppSettings {
     'isPro': isPro,
     'backendMode': backendMode.name,
     'themeMode': themeMode.name,
+    'locale': locale.name,
     'backendUrl': backendUrl,
     'scheduledProfiles': scheduledProfiles.map((p) => p.toJson()).toList(),
     'filenameTemplatePreset': filenameTemplatePreset.name,
@@ -141,6 +155,7 @@ class AppSettings {
           ? BackendMode.selfHosted
           : BackendMode.hosted,
       themeMode: _parseTheme(themeStr),
+      locale: _parseLocale(json['locale'] as String?),
       backendUrl:
           json['backendUrl'] as String? ??
           AppConstants.defaultSelfHostedBackendUrl,
@@ -182,6 +197,17 @@ class AppSettings {
         return AppThemeMode.dark;
       default:
         return AppThemeMode.system;
+    }
+  }
+
+  static AppLocale _parseLocale(String? v) {
+    switch (v) {
+      case 'ru':
+        return AppLocale.ru;
+      case 'en':
+        return AppLocale.en;
+      default:
+        return AppLocale.system;
     }
   }
 }

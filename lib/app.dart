@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'core/platform/platform_support.dart';
 import 'core/theme/app_theme.dart';
-import 'features/home/presentation/screens/home_screen.dart';
-import 'features/web/presentation/screens/web_dashboard_screen.dart';
+import 'features/shell/presentation/screens/app_shell_screen.dart';
 import 'features/settings/presentation/providers/settings_provider.dart';
 import 'l10n/app_localizations.dart';
 
@@ -22,6 +20,7 @@ class QuickSaveApp extends ConsumerWidget {
       themeMode: settings.materialThemeMode,
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
+      locale: settings.materialLocale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       builder: (context, child) {
@@ -40,9 +39,7 @@ class QuickSaveApp extends ConsumerWidget {
           child: child ?? const SizedBox.shrink(),
         );
       },
-      home: PlatformSupport.isWeb
-          ? const WebDashboardScreen()
-          : const HomeScreen(),
+      home: const AppShellScreen(),
     );
   }
 }

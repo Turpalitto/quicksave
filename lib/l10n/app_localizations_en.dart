@@ -1061,4 +1061,197 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get shareText => 'Video from QuickSave';
+
+  @override
+  String get tabHome => 'Home';
+
+  @override
+  String get homeOnline => 'online';
+
+  @override
+  String get homeFindMedia => 'Find media';
+
+  @override
+  String get homeExamples => 'Examples:';
+
+  @override
+  String get homeInputFooter =>
+      'Paste a link to a post, Reels, story, or Instagram profile.';
+
+  @override
+  String get homeFound => 'Found';
+
+  @override
+  String get homePublic => 'Public';
+
+  @override
+  String get homeHowItWorks => 'How it works';
+
+  @override
+  String get homeHowStep1Title => 'Copy a link in Instagram';
+
+  @override
+  String get homeHowStep1Sub => 'Share → Copy link';
+
+  @override
+  String get homeHowStep2Title => 'Paste it here';
+
+  @override
+  String get homeHowStep2Sub => 'Or enter a profile @username';
+
+  @override
+  String get homeHowStep3Title => 'Download with one tap';
+
+  @override
+  String get homeHowStep3Sub => 'Carousels are saved in full';
+
+  @override
+  String get homeHowFooter =>
+      'Works only with public content. No account login required.';
+
+  @override
+  String get libraryTitle => 'Library';
+
+  @override
+  String get libraryFilterAll => 'All';
+
+  @override
+  String get libraryFilterPosts => 'Posts';
+
+  @override
+  String get libraryFilterReels => 'Reels';
+
+  @override
+  String get libraryFilterStories => 'Stories';
+
+  @override
+  String get libraryEdit => 'Edit';
+
+  @override
+  String get libraryDone => 'Done';
+
+  @override
+  String libraryStats(int count, int files) => '$count saves · $files files';
+
+  @override
+  String get libraryEmptyTitle => 'No saves yet';
+
+  @override
+  String get libraryEmptySubtitle =>
+      'Saved photos and videos will appear here.';
+
+  @override
+  String get libraryFooter =>
+      'Files are stored in the app folder and Gallery.';
+
+  @override
+  String get libraryFooterEdit =>
+      'Files are stored in the app folder. Tap − to delete.';
+
+  @override
+  String get watchlistAddPlaceholder => 'username';
+
+  @override
+  String get watchlistEmptyTitle => 'List is empty';
+
+  @override
+  String get watchlistEmptySubtitle =>
+      'Tracked profiles will appear here.';
+
+  @override
+  String watchlistTracking(int count) => 'Tracking · $count';
+
+  @override
+  String get watchlistNoNewPosts => 'No new posts';
+
+  @override
+  String watchlistNewPosts(int count) => '$count new posts';
+
+  @override
+  String get watchlistFooter =>
+      'You\'ll be notified when new posts appear in a profile.';
+
+  @override
+  String get settingsProTitle => 'QuickSave Pro';
+
+  @override
+  String get settingsProSubtitle =>
+      'Watchlist, ZIP export, cloud backup';
+
+  @override
+  String get settingsProPrice => '199 ₽';
+
+  @override
+  String get settingsSectionStorage => 'Storage';
+
+  @override
+  String get settingsStorageFooter =>
+      'Files are always available in the app library, even when Gallery is off.';
+
+  @override
+  String get settingsSectionServer => 'Server';
+
+  @override
+  String get settingsHostedOn => 'On';
+
+  @override
+  String get settingsHostedFooter =>
+      'Hosted server is connected — works out of the box.';
+
+  @override
+  String get settingsSectionLanguage => 'Language';
+
+  @override
+  String get settingsSectionAndroid => 'Android app';
+
+  @override
+  String get settingsWaitlistHint =>
+      'Leave your email — we\'ll send a Google Play link when we launch.';
+
+  @override
+  String get settingsWaitlistOk =>
+      'Done! App link will arrive by email.';
+
+  @override
+  String get settingsWaitlistError => 'Error';
+
+  @override
+  String get settingsVersion => 'Version';
+
+  @override
+  String get settingsGithub => 'Source code on GitHub';
+
+  @override
+  String get settingsLegalFooter =>
+      'Download only content you have rights to.\nQuickSave works only with public content.';
+
+  @override
+  String get settingsAdvanced => 'Advanced settings';
+
+  @override
+  String get examplePost => 'Post';
+
+  @override
+  String get exampleReels => 'Reels';
+
+  @override
+  String get exampleProfile => '@natgeo';
+
+  @override
+  String get homeSaved => 'Saved';
+
+  @override
+  String get homeGoToLibrary => 'Open library ›';
+
+  @override
+  String get homeDownloading => 'Downloading…';
+
+  @override
+  String get homeResumeNote => 'Resume supported if connection drops';
+
+  @override
+  String get libraryOpenHistory => 'Full history';
+
+  @override
+  String get settingsSectionAppearance => 'Appearance';
 }

@@ -130,10 +130,20 @@ class Validators {
     return result;
   }
 
+  /// Normalizes posts, reels, stories, highlights, and public profile URLs.
   static String? prepareUrl(String raw) {
     final extracted = extractInstagramUrl(raw) ?? raw.trim();
     if (extracted.isEmpty) return null;
     final normalized = normalize(extracted);
-    return isValidInstagramUrl(normalized) ? normalized : null;
+    if (isValidInstagramUrl(normalized)) return normalized;
+    if (isProfileUrl(normalized)) return normalized;
+    return null;
+  }
+
+  static String? profileUsername(String url) {
+    final normalized = normalize(url);
+    if (!isProfileUrl(normalized)) return null;
+    final m = _profileRe.firstMatch(normalized);
+    return m?.group(2);
   }
 }

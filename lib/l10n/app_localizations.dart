@@ -2005,6 +2005,67 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Video from QuickSave'**
   String get shareText;
+
+  String get tabHome;
+  String get homeOnline;
+  String get homeFindMedia;
+  String get homeExamples;
+  String get homeInputFooter;
+  String get homeFound;
+  String get homePublic;
+  String get homeHowItWorks;
+  String get homeHowStep1Title;
+  String get homeHowStep1Sub;
+  String get homeHowStep2Title;
+  String get homeHowStep2Sub;
+  String get homeHowStep3Title;
+  String get homeHowStep3Sub;
+  String get homeHowFooter;
+  String get libraryTitle;
+  String get libraryFilterAll;
+  String get libraryFilterPosts;
+  String get libraryFilterReels;
+  String get libraryFilterStories;
+  String get libraryEdit;
+  String get libraryDone;
+  String libraryStats(int count, int files);
+  String get libraryEmptyTitle;
+  String get libraryEmptySubtitle;
+  String get libraryFooter;
+  String get libraryFooterEdit;
+  String get watchlistAddPlaceholder;
+  String get watchlistEmptyTitle;
+  String get watchlistEmptySubtitle;
+  String watchlistTracking(int count);
+  String get watchlistNoNewPosts;
+  String watchlistNewPosts(int count);
+  String get watchlistFooter;
+  String get settingsProTitle;
+  String get settingsProSubtitle;
+  String get settingsProPrice;
+  String get settingsSectionStorage;
+  String get settingsStorageFooter;
+  String get settingsSectionServer;
+  String get settingsHostedOn;
+  String get settingsHostedFooter;
+  String get settingsSectionLanguage;
+  String get settingsSectionAndroid;
+  String get settingsWaitlistHint;
+  String get settingsWaitlistOk;
+  String get settingsWaitlistError;
+  String get settingsVersion;
+  String get settingsGithub;
+  String get settingsLegalFooter;
+  String get settingsAdvanced;
+  String get examplePost;
+  String get exampleReels;
+  String get exampleProfile;
+  String get homeSaved;
+  String get homeGoToLibrary;
+  String get homeDownloading;
+  String get homeResumeNote;
+  String get libraryOpenHistory;
+  String get settingsSectionAppearance;
 }
 
 class _AppLocalizationsDelegate

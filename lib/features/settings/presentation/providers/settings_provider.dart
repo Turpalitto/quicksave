@@ -61,25 +61,29 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
   Future<void> setThemeMode(AppThemeMode mode) =>
       update(state.copyWith(themeMode: mode));
 
+  Future<void> setLocale(AppLocale locale) =>
+      update(state.copyWith(locale: locale));
+
   Future<void> setBackendUrl(String url) =>
       update(state.copyWith(backendUrl: url));
 
-  Future<void> addScheduledProfile(String raw) async {
-    if (!state.canUseScheduler) return;
+  Future<bool> addScheduledProfile(String raw) async {
     final url = Validators.prepareUrl(raw.trim());
-    if (url == null) return;
-    final username = url.split('/').where((s) => s.isNotEmpty).last;
+    if (url == null) return false;
+    final username = Validators.profileUsername(url) ??
+        url.split('/').where((s) => s.isNotEmpty).last.replaceAll('@', '');
     final profile = ScheduledProfile(
-      username: username.replaceAll('@', ''),
+      username: username,
       profileUrl: url,
     );
     final exists = state.scheduledProfiles.any(
-      (p) => p.username == profile.username,
+      (p) => p.username.toLowerCase() == profile.username.toLowerCase(),
     );
-    if (exists) return;
+    if (exists) return false;
     await update(
       state.copyWith(scheduledProfiles: [...state.scheduledProfiles, profile]),
     );
+    return true;
   }
 
   Future<void> removeScheduledProfile(String username) async {
