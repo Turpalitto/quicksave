@@ -6,7 +6,6 @@ import '../../../../core/utils/strings.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/ios/ios_card.dart';
 import '../../../../core/widgets/ios/ios_section.dart';
-import '../../../downloader/presentation/providers/download_provider.dart';
 import '../../../downloader/presentation/screens/preview_screen.dart';
 import '../../../settings/domain/scheduled_profile.dart';
 import '../../../settings/presentation/providers/settings_provider.dart';

@@ -102,11 +102,7 @@ Failure mapExceptionToFailure(AppException ex) {
   if (ex is NoSpaceException) return const NoSpaceFailure();
   if (ex is FileWriteException) return const FileWriteFailure();
   if (ex is DownloadCancelledException) return const CancelledFailure();
+  if (ex is UrlExpiredException) return const UrlExpiredFailure();
   return UnknownFailure(ex.message);
 }
 
-Failure mapAnyExceptionToFailure(Object ex) {
-  if (ex is UrlExpiredException) return const UrlExpiredFailure();
-  if (ex is AppException) return mapExceptionToFailure(ex);
-  return UnknownFailure(ex.toString());
-}

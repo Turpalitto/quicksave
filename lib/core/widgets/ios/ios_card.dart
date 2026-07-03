@@ -16,37 +16,53 @@ class IosCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = IosPalette.of(context);
     final content = padding != null
         ? Padding(padding: padding!, child: child)
         : child;
 
+    final decoration = BoxDecoration(
+      color: palette.elevated,
+      borderRadius: BorderRadius.circular(12),
+      border: palette.isDark
+          ? null
+          : Border.all(color: palette.separator.withValues(alpha: 0.35)),
+      boxShadow: palette.isDark
+          ? null
+          : [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+    );
+
     if (!separated) {
-      return DecoratedBox(
-        decoration: BoxDecoration(
-          color: IosTokens.elevated,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: content,
-      );
+      return DecoratedBox(decoration: decoration, child: content);
     }
 
     return DecoratedBox(
-      decoration: BoxDecoration(
-        color: IosTokens.elevated,
-        borderRadius: BorderRadius.circular(12),
-      ),
+      decoration: decoration,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
-        child: _IosSeparatorList(child: content),
+        child: _IosSeparatorList(
+          separatorColor: palette.separator,
+          child: content,
+        ),
       ),
     );
   }
 }
 
 class _IosSeparatorList extends StatelessWidget {
-  const _IosSeparatorList({required this.child});
+  const _IosSeparatorList({
+    required this.child,
+    required this.separatorColor,
+  });
 
   final Widget child;
+  final Color separatorColor;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +72,7 @@ class _IosSeparatorList extends StatelessWidget {
     for (var i = 0; i < column.children.length; i++) {
       if (i > 0) {
         children.add(
-          const Divider(height: 0.5, thickness: 0.5, color: IosTokens.separator),
+          Divider(height: 0.5, thickness: 0.5, color: separatorColor),
         );
       }
       children.add(column.children[i]);

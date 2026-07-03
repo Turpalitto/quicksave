@@ -376,19 +376,8 @@ class DownloadQueue {
     _emit();
   }
 
-  Map<String, String> _cdnHeaders(String url) {
-    final lower = url.toLowerCase();
-    if (lower.contains('cdninstagram.com') ||
-        lower.contains('fbcdn.net') ||
-        lower.contains('instagram.com')) {
-      return {
-        'Referer': 'https://www.instagram.com/',
-        'User-Agent':
-            'Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/122.0 Mobile Safari/537.36',
-      };
-    }
-    return const {};
-  }
+  Map<String, String> _cdnHeaders(String url) =>
+      DownloadService.cdnHeaders(url);
 
   Future<DownloadQueueTask> waitForTask(String taskId) async {
     DownloadQueueTask? current;

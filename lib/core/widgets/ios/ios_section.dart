@@ -9,9 +9,10 @@ class IosSectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = IosPalette.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 7),
-      child: Text(text.toUpperCase(), style: IosTokens.sectionHeader),
+      child: Text(text.toUpperCase(), style: palette.sectionHeader),
     );
   }
 }
@@ -24,12 +25,13 @@ class IosSectionFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = IosPalette.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 7, 16, 0),
       child: Text(
         text,
         textAlign: center ? TextAlign.center : TextAlign.start,
-        style: IosTokens.footnote.copyWith(height: 18 / 13),
+        style: palette.footnote.copyWith(height: 18 / 13),
       ),
     );
   }

@@ -1131,7 +1131,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get libraryDone => 'Done';
 
   @override
-  String libraryStats(int count, int files) => '$count saves · $files files';
+  String libraryStats(int count, int files) {
+    return '$count saves · $files files';
+  }
 
   @override
   String get libraryEmptyTitle => 'No saves yet';
@@ -1141,8 +1143,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Saved photos and videos will appear here.';
 
   @override
-  String get libraryFooter =>
-      'Files are stored in the app folder and Gallery.';
+  String get libraryFooter => 'Files are stored in the app folder and Gallery.';
 
   @override
   String get libraryFooterEdit =>
@@ -1155,17 +1156,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get watchlistEmptyTitle => 'List is empty';
 
   @override
-  String get watchlistEmptySubtitle =>
-      'Tracked profiles will appear here.';
+  String get watchlistEmptySubtitle => 'Tracked profiles will appear here.';
 
   @override
-  String watchlistTracking(int count) => 'Tracking · $count';
+  String watchlistTracking(int count) {
+    return 'Tracking · $count';
+  }
 
   @override
   String get watchlistNoNewPosts => 'No new posts';
 
   @override
-  String watchlistNewPosts(int count) => '$count new posts';
+  String watchlistNewPosts(int count) {
+    return '$count new posts';
+  }
 
   @override
   String get watchlistFooter =>
@@ -1175,8 +1179,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsProTitle => 'QuickSave Pro';
 
   @override
-  String get settingsProSubtitle =>
-      'Watchlist, ZIP export, cloud backup';
+  String get settingsProSubtitle => 'Watchlist, ZIP export, cloud backup';
 
   @override
   String get settingsProPrice => '199 ₽';
@@ -1209,8 +1212,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Leave your email — we\'ll send a Google Play link when we launch.';
 
   @override
-  String get settingsWaitlistOk =>
-      'Done! App link will arrive by email.';
+  String get settingsWaitlistOk => 'Done! App link will arrive by email.';
 
   @override
   String get settingsWaitlistError => 'Error';
@@ -1251,7 +1253,4 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get libraryOpenHistory => 'Full history';
-
-  @override
-  String get settingsSectionAppearance => 'Appearance';
 }

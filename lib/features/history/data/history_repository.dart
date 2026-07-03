@@ -30,11 +30,8 @@ class HistoryRepository {
       StorageService.instance.saveCollections(collections);
 
   DownloadItem? findDuplicate(List<DownloadItem> items, DownloadItem item) {
-    try {
-      return items.firstWhere((e) => e.dedupeKey == item.dedupeKey);
-    } catch (_) {
-      return null;
-    }
+    final key = item.dedupeKey;
+    return items.where((e) => e.dedupeKey == key).firstOrNull;
   }
 
   Future<DedupeAddResult> addWithDedupe(DownloadItem item) async {
@@ -205,8 +202,28 @@ class HistoryRepository {
     String collectionId,
     Iterable<String> itemIds,
   ) async {
-    for (final id in itemIds) {
-      await addToCollection(collectionId, id);
-    }
+    final idSet = itemIds.toSet();
+    if (idSet.isEmpty) return;
+
+    // Batch-обновление коллекции.
+    final collections = await getCollections();
+    final updatedCollections = collections.map((c) {
+      if (c.id != collectionId) return c;
+      final newIds = idSet.where((id) => !c.itemIds.contains(id)).toList();
+      if (newIds.isEmpty) return c;
+      return c.copyWith(itemIds: [...c.itemIds, ...newIds]);
+    }).toList();
+    await saveCollections(updatedCollections);
+
+    // Batch-обновление items.
+    final items = await getAll();
+    final updatedItems = items.map((item) {
+      if (!idSet.contains(item.id)) return item;
+      if (item.collectionIds.contains(collectionId)) return item;
+      return item.copyWith(
+        collectionIds: [...item.collectionIds, collectionId],
+      );
+    }).toList();
+    await save(updatedItems);
   }
 }

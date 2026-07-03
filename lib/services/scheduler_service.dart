@@ -27,7 +27,7 @@ class SchedulerService {
       if (err != null) continue;
       final d = p.frequency.interval;
       if (d == null) continue;
-      if (min == null || d > min) min = d;
+      if (min == null || d < min) min = d;
     }
     return min;
   }

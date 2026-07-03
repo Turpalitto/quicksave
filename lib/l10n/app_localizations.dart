@@ -2006,66 +2006,359 @@ abstract class AppLocalizations {
   /// **'Video from QuickSave'**
   String get shareText;
 
+  /// No description provided for @tabHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
   String get tabHome;
+
+  /// No description provided for @homeOnline.
+  ///
+  /// In en, this message translates to:
+  /// **'online'**
   String get homeOnline;
+
+  /// No description provided for @homeFindMedia.
+  ///
+  /// In en, this message translates to:
+  /// **'Find media'**
   String get homeFindMedia;
+
+  /// No description provided for @homeExamples.
+  ///
+  /// In en, this message translates to:
+  /// **'Examples:'**
   String get homeExamples;
+
+  /// No description provided for @homeInputFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste a link to a post, Reels, story, or Instagram profile.'**
   String get homeInputFooter;
+
+  /// No description provided for @homeFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Found'**
   String get homeFound;
+
+  /// No description provided for @homePublic.
+  ///
+  /// In en, this message translates to:
+  /// **'Public'**
   String get homePublic;
+
+  /// No description provided for @homeHowItWorks.
+  ///
+  /// In en, this message translates to:
+  /// **'How it works'**
   String get homeHowItWorks;
+
+  /// No description provided for @homeHowStep1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy a link in Instagram'**
   String get homeHowStep1Title;
+
+  /// No description provided for @homeHowStep1Sub.
+  ///
+  /// In en, this message translates to:
+  /// **'Share → Copy link'**
   String get homeHowStep1Sub;
+
+  /// No description provided for @homeHowStep2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste it here'**
   String get homeHowStep2Title;
+
+  /// No description provided for @homeHowStep2Sub.
+  ///
+  /// In en, this message translates to:
+  /// **'Or enter a profile @username'**
   String get homeHowStep2Sub;
+
+  /// No description provided for @homeHowStep3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Download with one tap'**
   String get homeHowStep3Title;
+
+  /// No description provided for @homeHowStep3Sub.
+  ///
+  /// In en, this message translates to:
+  /// **'Carousels are saved in full'**
   String get homeHowStep3Sub;
+
+  /// No description provided for @homeHowFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Works only with public content. No account login required.'**
   String get homeHowFooter;
+
+  /// No description provided for @libraryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Library'**
   String get libraryTitle;
+
+  /// No description provided for @libraryFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
   String get libraryFilterAll;
+
+  /// No description provided for @libraryFilterPosts.
+  ///
+  /// In en, this message translates to:
+  /// **'Posts'**
   String get libraryFilterPosts;
+
+  /// No description provided for @libraryFilterReels.
+  ///
+  /// In en, this message translates to:
+  /// **'Reels'**
   String get libraryFilterReels;
+
+  /// No description provided for @libraryFilterStories.
+  ///
+  /// In en, this message translates to:
+  /// **'Stories'**
   String get libraryFilterStories;
+
+  /// No description provided for @libraryEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
   String get libraryEdit;
+
+  /// No description provided for @libraryDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
   String get libraryDone;
+
+  /// No description provided for @libraryStats.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} saves · {files} files'**
   String libraryStats(int count, int files);
+
+  /// No description provided for @libraryEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No saves yet'**
   String get libraryEmptyTitle;
+
+  /// No description provided for @libraryEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved photos and videos will appear here.'**
   String get libraryEmptySubtitle;
+
+  /// No description provided for @libraryFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Files are stored in the app folder and Gallery.'**
   String get libraryFooter;
+
+  /// No description provided for @libraryFooterEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Files are stored in the app folder. Tap − to delete.'**
   String get libraryFooterEdit;
+
+  /// No description provided for @watchlistAddPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'username'**
   String get watchlistAddPlaceholder;
+
+  /// No description provided for @watchlistEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'List is empty'**
   String get watchlistEmptyTitle;
+
+  /// No description provided for @watchlistEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracked profiles will appear here.'**
   String get watchlistEmptySubtitle;
+
+  /// No description provided for @watchlistTracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracking · {count}'**
   String watchlistTracking(int count);
+
+  /// No description provided for @watchlistNoNewPosts.
+  ///
+  /// In en, this message translates to:
+  /// **'No new posts'**
   String get watchlistNoNewPosts;
+
+  /// No description provided for @watchlistNewPosts.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} new posts'**
   String watchlistNewPosts(int count);
+
+  /// No description provided for @watchlistFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll be notified when new posts appear in a profile.'**
   String get watchlistFooter;
+
+  /// No description provided for @settingsProTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'QuickSave Pro'**
   String get settingsProTitle;
+
+  /// No description provided for @settingsProSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Watchlist, ZIP export, cloud backup'**
   String get settingsProSubtitle;
+
+  /// No description provided for @settingsProPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'199 ₽'**
   String get settingsProPrice;
+
+  /// No description provided for @settingsSectionStorage.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage'**
   String get settingsSectionStorage;
+
+  /// No description provided for @settingsStorageFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Files are always available in the app library, even when Gallery is off.'**
   String get settingsStorageFooter;
+
+  /// No description provided for @settingsSectionServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Server'**
   String get settingsSectionServer;
+
+  /// No description provided for @settingsHostedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'On'**
   String get settingsHostedOn;
+
+  /// No description provided for @settingsHostedFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Hosted server is connected — works out of the box.'**
   String get settingsHostedFooter;
+
+  /// No description provided for @settingsSectionLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
   String get settingsSectionLanguage;
+
+  /// No description provided for @settingsSectionAndroid.
+  ///
+  /// In en, this message translates to:
+  /// **'Android app'**
   String get settingsSectionAndroid;
+
+  /// No description provided for @settingsWaitlistHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave your email — we\'ll send a Google Play link when we launch.'**
   String get settingsWaitlistHint;
+
+  /// No description provided for @settingsWaitlistOk.
+  ///
+  /// In en, this message translates to:
+  /// **'Done! App link will arrive by email.'**
   String get settingsWaitlistOk;
+
+  /// No description provided for @settingsWaitlistError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
   String get settingsWaitlistError;
+
+  /// No description provided for @settingsVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
   String get settingsVersion;
+
+  /// No description provided for @settingsGithub.
+  ///
+  /// In en, this message translates to:
+  /// **'Source code on GitHub'**
   String get settingsGithub;
+
+  /// No description provided for @settingsLegalFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Download only content you have rights to.\nQuickSave works only with public content.'**
   String get settingsLegalFooter;
+
+  /// No description provided for @settingsAdvanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced settings'**
   String get settingsAdvanced;
+
+  /// No description provided for @examplePost.
+  ///
+  /// In en, this message translates to:
+  /// **'Post'**
   String get examplePost;
+
+  /// No description provided for @exampleReels.
+  ///
+  /// In en, this message translates to:
+  /// **'Reels'**
   String get exampleReels;
+
+  /// No description provided for @exampleProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'@natgeo'**
   String get exampleProfile;
+
+  /// No description provided for @homeSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
   String get homeSaved;
+
+  /// No description provided for @homeGoToLibrary.
+  ///
+  /// In en, this message translates to:
+  /// **'Open library ›'**
   String get homeGoToLibrary;
+
+  /// No description provided for @homeDownloading.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading…'**
   String get homeDownloading;
+
+  /// No description provided for @homeResumeNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume supported if connection drops'**
   String get homeResumeNote;
+
+  /// No description provided for @libraryOpenHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Full history'**
   String get libraryOpenHistory;
-  String get settingsSectionAppearance;
 }
 
 class _AppLocalizationsDelegate

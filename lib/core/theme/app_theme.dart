@@ -53,20 +53,24 @@ class AppTheme {
         titleTextStyle: IosTokens.largeTitle.copyWith(fontSize: 34),
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: IosTokens.blurBar,
+        backgroundColor: isDark ? IosTokens.blurBar : IosTokens.blurBarLight,
         indicatorColor: Colors.transparent,
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           final selected = states.contains(WidgetState.selected);
           return TextStyle(
             fontSize: 10,
             fontWeight: FontWeight.w500,
-            color: selected ? IosTokens.blue : IosTokens.label3,
+            color: selected
+                ? IosTokens.blue
+                : (isDark ? IosTokens.label3 : IosTokens.label3Light),
           );
         }),
         iconTheme: WidgetStateProperty.resolveWith((states) {
           final selected = states.contains(WidgetState.selected);
           return IconThemeData(
-            color: selected ? IosTokens.blue : IosTokens.label3,
+            color: selected
+                ? IosTokens.blue
+                : (isDark ? IosTokens.label3 : IosTokens.label3Light),
             size: 26,
           );
         }),
@@ -82,17 +86,22 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: IosTokens.elevated,
+        fillColor: isDark ? IosTokens.elevated : IosTokens.elevatedLight,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
+          borderSide: isDark
+              ? BorderSide.none
+              : const BorderSide(color: Color(0x1A3C3C43)),
         ),
-        hintStyle: IosTokens.body.copyWith(color: IosTokens.label3),
+        hintStyle: IosTokens.body.copyWith(
+          color: isDark ? IosTokens.label3 : IosTokens.label3Light,
+        ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
       cardTheme: CardThemeData(
-        elevation: 0,
-        color: IosTokens.elevated,
+        elevation: isDark ? 0 : 0.5,
+        shadowColor: isDark ? Colors.transparent : Colors.black26,
+        color: isDark ? IosTokens.elevated : IosTokens.elevatedLight,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: EdgeInsets.zero,
       ),
@@ -103,8 +112,10 @@ class AppTheme {
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        backgroundColor: IosTokens.elevated2,
-        contentTextStyle: IosTokens.subhead,
+        backgroundColor: isDark ? IosTokens.elevated2 : IosTokens.elevatedLight,
+        contentTextStyle: IosTokens.subhead.copyWith(
+          color: isDark ? IosTokens.label : IosTokens.labelLight,
+        ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );

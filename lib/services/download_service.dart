@@ -70,19 +70,26 @@ class DownloadService {
     // Найти имя без коллизий.
     var target = '${dir.path}${Platform.pathSeparator}$fileName';
     var part = '$target.part';
-    var i = 1;
-    while (File(target).existsSync() || File(part).existsSync()) {
-      // Если файл уже полностью скачан — вернуть его.
-      if (File(target).existsSync()) {
-        return target;
+
+    // Если целевой файл уже полностью скачан — вернуть его немедленно.
+    if (File(target).existsSync()) {
+      return target;
+    }
+
+    // Если .part существует — resume ниже использует его (не генерируем суффикс).
+    // Если ни target, ни part нет — имя свободно.
+    // Суффиксы нужны только при коллизии с чужим файлом.
+    if (!File(part).existsSync()) {
+      var i = 1;
+      while (File(target).existsSync() || File(part).existsSync()) {
+        final ext = _extension(fileName);
+        final base = _basename(fileName);
+        final suffix = '_$i';
+        target =
+            '${dir.path}${Platform.pathSeparator}$base$suffix${ext.isEmpty ? '' : '.$ext'}';
+        part = '$target.part';
+        i++;
       }
-      final ext = _extension(fileName);
-      final base = _basename(fileName);
-      final suffix = '_$i';
-      target =
-          '${dir.path}${Platform.pathSeparator}$base$suffix${ext.isEmpty ? '' : '.$ext'}';
-      part = '$target.part';
-      i++;
     }
 
     // Попытка возобновить.
@@ -117,12 +124,7 @@ class DownloadService {
             validateStatus: (s) => s != null && s < 400,
             headers: {
               if (existingBytes > 0) 'Range': 'bytes=$existingBytes-',
-              if (_isInstagramCdn(url)) ...{
-                'Referer': 'https://www.instagram.com/',
-                'User-Agent':
-                    'Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 '
-                    '(KHTML, like Gecko) Chrome/122.0 Mobile Safari/537.36',
-              },
+              ...cdnHeaders(url),
             },
           ),
           onReceiveProgress: (received, total) {
@@ -294,10 +296,23 @@ class DownloadService {
     return i < 0 ? name : name.substring(0, i);
   }
 
-  bool _isInstagramCdn(String url) {
+  /// Общий хелпер CDN headers — используется также из DownloadQueue.
+  static bool isInstagramCdn(String url) {
     final lower = url.toLowerCase();
     return lower.contains('cdninstagram.com') ||
         lower.contains('fbcdn.net') ||
         lower.contains('instagram.com');
+  }
+
+  static const _cdnUserAgent =
+      'Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 '
+      '(KHTML, like Gecko) Chrome/122.0 Mobile Safari/537.36';
+
+  static Map<String, String> cdnHeaders(String url) {
+    if (!isInstagramCdn(url)) return const {};
+    return const {
+      'Referer': 'https://www.instagram.com/',
+      'User-Agent': _cdnUserAgent,
+    };
   }
 }

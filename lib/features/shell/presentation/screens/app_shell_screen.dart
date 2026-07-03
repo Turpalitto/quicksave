@@ -118,7 +118,7 @@ class _AppShellScreenState extends State<AppShellScreen> {
                                               const SizedBox(width: 6),
                                               Text(
                                                 S.of(context).homeOnline,
-                                                style: IosTokens.caption1,
+                                                style: IosPalette.of(context).caption1,
                                               ),
                                             ],
                                           ),
@@ -217,6 +217,7 @@ class _IosTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
+    final palette = IosPalette.of(context);
     final items = <(AppTab, String, IconData, IconData)>[
       (AppTab.home, s.tabHome, Icons.arrow_downward_outlined, Icons.arrow_downward),
       (AppTab.library, s.webNavLibrary, Icons.grid_view_outlined, Icons.grid_view),
@@ -231,9 +232,9 @@ class _IosTabBar extends StatelessWidget {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
         child: DecoratedBox(
-          decoration: const BoxDecoration(
-            color: IosTokens.blurBar,
-            border: Border(top: BorderSide(color: IosTokens.separator, width: 0.5)),
+          decoration: BoxDecoration(
+            color: palette.blurBar,
+            border: Border(top: BorderSide(color: palette.separator, width: 0.5)),
           ),
           child: Padding(
             padding: EdgeInsets.only(
@@ -257,7 +258,7 @@ class _IosTabBar extends StatelessWidget {
                           Icon(
                             active ? item.$4 : item.$3,
                             size: 26,
-                            color: active ? IosTokens.blue : IosTokens.label3,
+                            color: active ? IosTokens.blue : palette.label3,
                           ),
                           const SizedBox(height: 2),
                           Text(
@@ -265,7 +266,7 @@ class _IosTabBar extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w500,
-                              color: active ? IosTokens.blue : IosTokens.label3,
+                              color: active ? IosTokens.blue : palette.label3,
                             ),
                           ),
                         ],

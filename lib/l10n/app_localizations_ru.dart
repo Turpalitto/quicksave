@@ -473,7 +473,7 @@ class AppLocalizationsRu extends AppLocalizations {
       'Добавлять загруженные видео в список истории.';
 
   @override
-  String get settingsSectionAppearance => 'Внешний вид';
+  String get settingsSectionAppearance => 'Оформление';
 
   @override
   String get settingsThemeSystem => 'Системная';
@@ -1137,18 +1137,18 @@ class AppLocalizationsRu extends AppLocalizations {
   String get libraryDone => 'Готово';
 
   @override
-  String libraryStats(int count, int files) => '$count сохранений · $files файлов';
+  String libraryStats(int count, int files) {
+    return '$count сохранений · $files файлов';
+  }
 
   @override
   String get libraryEmptyTitle => 'Нет сохранений';
 
   @override
-  String get libraryEmptySubtitle =>
-      'Сохранённые фото и видео появятся здесь.';
+  String get libraryEmptySubtitle => 'Сохранённые фото и видео появятся здесь.';
 
   @override
-  String get libraryFooter =>
-      'Файлы хранятся в папке приложения и Галерее.';
+  String get libraryFooter => 'Файлы хранятся в папке приложения и Галерее.';
 
   @override
   String get libraryFooterEdit =>
@@ -1161,17 +1161,20 @@ class AppLocalizationsRu extends AppLocalizations {
   String get watchlistEmptyTitle => 'Список пуст';
 
   @override
-  String get watchlistEmptySubtitle =>
-      'Отслеживаемые профили появятся здесь.';
+  String get watchlistEmptySubtitle => 'Отслеживаемые профили появятся здесь.';
 
   @override
-  String watchlistTracking(int count) => 'Отслеживаются · $count';
+  String watchlistTracking(int count) {
+    return 'Отслеживаются · $count';
+  }
 
   @override
   String get watchlistNoNewPosts => 'Нет новых постов';
 
   @override
-  String watchlistNewPosts(int count) => '$count новых поста';
+  String watchlistNewPosts(int count) {
+    return '$count новых поста';
+  }
 
   @override
   String get watchlistFooter =>
@@ -1181,8 +1184,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get settingsProTitle => 'QuickSave Pro';
 
   @override
-  String get settingsProSubtitle =>
-      'Watchlist, ZIP-экспорт, облачный бэкап';
+  String get settingsProSubtitle => 'Watchlist, ZIP-экспорт, облачный бэкап';
 
   @override
   String get settingsProPrice => '199 ₽';
@@ -1257,7 +1259,4 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get libraryOpenHistory => 'Полная история';
-
-  @override
-  String get settingsSectionAppearance => 'Оформление';
 }

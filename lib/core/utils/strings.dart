@@ -651,8 +651,6 @@ class Strings {
       _s((l) => l.semSettingsProActivate, 'Активировать Pro лицензию');
   String get semSettingsSchedulerAdd =>
       _s((l) => l.semSettingsSchedulerAdd, 'Добавить профиль в расписание');
-  String get settingsSectionAppearance =>
-      _s((l) => l.settingsSectionAppearance, 'Внешний вид');
   String get settingsThemeSystem =>
       _s((l) => l.settingsThemeSystem, 'Как в системе');
   String get settingsThemeLight => _s((l) => l.settingsThemeLight, 'Светлая');
@@ -822,6 +820,8 @@ class Strings {
   String get homeDownloading => _s((l) => l.homeDownloading, 'Загрузка…');
   String get homeResumeNote =>
       _s((l) => l.homeResumeNote, 'Докачка при обрыве соединения');
+  String get homeFound => _s((l) => l.homeFound, 'Найдено');
+  String get homePublic => _s((l) => l.homePublic, 'Публичный');
   String get libraryOpenHistory =>
       _s((l) => l.libraryOpenHistory, 'Полная история');
   String get settingsSectionAppearance =>

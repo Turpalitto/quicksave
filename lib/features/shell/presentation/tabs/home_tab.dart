@@ -247,6 +247,7 @@ class _HomeTabState extends ConsumerState<HomeTab> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
+    final p = IosPalette.of(context);
     final dlState = ref.watch(downloadProvider);
     final hasInput = _urlController.text.trim().isNotEmpty;
     final resolving = dlState is DownloadResolving;
@@ -263,19 +264,20 @@ class _HomeTabState extends ConsumerState<HomeTab> with WidgetsBindingObserver {
         IosCard(
           child: Row(
             children: [
-              const Padding(
-                padding: EdgeInsets.only(left: 16),
-                child: Icon(Icons.link, size: 17, color: IosTokens.label3),
+              Padding(
+                padding: const EdgeInsets.only(left: 16),
+                child: Icon(Icons.link, size: 17, color: p.label3),
               ),
               Expanded(
                 child: TextField(
                   controller: _urlController,
-                  style: IosTokens.body,
+                  style: p.body,
                   keyboardType: TextInputType.url,
                   textInputAction: TextInputAction.go,
                   onSubmitted: _submit,
                   decoration: InputDecoration(
                     hintText: s.urlFieldHint,
+                    hintStyle: p.body.copyWith(color: p.label3),
                     border: InputBorder.none,
                     filled: false,
                     contentPadding: const EdgeInsets.symmetric(
@@ -287,7 +289,7 @@ class _HomeTabState extends ConsumerState<HomeTab> with WidgetsBindingObserver {
               ),
               if (hasInput)
                 IconButton(
-                  icon: const Icon(Icons.cancel, size: 17, color: IosTokens.label3),
+                  icon: Icon(Icons.cancel, size: 17, color: p.label3),
                   onPressed: _clearInput,
                 ),
             ],
@@ -306,7 +308,7 @@ class _HomeTabState extends ConsumerState<HomeTab> with WidgetsBindingObserver {
           runSpacing: 8,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            Text(s.homeExamples, style: IosTokens.footnote),
+            Text(s.homeExamples, style: p.footnote),
             for (final ex in _examples)
               IosPressable(
                 onTap: resolving
@@ -318,12 +320,12 @@ class _HomeTabState extends ConsumerState<HomeTab> with WidgetsBindingObserver {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: IosTokens.fill,
+                    color: p.fill,
                     borderRadius: BorderRadius.circular(999),
                   ),
                   child: Text(
                     _exampleLabel(ex.$1, s),
-                    style: IosTokens.footnote.copyWith(
+                    style: p.footnote.copyWith(
                       color: IosTokens.blue,
                       fontWeight: FontWeight.w500,
                     ),
@@ -351,7 +353,7 @@ class _HomeTabState extends ConsumerState<HomeTab> with WidgetsBindingObserver {
                 Expanded(
                   child: Text(
                     _inlineError ?? failure!.failure.message,
-                    style: IosTokens.subhead.copyWith(color: IosTokens.label2),
+                    style: p.subhead.copyWith(color: p.label2),
                   ),
                 ),
               ],
@@ -389,14 +391,14 @@ class _HomeTabState extends ConsumerState<HomeTab> with WidgetsBindingObserver {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(_kindLabel(resolved.result, s), style: IosTokens.headline),
+                            Text(_kindLabel(resolved.result, s), style: p.headline),
                             Text(
                               [
                                 if (resolved.result.author != null)
                                   '@${resolved.result.author}',
                                 '${resolved.result.items.length} медиа',
                               ].join(' · '),
-                              style: IosTokens.footnote,
+                              style: p.footnote,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -469,6 +471,7 @@ class _HomeTabState extends ConsumerState<HomeTab> with WidgetsBindingObserver {
     required DownloadInProgress? inProgress,
     required bool success,
   }) {
+    final p = IosPalette.of(context);
     if (success) {
       return Row(
         children: [
@@ -477,7 +480,7 @@ class _HomeTabState extends ConsumerState<HomeTab> with WidgetsBindingObserver {
           Expanded(
             child: Text(
               s.homeSaved,
-              style: IosTokens.subhead.copyWith(
+              style: p.subhead.copyWith(
                 color: IosTokens.green,
                 fontWeight: FontWeight.w600,
               ),
@@ -487,7 +490,7 @@ class _HomeTabState extends ConsumerState<HomeTab> with WidgetsBindingObserver {
             onTap: widget.onGoToLibrary,
             child: Text(
               s.homeGoToLibrary,
-              style: IosTokens.subhead.copyWith(color: IosTokens.blue),
+              style: p.subhead.copyWith(color: IosTokens.blue),
             ),
           ),
         ],
@@ -502,8 +505,8 @@ class _HomeTabState extends ConsumerState<HomeTab> with WidgetsBindingObserver {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(s.homeDownloading, style: IosTokens.subhead),
-              Text('$pct%', style: IosTokens.subhead.copyWith(color: IosTokens.label2)),
+              Text(s.homeDownloading, style: p.subhead),
+              Text('$pct%', style: p.subhead.copyWith(color: p.label2)),
             ],
           ),
           const SizedBox(height: 10),
@@ -512,12 +515,12 @@ class _HomeTabState extends ConsumerState<HomeTab> with WidgetsBindingObserver {
             child: LinearProgressIndicator(
               value: inProgress.overallProgress,
               minHeight: 4,
-              backgroundColor: IosTokens.fill2,
+              backgroundColor: p.fill2,
               color: IosTokens.blue,
             ),
           ),
           const SizedBox(height: 8),
-          Text(s.homeResumeNote, style: IosTokens.caption1),
+          Text(s.homeResumeNote, style: p.caption1),
         ],
       );
     }
@@ -543,6 +546,7 @@ class _HowStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final p = IosPalette.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
@@ -551,13 +555,13 @@ class _HowStep extends StatelessWidget {
             width: 28,
             height: 28,
             alignment: Alignment.center,
-            decoration: const BoxDecoration(
-              color: IosTokens.fill,
+            decoration: BoxDecoration(
+              color: p.fill,
               shape: BoxShape.circle,
             ),
             child: Text(
               number,
-              style: IosTokens.footnote.copyWith(fontWeight: FontWeight.w600),
+              style: p.footnote.copyWith(fontWeight: FontWeight.w600),
             ),
           ),
           const SizedBox(width: 14),
@@ -565,8 +569,11 @@ class _HowStep extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: IosTokens.subhead.copyWith(fontWeight: FontWeight.w500)),
-                Text(subtitle, style: IosTokens.footnote),
+                Text(
+                  title,
+                  style: p.subhead.copyWith(fontWeight: FontWeight.w500),
+                ),
+                Text(subtitle, style: p.footnote),
               ],
             ),
           ),

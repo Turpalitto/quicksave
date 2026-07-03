@@ -307,20 +307,7 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
       );
     }).toList();
     _setResolved(
-      current.copyWith(
-        result: ResolveResult(
-          type: current.result.type,
-          sourceUrl: current.result.sourceUrl,
-          items: items,
-          author: current.result.author,
-          shortcode: current.result.shortcode,
-          videoCount: current.result.videoCount,
-          imageCount: current.result.imageCount,
-          userId: current.result.userId,
-          nextCursor: current.result.nextCursor,
-          hasMore: current.result.hasMore,
-        ),
-      ),
+      current.copyWith(result: current.result.copyWith(items: items)),
     );
   }
 
@@ -567,7 +554,7 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
         return;
       }
       const failure = UrlExpiredFailure();
-      state = const DownloadFailureState(UrlExpiredFailure());
+      state = const DownloadFailureState(failure);
       if (settings.notificationsEnabled) {
         await NotificationService.instance.showDownloadError(
           failure.message,
@@ -596,23 +583,6 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
         );
       }
     } catch (e) {
-      if (e is UrlExpiredException) {
-        if (saved.isNotEmpty) {
-          state = DownloadSuccess(saved, failedCount: failedCount + 1);
-          return;
-        }
-        const failure = UrlExpiredFailure();
-        state = const DownloadFailureState(UrlExpiredFailure());
-        if (settings.notificationsEnabled) {
-          await NotificationService.instance.showDownloadError(
-            failure.message,
-            title: strings.errorTitle,
-            channelName: strings.channelName,
-            channelDescription: strings.channelDescription,
-          );
-        }
-        return;
-      }
       if (saved.isNotEmpty || failedCount > 0) {
         if (saved.isNotEmpty) {
           state = DownloadSuccess(saved, failedCount: failedCount);
@@ -764,24 +734,7 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
         .map((m) => m.id == refreshed.id ? refreshed : m)
         .toList();
     _setResolved(
-      DownloadResolved(
-        result: ResolveResult(
-          type: current.result.type,
-          sourceUrl: current.result.sourceUrl,
-          items: items,
-          author: current.result.author,
-          shortcode: current.result.shortcode,
-          videoCount: current.result.videoCount,
-          imageCount: current.result.imageCount,
-          userId: current.result.userId,
-          nextCursor: current.result.nextCursor,
-          hasMore: current.result.hasMore,
-          caption: current.result.caption,
-          postDate: current.result.postDate,
-        ),
-        sourceUrl: current.sourceUrl,
-        selectedIds: current.selectedIds,
-      ),
+      current.copyWith(result: current.result.copyWith(items: items)),
     );
   }
 

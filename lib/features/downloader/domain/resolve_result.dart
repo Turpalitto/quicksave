@@ -145,6 +145,33 @@ class ResolveResult {
     this.postDate,
   });
 
+  ResolveResult copyWith({
+    ResolveType? type,
+    List<MediaItem>? items,
+    String? author,
+    String? shortcode,
+    int? videoCount,
+    int? imageCount,
+    String? userId,
+    String? nextCursor,
+    bool? hasMore,
+    String? caption,
+    DateTime? postDate,
+  }) => ResolveResult(
+    type: type ?? this.type,
+    sourceUrl: sourceUrl,
+    items: items ?? this.items,
+    author: author ?? this.author,
+    shortcode: shortcode ?? this.shortcode,
+    videoCount: videoCount ?? this.videoCount,
+    imageCount: imageCount ?? this.imageCount,
+    userId: userId ?? this.userId,
+    nextCursor: nextCursor ?? this.nextCursor,
+    hasMore: hasMore ?? this.hasMore,
+    caption: caption ?? this.caption,
+    postDate: postDate ?? this.postDate,
+  );
+
   bool get isCollection => items.length > 1;
   bool get isProfile => type == ResolveType.profile;
   bool get hasVideos => videoCount > 0;

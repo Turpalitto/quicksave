@@ -1,7 +1,7 @@
 import 'package:share_plus/share_plus.dart';
 
-import '../../features/history/domain/download_item.dart';
-import '../../features/settings/domain/cloud_backup_config.dart';
+import '../features/history/domain/download_item.dart';
+import '../features/settings/domain/cloud_backup_config.dart';
 import 'export/cloud/cloud_backup_adapter.dart';
 import 'export/cloud/cloud_backup_registry.dart';
 import 'export/cloud/cloud_backup_service.dart';

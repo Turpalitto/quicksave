@@ -87,14 +87,9 @@ class DownloadCancelledException extends AppException {
 }
 
 /// CDN-ссылка Instagram истекла — нужен повторный resolve.
-class UrlExpiredException implements Exception {
-  final String message;
-  const UrlExpiredException({
-    this.message = 'CDN URL expired, please re-resolve',
-  });
-
-  @override
-  String toString() => message;
+class UrlExpiredException extends AppException {
+  const UrlExpiredException()
+    : super('CDN-ссылка истекла. Требуется повторный resolve.');
 }
 
 /// Неизвестная ошибка.
