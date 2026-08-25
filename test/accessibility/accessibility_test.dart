@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod/misc.dart' show Override;
 
 import 'package:quicksave/features/downloader/domain/resolve_result.dart';
 import 'package:quicksave/features/downloader/presentation/providers/download_provider.dart';

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
 import '../../../../services/billing/play_billing_service.dart';

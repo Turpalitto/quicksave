@@ -108,7 +108,9 @@ class PostSaveActionsSheet extends ConsumerWidget {
       ).showSnackBar(SnackBar(content: Text(s.errorFileMissing)));
       return;
     }
-    await Share.shareXFiles([XFile(path)], text: s.shareText);
+    await SharePlus.instance.share(
+      ShareParams(files: [XFile(path)], text: s.shareText),
+    );
   }
 
   Future<void> _addToCollection(

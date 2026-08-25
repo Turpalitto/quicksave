@@ -28,7 +28,9 @@ class ExportService {
 
   Future<void> shareZip(List<DownloadItem> items) async {
     final zipPath = await exportToZip(items);
-    await Share.shareXFiles([XFile(zipPath)], text: 'QuickSave export');
+    await SharePlus.instance.share(
+      ShareParams(files: [XFile(zipPath)], text: 'QuickSave export'),
+    );
   }
 
   Future<void> shareMetadata(
@@ -36,7 +38,9 @@ class ExportService {
     ExportFormat format = ExportFormat.json,
   }) async {
     final path = await _metadata.exportItems(items, format: format);
-    await Share.shareXFiles([XFile(path)], text: 'QuickSave metadata');
+    await SharePlus.instance.share(
+      ShareParams(files: [XFile(path)], text: 'QuickSave metadata'),
+    );
   }
 
   /// Exports ZIP and optionally uploads to configured cloud destination.
@@ -47,7 +51,9 @@ class ExportService {
   }) async {
     final zipPath = await exportToZip(items);
     if (shareAfterExport) {
-      await Share.shareXFiles([XFile(zipPath)], text: 'QuickSave export');
+      await SharePlus.instance.share(
+        ShareParams(files: [XFile(zipPath)], text: 'QuickSave export'),
+      );
     }
 
     if (!config.enabled || !config.isConfigured) return null;

@@ -20,7 +20,7 @@ class NotificationService {
         android: AndroidInitializationSettings('@mipmap/ic_launcher'),
       );
 
-      await _plugin.initialize(initSettings);
+      await _plugin.initialize(settings: initSettings);
 
       if (Platform.isAndroid) {
         try {
@@ -66,10 +66,10 @@ class NotificationService {
     );
 
     await _plugin.show(
-      DateTime.now().millisecondsSinceEpoch.remainder(100000),
-      title,
-      body,
-      details,
+      id: DateTime.now().millisecondsSinceEpoch.remainder(100000),
+      title: title,
+      body: body,
+      notificationDetails: details,
       payload: payload,
     );
   }
@@ -82,10 +82,10 @@ class NotificationService {
   }) async {
     if (!_ready) await init();
     await _plugin.show(
-      DateTime.now().millisecondsSinceEpoch.remainder(100000) + 1,
-      title,
-      message,
-      NotificationDetails(
+      id: DateTime.now().millisecondsSinceEpoch.remainder(100000) + 1,
+      title: title,
+      body: message,
+      notificationDetails: NotificationDetails(
         android: AndroidNotificationDetails(
           'downloads',
           channelName,

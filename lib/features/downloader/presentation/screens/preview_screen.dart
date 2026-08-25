@@ -1037,7 +1037,9 @@ class _BatchSuccessView extends StatelessWidget {
       ).showSnackBar(SnackBar(content: Text(s.errorFileMissing)));
       return;
     }
-    await Share.shareXFiles([XFile(path)], text: s.shareText);
+    await SharePlus.instance.share(
+      ShareParams(files: [XFile(path)], text: s.shareText),
+    );
   }
 
   Future<void> _shareAll(BuildContext context, List<DownloadItem> items) async {
@@ -1053,6 +1055,8 @@ class _BatchSuccessView extends StatelessWidget {
       ).showSnackBar(SnackBar(content: Text(s.errorFileMissing)));
       return;
     }
-    await Share.shareXFiles(files, text: s.shareText);
+    await SharePlus.instance.share(
+      ShareParams(files: files, text: s.shareText),
+    );
   }
 }

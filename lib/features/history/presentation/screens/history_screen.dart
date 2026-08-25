@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -40,7 +41,7 @@ final filteredHistoryProvider = Provider<List<DownloadItem>>((ref) {
   final filter = ref.watch(historyFilterProvider);
   final collectionId = ref.watch(historyCollectionFilterProvider);
   final sort = ref.watch(historySortProvider);
-  final collections = ref.watch(collectionsProvider).valueOrNull ?? [];
+  final collections = ref.watch(collectionsProvider).value ?? [];
   final filtered = HistoryRepository.instance.filterItems(
     all,
     query: q,
@@ -1063,7 +1064,9 @@ class _HistoryTile extends ConsumerWidget {
           ).showSnackBar(SnackBar(content: Text(s.errorFileMissing)));
           return;
         }
-        await Share.shareXFiles([XFile(item.filePath)], text: s.shareText);
+        await SharePlus.instance.share(
+          ShareParams(files: [XFile(item.filePath)], text: s.shareText),
+        );
         break;
       case 'delete_file':
         if (await _confirmDelete(context, s, deleteFile: true)) {

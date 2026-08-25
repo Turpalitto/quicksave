@@ -5,6 +5,21 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 этот проект следует [Semantic Versioning](https://semver.org/lang/ru/).
 
+## [1.5.3] - 2026-08-26
+
+### Dependencies (мажорная модернизация)
+- `flutter_riverpod` ^2 → **^3.4.2** (+ явная зависимость `riverpod`): провайдеры
+  переведены на официальный legacy-импорт (`StateProvider`/`StateNotifierProvider`
+  сохраняют поведение); `valueOrNull` → `value` (в v3 идентичная семантика).
+- `share_plus` ^7 → **^13.3.0**: `Share.shareXFiles` →
+  `SharePlus.instance.share(ShareParams(...))`.
+- `flutter_local_notifications` ^17 → **^22.3.0**: именованные параметры
+  `initialize(settings:)` / `show(id:, title:, body:, notificationDetails:)`.
+- Мажоры плагинов: `permission_handler` 13, `package_info_plus` 10,
+  `archive` 4, `workmanager` 0.10; миноры: dio 5.11, video_player 2.14,
+  connectivity_plus 7.3.1, uuid 4.6.
+- Версия: pubspec 1.5.3+21.
+
 ## [1.5.2] - 2026-08-25
 
 ### Tooling
