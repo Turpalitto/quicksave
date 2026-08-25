@@ -20,7 +20,8 @@
    - `METRICS_TOKEN` — случайная строка 32+ символов (для `GET /health/metrics` с заголовком `X-Metrics-Token`).
    - Или для dev/staging: `METRICS_PUBLIC=true` (метрики без токена).
    - Опционально: `BILLING_PLAY_VERIFY=1`, `BILLING_DEV_ACCEPT=1` только на staging.
-4. **Deploy:** Manual Deploy или auto-deploy on push (Settings → Build & Deploy). После push в `main` с `backend/public/web/` поднимается API + Web PWA на одном домене.
+   - `GITHUB_RELEASE_TOKEN` — PAT с `repo` scope, чтобы `buildCommand` мог скачать `web-pwa.tar.gz` из GitHub Release (см. ниже).
+4. **Deploy:** Manual Deploy или auto-deploy on push (Settings → Build & Deploy). На каждый push тега `v*` GitHub Actions собирает Flutter Web, пакует в `web-pwa.tar.gz` и прикладывает к Release. Render подхватывает `SERVICE_VERSION` из тега и скачивает соответствующий архив.
 5. **Проверка** (cold start free tier до ~60 с):
    ```bash
    curl https://quicksave-api.onrender.com/health
@@ -43,17 +44,26 @@
 
 ### Refresh Web PWA on server
 
-Web is bundled in Docker as `backend/public/web/`. After UI changes:
+Web is **no longer committed** to git. The bundle is built and published
+on every `v*` tag push by `.github/workflows/release.yml`. Render's
+`buildCommand` then downloads `web-pwa.tar.gz` from the matching
+GitHub Release.
+
+```bash
+git tag v1.5.4
+git push --tags
+```
+
+The release workflow builds, stages, packs, and uploads automatically.
+Render picks up the new tag's `SERVICE_VERSION` and downloads the asset.
+
+If you just want to test the web build locally (without deploying):
 
 ```bash
 flutter build web --release
 node scripts/stage-web-for-backend.mjs
-git add backend/public/web
-git commit -m "chore: refresh staged web PWA"
-git push
+# local dev server already serves backend/public/web/ if present
 ```
-
-Render redeploys on push (if auto-deploy enabled).
 
 ---
 

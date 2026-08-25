@@ -15,7 +15,6 @@ function createRedisClient() {
   if (client) return client;
 
   try {
-     
     const { createClient } = require('redis');
     client = createClient({ url: config.redisUrl });
     client.on('error', (err) => {

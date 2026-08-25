@@ -5,6 +5,25 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 этот проект следует [Semantic Versioning](https://semver.org/lang/ru/).
 
+## [Unreleased] - 2026-08-26
+
+### Release infrastructure
+- **Версии синхронизированы**: `backend/package.json` 1.5.2 → **1.5.3**,
+  `backend/render.yaml` `SERVICE_VERSION` 1.5.2 → **1.5.3**,
+  `extension/manifest.json` + `extension/package.json` 1.3.1 → **1.5.3**.
+- **Git-теги** v1.5.1 / v1.5.2 / v1.5.3 — отмечают релизы на `main`.
+- **41 МБ артефакт удалён из git** (`backend/public/web/` — Flutter Web
+  бандл). Файлы остались на диске для бесшовного перехода. Добавлен
+  `.github/workflows/release.yml`: на каждый push тега `v*` собирает
+  `flutter build web --release`, стадит через `scripts/stage-web-for-backend.mjs`
+  и публикует `web-pwa.tar.gz` в GitHub Release.
+- **`render.yaml` `buildCommand`**: на деплое Render скачивает
+  `web-pwa.tar.gz` для текущего `SERVICE_VERSION` через
+  `GITHUB_RELEASE_TOKEN` (PAT, `repo` scope) и распаковывает в
+  `backend/public/web/` до `docker build`. API + Web PWA снова на одном
+  домене без хранения бинаря в репозитории.
+- Обновлены `README.md`, `backend/README.md`, `store/RELEASE_CHECKLIST.md`.
+
 ## [1.5.3] - 2026-08-26
 
 ### Dependencies (мажорная модернизация)

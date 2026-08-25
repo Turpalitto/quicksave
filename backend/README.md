@@ -46,6 +46,24 @@ Resolver success rate and failure breakdown (alert when successRate &lt; 70% aft
 3. After deploy, copy service URL → set `hostedBackendUrl` in Flutter `app_constants.dart`.
 4. Optional: attach Redis from blueprint for shared cache/rate limit.
 
+### Web PWA bundle
+
+The Flutter web build is **not** committed to git. On every `v*` tag push,
+[`.github/workflows/release.yml`](../.github/workflows/release.yml) builds
+`flutter build web --release`, stages it for the backend, packs
+`backend/public/web-pwa.tar.gz` and attaches it to the GitHub Release.
+
+`render.yaml`'s `buildCommand` then downloads that tarball (via
+`GITHUB_RELEASE_TOKEN`, `repo` scope) and extracts it into
+`backend/public/web/` before the Docker image is built. So:
+
+- `git tag v1.5.3 && git push --tags` → CI builds & uploads →
+  Render picks up the tag's `SERVICE_VERSION` and downloads it.
+
+If you change the web build without bumping `SERVICE_VERSION`, set
+`GITHUB_RELEASE_TOKEN` on Render with `repo` scope, otherwise the
+backend will serve 404s for `/` and the PWA shell won't load.
+
 See also [`render.yaml`](render.yaml) and [`store/RELEASE_CHECKLIST.md`](../store/RELEASE_CHECKLIST.md).
 
 ## Endpoints (resolve)

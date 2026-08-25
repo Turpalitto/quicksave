@@ -7,6 +7,18 @@ services:
     dockerContext: .
     plan: free
     healthCheckPath: /health
+    # Download matching web PWA bundle from the GitHub Release tagged v${SERVICE_VERSION}
+    # and stage it into public/web. Requires GITHUB_RELEASE_TOKEN env var (set in Render dashboard)
+    # with `repo` scope to read release assets. The release artifact is produced by
+    # .github/workflows/release.yml on every v* tag push.
+    buildCommand: |
+      apt-get update -qq && apt-get install -y -qq curl ca-certificates >/dev/null
+      curl -sSL -o /tmp/web-pwa.tar.gz \
+        -H "Authorization: Bearer $GITHUB_RELEASE_TOKEN" \
+        "https://github.com/Turpalitto/quicksave/releases/download/v${SERVICE_VERSION}/web-pwa.tar.gz"
+      mkdir -p public/web
+      tar -xzf /tmp/web-pwa.tar.gz -C public/web
+      rm /tmp/web-pwa.tar.gz
     envVars:
       - key: NODE_ENV
         value: production
@@ -19,10 +31,11 @@ services:
       - key: METRICS_PUBLIC
         value: "false"
       - key: SERVICE_VERSION
-        value: "1.5.2"
+        value: "1.5.3"
       - key: RESOLVE_DEADLINE_MS
         value: "45000"
       # Set METRICS_TOKEN in Render dashboard (secret) for protected /health/metrics
+      # Set GITHUB_RELEASE_TOKEN in Render dashboard (secret, repo scope) to fetch web PWA
       - key: REDIS_URL
         fromService:
           type: redis

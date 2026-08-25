@@ -81,12 +81,11 @@ Free-tier hosted backends may cold-start ~30–60 s; the app retries health chec
 quicksave/
 ├── lib/                    # Flutter app + Web PWA
 ├── android/                # Kotlin: Gallery, Widget, QS tile, FG service
-├── backend/                # Express resolver + Docker + staged Web PWA
-│   └── public/web/         # ⚠ generated artifact, refresh via scripts/stage-web-for-backend.mjs
+├── backend/                # Express resolver + Docker; PWA bundled at deploy
 ├── extension/              # Chrome MV3 extension
 ├── store/                  # Play listing, billing, release checklist
 ├── scripts/                # stage-web-for-backend.mjs, smoke-deploy.mjs
-└── .github/workflows/      # CI (Flutter, Backend, Extension)
+└── .github/workflows/      # CI (Flutter, Backend, Extension, Release)
 ```
 
 ---

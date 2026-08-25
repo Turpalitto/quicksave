@@ -45,3 +45,8 @@ node_modules/
 .env.local
 *.log
 coverage/
+
+# Pre-built Flutter web bundle (downloaded at deploy time from GitHub Release
+# by render.yaml buildCommand). See .github/workflows/release.yml.
+backend/public/web/
+backend/public/web-pwa.tar.gz

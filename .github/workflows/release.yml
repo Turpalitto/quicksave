@@ -1,0 +1,50 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  web-pwa:
+    name: Build and publish web PWA bundle
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.44.2
+          cache: true
+
+      - name: Get packages
+        run: flutter pub get
+
+      - name: Generate l10n
+        run: flutter gen-l10n
+
+      - name: Build web release
+        run: flutter build web --release
+
+      - name: Stage web for backend
+        run: node scripts/stage-web-for-backend.mjs
+
+      - name: Pack web bundle
+        working-directory: backend/public
+        run: |
+          tar -czf web-pwa.tar.gz web
+          ls -lh web-pwa.tar.gz
+
+      - name: Upload web-pwa.tar.gz to release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          generate_release_notes: true
+          files: backend/public/web-pwa.tar.gz
