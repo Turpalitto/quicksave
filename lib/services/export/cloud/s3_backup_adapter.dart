@@ -118,7 +118,7 @@ class S3BackupAdapter implements CloudBackupAdapter {
       'host': host,
       'x-amz-content-sha256': payloadHash,
       'x-amz-date': amzDate,
-      if (contentType != null) 'content-type': contentType,
+      'content-type': ?contentType,
     };
 
     final canonicalHeaders =

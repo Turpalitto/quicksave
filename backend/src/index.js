@@ -92,7 +92,7 @@ function createRateLimiter() {
   const client = redisClient ?? initRedis();
   if (client) {
     try {
-      // eslint-disable-next-line global-require
+       
       const { RedisStore } = require('rate-limit-redis');
       return rateLimit({
         ...baseOptions,
@@ -157,7 +157,7 @@ app.use('/billing', billingRouter);
 const webBuildDir = (() => {
   const packaged = path.join(__dirname, '..', 'public', 'web');
   const local = path.join(__dirname, '..', '..', 'build', 'web');
-  // eslint-disable-next-line global-require
+   
   const fs = require('fs');
   if (fs.existsSync(path.join(packaged, 'index.html'))) return packaged;
   return local;
@@ -177,7 +177,7 @@ app.use((req, res) => {
   });
 });
 
-// eslint-disable-next-line no-unused-vars
+ 
 app.use((err, req, res, _next) => {
   logger.error('unhandled_error', { reqId: req.id, err: String(err) });
   if (err.type === 'entity.parse.failed') {

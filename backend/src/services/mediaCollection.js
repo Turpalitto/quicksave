@@ -44,11 +44,11 @@ function mediaNodeToItem(node, index, idPrefix) {
   if (!node || typeof node !== 'object') return null;
 
   const isVideo = isVideoNode(node);
-  let mediaUrl = null;
-  let thumbnailUrl = null;
+  let mediaUrl;
+  let thumbnailUrl;
   let duration = 0;
-  let width = 0;
-  let height = 0;
+  let width;
+  let height;
 
   if (isVideo) {
     mediaUrl =

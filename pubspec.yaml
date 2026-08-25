@@ -1,7 +1,7 @@
 name: quicksave
 description: QuickSave — save public Instagram Reels, posts and stories via Share Intent. Gallery, batch download, download-later queue.
 publish_to: "none"
-version: 1.5.1+19
+version: 1.5.2+20
 
 environment:
   sdk: ">=3.10.0 <4.0.0"
@@ -47,7 +47,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: ^6.0.0
 
 flutter:
   uses-material-design: true

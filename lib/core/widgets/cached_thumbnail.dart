@@ -30,8 +30,8 @@ class CachedThumbnail extends StatelessWidget {
       width: width,
       height: height,
       fit: fit,
-      placeholder: (_, __) => _shimmer(context),
-      errorWidget: (_, __, ___) => fallback ?? _defaultFallback(context),
+      placeholder: (_, _) => _shimmer(context),
+      errorWidget: (_, _, _) => fallback ?? _defaultFallback(context),
     );
   }
 

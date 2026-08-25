@@ -15,7 +15,7 @@ function createRedisClient() {
   if (client) return client;
 
   try {
-    // eslint-disable-next-line global-require
+     
     const { createClient } = require('redis');
     client = createClient({ url: config.redisUrl });
     client.on('error', (err) => {

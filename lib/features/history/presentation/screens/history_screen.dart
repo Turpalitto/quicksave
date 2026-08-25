@@ -374,7 +374,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                   );
                 },
                 loading: () => const SizedBox.shrink(),
-                error: (_, __) => const SizedBox.shrink(),
+                error: (_, _) => const SizedBox.shrink(),
               ),
             ],
             Expanded(
@@ -393,7 +393,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                   : ListView.separated(
                       padding: const EdgeInsets.all(16),
                       itemCount: groups.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 12),
+                      separatorBuilder: (_, _) => const SizedBox(height: 12),
                       itemBuilder: (_, i) => _HistoryGroupTile(
                         group: groups[i],
                         scheme: scheme,

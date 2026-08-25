@@ -425,7 +425,7 @@ class _SettingsRow extends StatelessWidget {
               value!,
               style: IosTokens.body.copyWith(color: IosTokens.label2),
             ),
-          if (trailing != null) trailing!,
+          ?trailing,
           if (onTap != null && trailing == null)
             const Icon(Icons.chevron_right, size: 16, color: IosTokens.label3),
         ],

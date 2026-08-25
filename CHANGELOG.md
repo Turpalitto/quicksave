@@ -5,6 +5,18 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 этот проект следует [Semantic Versioning](https://semver.org/lang/ru/).
 
+## [1.5.2] - 2026-08-25
+
+### Tooling
+- `flutter_lints` ^3 → ^6: код переведён на wildcard-параметры `_` и
+  null-aware elements (`?x`, `'k': ?v`); `flutter analyze` — 0 issues.
+- Backend: миграция ESLint 8 (.eslintrc.cjs) → ESLint 10 flat config
+  (`eslint.config.js`); удалены мёртвые eslint-disable директивы;
+  убраны бесполезные инициализаторы в `mediaCollection.js`.
+- `npm audit`: 0 vulnerabilities (body-parser, brace-expansion, js-yaml
+  обновлены транзитивно).
+- Версии: pubspec 1.5.2+20, backend/render 1.5.2.
+
 ## [1.5.1] - 2026-08-25
 
 ### Security (полный аудит)

@@ -961,7 +961,7 @@ class _BatchSuccessView extends StatelessWidget {
             Expanded(
               child: ListView.separated(
                 itemCount: items.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 6),
+                separatorBuilder: (_, _) => const SizedBox(height: 6),
                 itemBuilder: (context, i) {
                   final item = items[i];
                   return ListTile(

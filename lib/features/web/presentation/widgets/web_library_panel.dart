@@ -144,7 +144,7 @@ class _WebLibraryPanelState extends ConsumerState<WebLibraryPanel> {
         const SizedBox(height: 16),
         libraryAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (_, __) => Text(s.errorNotRecognized),
+          error: (_, _) => Text(s.errorNotRecognized),
           data: (items) {
             final filtered = _query.isEmpty
                 ? items
