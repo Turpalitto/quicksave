@@ -726,7 +726,8 @@ class Strings {
       _s((l) => l.homeHowStep1Title, 'Скопируйте ссылку в Instagram');
   String get homeHowStep1Sub =>
       _s((l) => l.homeHowStep1Sub, 'Поделиться → Копировать ссылку');
-  String get homeHowStep2Title => _s((l) => l.homeHowStep2Title, 'Вставьте её сюда');
+  String get homeHowStep2Title =>
+      _s((l) => l.homeHowStep2Title, 'Вставьте её сюда');
   String get homeHowStep2Sub =>
       _s((l) => l.homeHowStep2Sub, 'Или введите @username профиля');
   String get homeHowStep3Title =>
@@ -741,25 +742,32 @@ class Strings {
   String get libraryFilterAll => _s((l) => l.libraryFilterAll, 'Все');
   String get libraryFilterPosts => _s((l) => l.libraryFilterPosts, 'Посты');
   String get libraryFilterReels => _s((l) => l.libraryFilterReels, 'Reels');
-  String get libraryFilterStories => _s((l) => l.libraryFilterStories, 'Истории');
+  String get libraryFilterStories =>
+      _s((l) => l.libraryFilterStories, 'Истории');
   String get libraryEdit => _s((l) => l.libraryEdit, 'Править');
   String get libraryDone => _s((l) => l.libraryDone, 'Готово');
-  String libraryStats(int count, int files) =>
-      _s((l) => l.libraryStats(count, files), '$count сохранений · $files файлов');
-  String get libraryEmptyTitle => _s((l) => l.libraryEmptyTitle, 'Нет сохранений');
+  String libraryStats(int count, int files) => _s(
+    (l) => l.libraryStats(count, files),
+    '$count сохранений · $files файлов',
+  );
+  String get libraryEmptyTitle =>
+      _s((l) => l.libraryEmptyTitle, 'Нет сохранений');
   String get libraryEmptySubtitle => _s(
     (l) => l.libraryEmptySubtitle,
     'Сохранённые фото и видео появятся здесь.',
   );
-  String get libraryFooter =>
-      _s((l) => l.libraryFooter, 'Файлы хранятся в папке приложения и Галерее.');
+  String get libraryFooter => _s(
+    (l) => l.libraryFooter,
+    'Файлы хранятся в папке приложения и Галерее.',
+  );
   String get libraryFooterEdit => _s(
     (l) => l.libraryFooterEdit,
     'Файлы хранятся в папке приложения. Нажмите − чтобы удалить.',
   );
   String get watchlistAddPlaceholder =>
       _s((l) => l.watchlistAddPlaceholder, 'username');
-  String get watchlistEmptyTitle => _s((l) => l.watchlistEmptyTitle, 'Список пуст');
+  String get watchlistEmptyTitle =>
+      _s((l) => l.watchlistEmptyTitle, 'Список пуст');
   String get watchlistEmptySubtitle => _s(
     (l) => l.watchlistEmptySubtitle,
     'Отслеживаемые профили появятся здесь.',
@@ -780,18 +788,21 @@ class Strings {
     'Watchlist, ZIP-экспорт, облачный бэкап',
   );
   String get settingsProPrice => _s((l) => l.settingsProPrice, '199 ₽');
-  String get settingsSectionStorage => _s((l) => l.settingsSectionStorage, 'Сохранение');
+  String get settingsSectionStorage =>
+      _s((l) => l.settingsSectionStorage, 'Сохранение');
   String get settingsStorageFooter => _s(
     (l) => l.settingsStorageFooter,
     'Файлы всегда доступны в библиотеке приложения, даже если Галерея выключена.',
   );
-  String get settingsSectionServer => _s((l) => l.settingsSectionServer, 'Сервер');
+  String get settingsSectionServer =>
+      _s((l) => l.settingsSectionServer, 'Сервер');
   String get settingsHostedOn => _s((l) => l.settingsHostedOn, 'Вкл.');
   String get settingsHostedFooter => _s(
     (l) => l.settingsHostedFooter,
     'Подключён hosted-сервер — работает без настройки.',
   );
-  String get settingsSectionLanguage => _s((l) => l.settingsSectionLanguage, 'Язык');
+  String get settingsSectionLanguage =>
+      _s((l) => l.settingsSectionLanguage, 'Язык');
   String get settingsSectionAndroid =>
       _s((l) => l.settingsSectionAndroid, 'Приложение для Android');
   String get settingsWaitlistHint => _s(
@@ -808,7 +819,7 @@ class Strings {
   String get settingsLegalFooter => _s(
     (l) => l.settingsLegalFooter,
     'Скачивайте только контент, на который у вас есть права.\n'
-        'QuickSave работает только с публичным контентом.',
+    'QuickSave работает только с публичным контентом.',
   );
   String get settingsAdvanced =>
       _s((l) => l.settingsAdvanced, 'Расширенные настройки');

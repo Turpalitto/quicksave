@@ -122,37 +122,25 @@ function extractVideoFromJsonScripts(html) {
         return {
           videoUrl: unescapeJsonString(media.video_url),
           thumbnailUrl:
-            media.thumbnail_src ||
-            media.display_url ||
-            findThumbnailInJson(media) ||
-            null,
+            media.thumbnail_src || media.display_url || findThumbnailInJson(media) || null,
         };
       }
     } catch (_) {}
   }
 
-  const additionalRe =
-    /window\.__additionalDataLoaded\s*\(\s*[^,]+,\s*(\{[\s\S]*?\})\s*\)\s*;?/g;
+  const additionalRe = /window\.__additionalDataLoaded\s*\(\s*[^,]+,\s*(\{[\s\S]*?\})\s*\)\s*;?/g;
   let am;
   while ((am = additionalRe.exec(html)) !== null) {
     try {
       const j = JSON.parse(am[1]);
-      const media =
-        j?.graphql?.shortcode_media ||
-        j?.items?.[0] ||
-        j?.shortcode_media ||
-        null;
+      const media = j?.graphql?.shortcode_media || j?.items?.[0] || j?.shortcode_media || null;
       if (media) {
-        const videoUrl =
-          media.video_url || findVideoUrlInJson(media);
+        const videoUrl = media.video_url || findVideoUrlInJson(media);
         if (videoUrl) {
           return {
             videoUrl: unescapeJsonString(videoUrl),
             thumbnailUrl:
-              media.thumbnail_src ||
-              media.display_url ||
-              findThumbnailInJson(media) ||
-              null,
+              media.thumbnail_src || media.display_url || findThumbnailInJson(media) || null,
           };
         }
       }

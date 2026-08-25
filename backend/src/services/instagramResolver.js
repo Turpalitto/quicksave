@@ -2,6 +2,7 @@ const config = require('../config');
 const { resolveCache } = require('./resolveCache');
 const { recordResolve, recordCacheHit, recordCacheMiss } = require('./resolveMetrics');
 const { buildCollectionResponse } = require('./mediaCollection');
+const { hashUrl } = require('../utils/urlSanitizer');
 const {
   normalizeUrl,
   isValidPublicUrl,
@@ -51,7 +52,7 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
     return { ok: false, error: 'invalid_url' };
   }
 
-  const cacheKey = options.cursor ? `${url}?cursor=${options.cursor}` : url;
+  const cacheKey = options.cursor ? `${url}?cursor=${hashUrl(options.cursor)}` : url;
   if (config.nodeEnv !== 'test') {
     const cached = await resolveCache.get(cacheKey);
     if (cached) {
@@ -61,7 +62,7 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
     recordCacheMiss();
   }
 
-  const runResolve = async () => {
+  const runResolve = async (signal) => {
     if (getUrlKind(url) === 'profile') {
       return { ok: false, error: 'profile_not_supported' };
     }
@@ -73,7 +74,7 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
     // GraphQL shortcode query (works when HTML no longer embeds video_versions).
     if (shortcode && urlKind !== 'story' && urlKind !== 'highlight') {
       for (const ua of USER_AGENTS.slice(0, 3)) {
-        const gqlMedia = await fetchGraphqlShortcodeMedia(url, shortcode, ua);
+        const gqlMedia = await fetchGraphqlShortcodeMedia(url, shortcode, ua, signal);
         if (gqlMedia.videoUrl) {
           let result = buildSuccessResult(
             { videoUrl: gqlMedia.videoUrl, thumbnailUrl: gqlMedia.thumbnailUrl },
@@ -81,7 +82,7 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
             shortcode,
             { thumbnailUrl: gqlMedia.thumbnailUrl },
           );
-          const oembed = await fetchOembedMetadata(url, ua);
+          const oembed = await fetchOembedMetadata(url, ua, signal);
           result = enrichCollectionWithOembed(result, oembed);
           return result;
         }
@@ -92,7 +93,7 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
           let result = buildImageSuccessResult(mediaNode.display_url, null, shortcode, {
             thumbnailUrl: mediaNode.thumbnail_src || mediaNode.display_url,
           });
-          const oembed = await fetchOembedMetadata(url, ua);
+          const oembed = await fetchOembedMetadata(url, ua, signal);
           result = enrichCollectionWithOembed(result, oembed);
           return result;
         }
@@ -107,7 +108,7 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
     let bestHtml = '';
     let bestCollection = [];
 
-    const htmlResults = await fetchHtmlSources(url, embedUrl);
+    const htmlResults = await fetchHtmlSources(url, embedUrl, signal);
 
     for (const item of htmlResults) {
       if (item.err) {
@@ -140,7 +141,7 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
           author: extractAuthor(meta.title),
           shortcode,
         });
-        const oembed = await fetchOembedMetadata(url, USER_AGENTS[0]);
+        const oembed = await fetchOembedMetadata(url, USER_AGENTS[0], signal);
         result = enrichCollectionWithOembed(result, oembed);
         return result;
       }
@@ -152,7 +153,7 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
           author: extractAuthor(meta.title),
           shortcode,
         });
-        const oembed = await fetchOembedMetadata(url, USER_AGENTS[0]);
+        const oembed = await fetchOembedMetadata(url, USER_AGENTS[0], signal);
         result = enrichCollectionWithOembed(result, oembed);
         return result;
       }
@@ -160,7 +161,7 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
       const extracted = extractVideoFromHtml(html);
       if (extracted && extracted.videoUrl) {
         let result = buildSuccessResult(extracted, html, shortcode);
-        const oembed = await fetchOembedMetadata(url, USER_AGENTS[0]);
+        const oembed = await fetchOembedMetadata(url, USER_AGENTS[0], signal);
         result = enrichCollectionWithOembed(result, oembed);
         return result;
       }
@@ -173,14 +174,14 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
         author: extractAuthor(meta.title),
         shortcode,
       });
-      const oembed = await fetchOembedMetadata(url, USER_AGENTS[0]);
+      const oembed = await fetchOembedMetadata(url, USER_AGENTS[0], signal);
       result = enrichCollectionWithOembed(result, oembed);
       return result;
     }
 
     let gqlResult = { videoUrl: null, thumbnailUrl: null, rawData: null };
     try {
-      gqlResult = await fetchGraphqlVideoUrl(url, USER_AGENTS[0]);
+      gqlResult = await fetchGraphqlVideoUrl(url, USER_AGENTS[0], signal);
     } catch (err) {
       if (err && err.code === 'not_found') {
         if (sawLoginWall) return { ok: false, error: 'private' };
@@ -193,7 +194,7 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
       if (gqlItems.length > 0) {
         const type = collectionTypeForKind(urlKind, gqlItems.length);
         let result = buildCollectionResponse(type, gqlItems, { shortcode });
-        const oembed = await fetchOembedMetadata(url, USER_AGENTS[0]);
+        const oembed = await fetchOembedMetadata(url, USER_AGENTS[0], signal);
         result = enrichCollectionWithOembed(result, oembed);
         return result;
       }
@@ -206,7 +207,7 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
         shortcode,
         { thumbnailUrl: gqlResult.thumbnailUrl },
       );
-      const oembed = await fetchOembedMetadata(url, USER_AGENTS[0]);
+      const oembed = await fetchOembedMetadata(url, USER_AGENTS[0], signal);
       result = enrichCollectionWithOembed(result, oembed);
       return result;
     }
@@ -215,7 +216,7 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
       const imageUrl = extractImageFromHtml(bestHtml);
       if (imageUrl) {
         let result = buildImageSuccessResult(imageUrl, bestHtml, shortcode);
-        const oembed = await fetchOembedMetadata(url, USER_AGENTS[0]);
+        const oembed = await fetchOembedMetadata(url, USER_AGENTS[0], signal);
         result = enrichCollectionWithOembed(result, oembed);
         return result;
       }
@@ -228,7 +229,7 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
         author: extractAuthor(meta.title),
         shortcode,
       });
-      const oembed = await fetchOembedMetadata(url, USER_AGENTS[0]);
+      const oembed = await fetchOembedMetadata(url, USER_AGENTS[0], signal);
       result = enrichCollectionWithOembed(result, oembed);
       return result;
     }
@@ -236,7 +237,7 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
     if (bestCollection.length === 1) {
       const type = collectionTypeForKind(urlKind, bestCollection.length);
       let result = buildCollectionResponse(type, bestCollection, { shortcode });
-      const oembed = await fetchOembedMetadata(url, USER_AGENTS[0]);
+      const oembed = await fetchOembedMetadata(url, USER_AGENTS[0], signal);
       result = enrichCollectionWithOembed(result, oembed);
       return result;
     }
@@ -254,6 +255,7 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
       urlKind,
       bestHtml,
       embedUrl,
+      signal,
     });
     if (spare) return spare;
 
@@ -267,13 +269,26 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
   };
 
   const deadline = config.resolveDeadlineMs;
+  const ac = new AbortController();
   let deadlineTimer;
   const deadlinePromise = new Promise((resolve) => {
-    deadlineTimer = setTimeout(() => resolve({ ok: false, error: 'resolver_failed' }), deadline);
+    deadlineTimer = setTimeout(() => {
+      try {
+        ac.abort();
+      } catch (_) {}
+      resolve({ ok: false, error: 'resolver_failed' });
+    }, deadline);
   });
 
-  const result = await Promise.race([runResolve(), deadlinePromise]);
+  // Swallow late failures after the deadline has already resolved the race.
+  const runPromise = runResolve(ac.signal).catch(() => ({ ok: false, error: 'resolver_failed' }));
+  const result = await Promise.race([runPromise, deadlinePromise]);
   clearTimeout(deadlineTimer);
+
+  // Cancel any upstream work still in flight (deadline hit mid-resolve).
+  try {
+    ac.abort();
+  } catch (_) {}
 
   recordResolve(result);
 

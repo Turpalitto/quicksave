@@ -1,5 +1,11 @@
 const igHttp = require('../utils/instagramHttp');
-const { findVideoUrlInJson, findThumbnailInJson, extractVideoFromJsonScripts, extractVideoFromHtml } = require('./postExtractor');
+const { isAbortError } = require('./upstreamClient');
+const {
+  findVideoUrlInJson,
+  findThumbnailInJson,
+  extractVideoFromJsonScripts,
+  extractVideoFromHtml,
+} = require('./postExtractor');
 const { shortcodeToPk } = require('../utils/shortcodePk');
 const {
   cookieHeader,
@@ -43,9 +49,7 @@ const GRAPHQL_VARIABLES_TEMPLATES = [
 function extractLsdToken(html) {
   if (!html || typeof html !== 'string') return '';
   return (
-    html.match(/"LSD",\[\],\{"token":"([^"]+)"\}/)?.[1] ||
-    html.match(/"lsd":"([^"]+)"/)?.[1] ||
-    ''
+    html.match(/"LSD",\[\],\{"token":"([^"]+)"\}/)?.[1] || html.match(/"lsd":"([^"]+)"/)?.[1] || ''
   );
 }
 
@@ -87,13 +91,9 @@ function parseGraphqlMedia(data) {
     data.data?.shortcode_media ||
     null;
 
-  const videoUrl =
-    media?.video_url || findVideoUrlInJson(data) || null;
+  const videoUrl = media?.video_url || findVideoUrlInJson(data) || null;
   const thumbnailUrl =
-    media?.thumbnail_src ||
-    media?.display_url ||
-    findThumbnailInJson(data) ||
-    null;
+    media?.thumbnail_src || media?.display_url || findThumbnailInJson(data) || null;
 
   return { videoUrl, thumbnailUrl, rawData: data };
 }
@@ -110,7 +110,7 @@ function resultFromHtml(html) {
   return null;
 }
 
-async function bootstrapSession(userAgent, pageUrl) {
+async function bootstrapSession(userAgent, pageUrl, signal) {
   const session = createSessionState();
   const jar = session.jar;
   let html = '';
@@ -120,11 +120,11 @@ async function bootstrapSession(userAgent, pageUrl) {
       timeout: 15000,
       maxRedirects: 5,
       validateStatus: (s) => s >= 200 && s < 400,
+      ...(signal ? { signal } : {}),
       headers: {
         'User-Agent': userAgent,
         'Accept-Language': 'en-US,en;q=0.9',
-        Accept:
-          'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         ...(cookieHeader(jar) ? { Cookie: cookieHeader(jar) } : {}),
       },
     });
@@ -137,11 +137,11 @@ async function bootstrapSession(userAgent, pageUrl) {
       timeout: 15000,
       maxRedirects: 5,
       validateStatus: (s) => s >= 200 && s < 400,
+      ...(signal ? { signal } : {}),
       headers: {
         'User-Agent': userAgent,
         'Accept-Language': 'en-US,en;q=0.9',
-        Accept:
-          'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         Referer: 'https://www.instagram.com/',
         ...(cookieHeader(jar) ? { Cookie: cookieHeader(jar) } : {}),
       },
@@ -157,36 +157,35 @@ async function bootstrapSession(userAgent, pageUrl) {
   return { jar, html, csrf, lsd, wwwClaim: session.wwwClaim };
 }
 
-async function warmupRuling(shortcode, userAgent, session, csrf) {
+async function warmupRuling(shortcode, userAgent, session, csrf, signal) {
   const pk = shortcodeToPk(shortcode);
   if (!pk) return;
   const { jar } = session;
   try {
-    const res = await igHttp.get(
-      'https://www.instagram.com/api/v1/web/get_ruling_for_content/',
-      {
-        params: { content_type: 'MEDIA', target_id: pk },
-        timeout: 10000,
-        validateStatus: (s) => s >= 200 && s < 500,
-        headers: apiHeaders({
-          userAgent,
-          csrf,
-          lsd: '',
-          referer: 'https://www.instagram.com/',
-          jar,
-          wwwClaim: session.wwwClaim,
-        }),
-      },
-    );
+    const res = await igHttp.get('https://www.instagram.com/api/v1/web/get_ruling_for_content/', {
+      params: { content_type: 'MEDIA', target_id: pk },
+      timeout: 10000,
+      validateStatus: (s) => s >= 200 && s < 500,
+      ...(signal ? { signal } : {}),
+      headers: apiHeaders({
+        userAgent,
+        csrf,
+        lsd: '',
+        referer: 'https://www.instagram.com/',
+        jar,
+        wwwClaim: session.wwwClaim,
+      }),
+    });
     applyWwwClaimFromResponse(res.headers, session);
   } catch (_) {}
 }
 
-async function fetchGraphqlGet(userAgent, session, csrf, lsd, pageUrl, docId, variables) {
+async function fetchGraphqlGet(userAgent, session, csrf, lsd, pageUrl, docId, variables, signal) {
   const { jar } = session;
   const response = await igHttp.get('https://www.instagram.com/graphql/query/', {
     timeout: 15000,
     validateStatus: (s) => s >= 200 && s < 500,
+    ...(signal ? { signal } : {}),
     headers: apiHeaders({
       userAgent,
       csrf,
@@ -204,55 +203,50 @@ async function fetchGraphqlGet(userAgent, session, csrf, lsd, pageUrl, docId, va
   return parseGraphqlMedia(response.data);
 }
 
-async function fetchGraphqlPost(userAgent, session, csrf, lsd, pageUrl, docId, variables) {
+async function fetchGraphqlPost(userAgent, session, csrf, lsd, pageUrl, docId, variables, signal) {
   const { jar } = session;
   const vars = encodeURIComponent(JSON.stringify(variables));
   const body = `variables=${vars}&doc_id=${docId}&server_timestamps=true&lsd=${encodeURIComponent(lsd)}`;
 
-  const response = await igHttp.post(
-    'https://www.instagram.com/graphql/query',
-    body,
-    {
-      timeout: 15000,
-      validateStatus: (s) => s >= 200 && s < 500,
-      headers: {
-        ...apiHeaders({
-          userAgent,
-          csrf,
-          lsd,
-          referer: pageUrl,
-          jar,
-          wwwClaim: session.wwwClaim,
-        }),
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
+  const response = await igHttp.post('https://www.instagram.com/graphql/query', body, {
+    timeout: 15000,
+    validateStatus: (s) => s >= 200 && s < 500,
+    ...(signal ? { signal } : {}),
+    headers: {
+      ...apiHeaders({
+        userAgent,
+        csrf,
+        lsd,
+        referer: pageUrl,
+        jar,
+        wwwClaim: session.wwwClaim,
+      }),
+      'Content-Type': 'application/x-www-form-urlencoded',
     },
-  );
+  });
   applyWwwClaimFromResponse(response.headers, session);
   return parseGraphqlMedia(response.data);
 }
 
-async function fetchMobileMediaInfo(shortcode, userAgent, session, csrf) {
+async function fetchMobileMediaInfo(shortcode, userAgent, session, csrf, signal) {
   const pk = shortcodeToPk(shortcode);
   if (!pk) return { videoUrl: null, thumbnailUrl: null, rawData: null };
   const { jar } = session;
 
   try {
-    const response = await igHttp.get(
-      `https://i.instagram.com/api/v1/media/${pk}/info/`,
-      {
-        timeout: 15000,
-        validateStatus: (s) => s >= 200 && s < 500,
-        headers: apiHeaders({
-          userAgent,
-          csrf,
-          lsd: '',
-          referer: 'https://www.instagram.com/',
-          jar,
-          wwwClaim: session.wwwClaim,
-        }),
-      },
-    );
+    const response = await igHttp.get(`https://i.instagram.com/api/v1/media/${pk}/info/`, {
+      timeout: 15000,
+      validateStatus: (s) => s >= 200 && s < 500,
+      ...(signal ? { signal } : {}),
+      headers: apiHeaders({
+        userAgent,
+        csrf,
+        lsd: '',
+        referer: 'https://www.instagram.com/',
+        jar,
+        wwwClaim: session.wwwClaim,
+      }),
+    });
     applyWwwClaimFromResponse(response.headers, session);
     const item = response.data?.items?.[0] || response.data;
     if (item && typeof item === 'object') {
@@ -267,18 +261,18 @@ async function fetchMobileMediaInfo(shortcode, userAgent, session, csrf) {
   return { videoUrl: null, thumbnailUrl: null, rawData: null };
 }
 
-async function fetchEmbedPage(pageUrl, userAgent, jar) {
+async function fetchEmbedPage(pageUrl, userAgent, jar, signal) {
   const embedUrl = pageUrl.replace(/\/$/, '') + '/embed/';
   try {
     const res = await igHttp.get(embedUrl, {
       timeout: 15000,
       maxRedirects: 5,
       validateStatus: (s) => s >= 200 && s < 400,
+      ...(signal ? { signal } : {}),
       headers: {
         'User-Agent': userAgent,
         'Accept-Language': 'en-US,en;q=0.9',
-        Accept:
-          'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         Referer: 'https://www.instagram.com/',
         ...(cookieHeader(jar) ? { Cookie: cookieHeader(jar) } : {}),
       },
@@ -294,14 +288,14 @@ async function fetchEmbedPage(pageUrl, userAgent, jar) {
  * Multi-strategy shortcode resolver (yt-dlp / instaloader patterns).
  * Returns { videoUrl, thumbnailUrl, rawData } or empty on failure.
  */
-async function fetchGraphqlShortcodeMedia(pageUrl, shortcode, userAgent) {
-  const { jar, html, csrf, lsd, wwwClaim } = await bootstrapSession(userAgent, pageUrl);
+async function fetchGraphqlShortcodeMedia(pageUrl, shortcode, userAgent, signal) {
+  const { jar, html, csrf, lsd, wwwClaim } = await bootstrapSession(userAgent, pageUrl, signal);
   const session = { jar, wwwClaim };
 
   const htmlResult = resultFromHtml(html);
   if (htmlResult?.videoUrl) return htmlResult;
 
-  await warmupRuling(shortcode, userAgent, session, csrf);
+  await warmupRuling(shortcode, userAgent, session, csrf, signal);
 
   const htmlDocId = extractDocIdFromHtml(html);
   const docIds = htmlDocId
@@ -320,9 +314,12 @@ async function fetchGraphqlShortcodeMedia(pageUrl, shortcode, userAgent) {
           pageUrl,
           docId,
           variables,
+          signal,
         );
         if (getResult.videoUrl) return getResult;
-      } catch (_) {}
+      } catch (err) {
+        if (isAbortError(err)) throw err;
+      }
 
       try {
         const postResult = await fetchGraphqlPost(
@@ -333,16 +330,19 @@ async function fetchGraphqlShortcodeMedia(pageUrl, shortcode, userAgent) {
           pageUrl,
           docId,
           variables,
+          signal,
         );
         if (postResult.videoUrl) return postResult;
-      } catch (_) {}
+      } catch (err) {
+        if (isAbortError(err)) throw err;
+      }
     }
   }
 
-  const mobile = await fetchMobileMediaInfo(shortcode, userAgent, session, csrf);
+  const mobile = await fetchMobileMediaInfo(shortcode, userAgent, session, csrf, signal);
   if (mobile.videoUrl) return mobile;
 
-  const embed = await fetchEmbedPage(pageUrl, userAgent, jar);
+  const embed = await fetchEmbedPage(pageUrl, userAgent, jar, signal);
   if (embed?.videoUrl) return embed;
 
   return { videoUrl: null, thumbnailUrl: null, rawData: null };

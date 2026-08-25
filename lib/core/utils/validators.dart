@@ -136,7 +136,13 @@ class Validators {
     if (extracted.isEmpty) return null;
     final normalized = normalize(extracted);
     if (isValidInstagramUrl(normalized)) return normalized;
-    if (isProfileUrl(normalized)) return normalized;
+    if (isProfileUrl(normalized)) {
+      // Canonical form for watchlist/profiles keeps the bare instagram.com host.
+      return normalized.replaceFirstMapped(
+        RegExp(r'^(https?://)www\.', caseSensitive: false),
+        (m) => '${m.group(1)}',
+      );
+    }
     return null;
   }
 

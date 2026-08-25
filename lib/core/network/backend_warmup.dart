@@ -15,14 +15,14 @@ int backendResolveMaxAttempts(String backendUrl) =>
 
 Duration backendResolveTimeout(String backendUrl) =>
     backendNeedsWarmUp(backendUrl)
-        ? const Duration(seconds: 40)
-        : AppConstants.networkTimeout;
+    ? const Duration(seconds: 40)
+    : AppConstants.networkTimeout;
 
 /// Hard cap so the preview screen never spins for 3+ minutes on a dead host.
 Duration backendResolveOverallTimeout(String backendUrl) =>
     backendNeedsWarmUp(backendUrl)
-        ? const Duration(seconds: 90)
-        : AppConstants.networkTimeout;
+    ? const Duration(seconds: 90)
+    : AppConstants.networkTimeout;
 
 bool shouldRetryBackendRequest(DioExceptionType type) {
   return type == DioExceptionType.connectionTimeout ||

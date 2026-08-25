@@ -26,9 +26,7 @@ Future<void> main() async {
     IntentService.instance.initialize();
     await EntitlementService.instance.bootstrap();
     unawaited(
-      BackendHealthService.instance.checkHealth(
-        AppConstants.hostedBackendUrl,
-      ),
+      BackendHealthService.instance.checkHealth(AppConstants.hostedBackendUrl),
     );
   }
 

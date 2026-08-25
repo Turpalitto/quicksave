@@ -168,7 +168,7 @@ class _PreviewScreenState extends ConsumerState<PreviewScreen> {
                 await ref
                     .read(downloadProvider.notifier)
                     .enqueuePending(widget.sourceUrl, error: failure.message);
-                if (!context.mounted) return;
+                if (!mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(s.pendingDownloadQueued)),
                 );

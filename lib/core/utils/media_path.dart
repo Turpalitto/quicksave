@@ -22,11 +22,7 @@ Future<List<DownloadItem>> repairLegacyGalleryPaths(
   if (!needsRepair) return items;
 
   final dir = await DownloadService.instance.quickSaveDirectory();
-  final onDisk = await dir
-      .list()
-      .where((e) => e is File)
-      .cast<File>()
-      .toList();
+  final onDisk = await dir.list().where((e) => e is File).cast<File>().toList();
 
   var changed = false;
   final repaired = <DownloadItem>[];

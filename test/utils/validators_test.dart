@@ -159,10 +159,7 @@ void main() {
     });
 
     test('prepareUrl accepts @username shorthand', () {
-      expect(
-        Validators.prepareUrl('@natgeo'),
-        'https://instagram.com/natgeo',
-      );
+      expect(Validators.prepareUrl('@natgeo'), 'https://instagram.com/natgeo');
     });
 
     test('prepareUrl accepts public profile URL', () {

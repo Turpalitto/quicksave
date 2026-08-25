@@ -105,4 +105,3 @@ Failure mapExceptionToFailure(AppException ex) {
   if (ex is UrlExpiredException) return const UrlExpiredFailure();
   return UnknownFailure(ex.message);
 }
-

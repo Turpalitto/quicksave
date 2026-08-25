@@ -164,7 +164,7 @@ class DownloadService {
             try {
               await File(part).delete();
             } catch (_) {}
-            return download(
+            return await download(
               url: url,
               fileName: fileName,
               subfolder: subfolder,

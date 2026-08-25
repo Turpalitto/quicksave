@@ -168,7 +168,9 @@ test/
 2. **Не сохраняем cookies** — HTTP-клиент stateless.
 3. **Не обходим антибот** — используем только то, что Instagram отдаёт публично.
 4. **Не скачиваем приватный контент** — regex-валидация `/reel|p|tv/` + проверка `og:video` на сервере.
-5. **Cleartext только в debug** — `network_security_config.xml` разрешает HTTP только для LAN/10.0.2.2 в debug-overrides.
+5. **Cleartext запрещён глобально** — `network_security_config.xml` разрешает
+   HTTP только для dev-хостов (10.0.2.2 / localhost / 127.0.0.1); base-config
+   требует HTTPS. Бэкенд отдаёт PWA с CSP и CORS-allowlist (`ALLOWED_ORIGINS`).
 6. **Бэкап без файлов** — `backup_rules.xml` исключает `QuickSave/` из auto-backup.
 
 ## Производительность

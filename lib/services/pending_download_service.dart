@@ -88,8 +88,6 @@ class PendingDownloadService {
 
   Future<void> clearExpired() async {
     final items = await list();
-    await _repo.saveAll(
-      items.where((i) => i.attempts < maxAttempts).toList(),
-    );
+    await _repo.saveAll(items.where((i) => i.attempts < maxAttempts).toList());
   }
 }

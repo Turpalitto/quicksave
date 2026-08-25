@@ -213,7 +213,9 @@ class DownloadNotifier extends StateNotifier<DownloadState> {
   }
 
   Future<void> enqueuePending(String url, {String? error}) async {
-    await ref.read(pendingDownloadsProvider.notifier).enqueue(url, error: error);
+    await ref
+        .read(pendingDownloadsProvider.notifier)
+        .enqueue(url, error: error);
   }
 
   void toggleSelection(String id) {

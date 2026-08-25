@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:quicksave/app.dart';
@@ -21,12 +20,14 @@ void main() {
     );
 
     await tester.pumpWidget(const ProviderScope(child: QuickSaveApp()));
-    await tester.pumpAndSettle(const Duration(milliseconds: 300));
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pump(const Duration(milliseconds: 300));
 
     for (final label in ['Got it', 'Понятно']) {
       if (find.text(label).evaluate().isNotEmpty) {
         await tester.tap(find.text(label));
-        await tester.pumpAndSettle();
+        await tester.pump(const Duration(milliseconds: 200));
+        await tester.pump(const Duration(milliseconds: 200));
         break;
       }
     }
@@ -38,9 +39,13 @@ void main() {
     } else {
       await tester.tap(libraryTabRu);
     }
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pump(const Duration(milliseconds: 300));
 
-    expect(find.text('Full history').evaluate().isNotEmpty ||
-        find.text('Полная история').evaluate().isNotEmpty, isTrue);
+    expect(
+      find.text('Full history').evaluate().isNotEmpty ||
+          find.text('Полная история').evaluate().isNotEmpty,
+      isTrue,
+    );
   });
 }

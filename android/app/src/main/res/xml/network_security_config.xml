@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <!-- Self-hosted backend uses http:// on LAN; cloud API stays https:// -->
-    <base-config cleartextTrafficPermitted="true">
+    <!-- Cleartext is denied globally; only the dev hosts below are exempt. -->
+    <base-config cleartextTrafficPermitted="false">
         <trust-anchors>
             <certificates src="system" />
         </trust-anchors>

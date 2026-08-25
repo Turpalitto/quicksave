@@ -37,9 +37,7 @@ class BackendHealthService {
   BackendHealthResult? lastSelfHostedResult;
 
   final Dio _dio = Dio(
-    BaseOptions(
-      validateStatus: (s) => s != null && s < 500,
-    ),
+    BaseOptions(validateStatus: (s) => s != null && s < 500),
   );
 
   String _base(String backendUrl) => backendUrl.replaceAll(RegExp(r'/$'), '');

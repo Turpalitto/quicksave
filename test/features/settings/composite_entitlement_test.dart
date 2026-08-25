@@ -4,6 +4,7 @@ import 'package:quicksave/features/settings/domain/entitlement.dart';
 import 'package:quicksave/services/billing/billing_constants.dart';
 import 'package:quicksave/services/billing/billing_storage.dart';
 import 'package:quicksave/services/billing/play_billing_service.dart';
+import 'package:quicksave/services/pro_service.dart';
 
 import '../../helpers/mock_setup.dart';
 
@@ -74,7 +75,7 @@ void main() {
         writeIsPro: (v) async => isPro = v,
       );
 
-      await repo.activateLicense('QS-PRO-SHOST1234');
+      await repo.activateLicense(ProService.generateKey(selfHosted: true));
       final state = await repo.getState();
       expect(state.tier, EntitlementTier.proSelfHosted);
     });

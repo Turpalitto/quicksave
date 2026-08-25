@@ -5,9 +5,7 @@
 const { readFileSync } = require('fs');
 const { join } = require('path');
 
-const pkg = JSON.parse(
-  readFileSync(join(__dirname, '..', 'package.json'), 'utf8'),
-);
+const pkg = JSON.parse(readFileSync(join(__dirname, '..', 'package.json'), 'utf8'));
 
 const config = {
   port: parseInt(process.env.PORT || '3000', 10),

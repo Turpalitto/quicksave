@@ -59,7 +59,10 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
 
     try {
       final settings = ref.read(settingsProvider);
-      final backend = settings.effectiveBackendUrl.replaceAll(RegExp(r'/$'), '');
+      final backend = settings.effectiveBackendUrl.replaceAll(
+        RegExp(r'/$'),
+        '',
+      );
       final dio = Dio();
       await dio.post(
         '$backend/api/waitlist',
@@ -129,7 +132,10 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: IosTokens.blue,
                     borderRadius: BorderRadius.circular(999),
@@ -194,14 +200,18 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
                 color: IosTokens.blue,
                 icon: Icons.public,
                 label: s.settingsBackendModeHosted,
-                value: settings.backendMode == BackendMode.hosted ? s.settingsHostedOn : null,
+                value: settings.backendMode == BackendMode.hosted
+                    ? s.settingsHostedOn
+                    : null,
                 onTap: () => notifier.setBackendMode(BackendMode.hosted),
               ),
               _SettingsRow(
                 color: IosTokens.purple,
                 icon: Icons.dns_outlined,
                 label: s.settingsBackendModeSelf,
-                value: settings.backendMode == BackendMode.selfHosted ? s.settingsHostedOn : null,
+                value: settings.backendMode == BackendMode.selfHosted
+                    ? s.settingsHostedOn
+                    : null,
                 onTap: settings.canSelfHost
                     ? () => notifier.setBackendMode(BackendMode.selfHosted)
                     : null,
@@ -215,14 +225,18 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
             child: TextField(
               controller: _selfUrlCtrl,
               style: IosTokens.callout,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'https://my-server.example.com',
                 border: InputBorder.none,
                 filled: false,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
               ),
               onSubmitted: notifier.setBackendUrl,
-              onEditingComplete: () => notifier.setBackendUrl(_selfUrlCtrl.text.trim()),
+              onEditingComplete: () =>
+                  notifier.setBackendUrl(_selfUrlCtrl.text.trim()),
             ),
           ),
         ] else
@@ -231,7 +245,9 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
         IosSectionHeader(s.settingsSectionLanguage),
         IosSegment<AppLocale>(
           segments: const [AppLocale.ru, AppLocale.en],
-          selected: settings.locale == AppLocale.en ? AppLocale.en : AppLocale.ru,
+          selected: settings.locale == AppLocale.en
+              ? AppLocale.en
+              : AppLocale.ru,
           onChanged: notifier.setLocale,
           labelBuilder: (l) => l == AppLocale.ru ? 'Русский' : 'English',
         ),
@@ -269,7 +285,10 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
                           borderRadius: BorderRadius.circular(10),
                           borderSide: BorderSide.none,
                         ),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 10,
+                        ),
                       ),
                     ),
                   ),
@@ -279,7 +298,9 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
                     child: IosBlueButton(
                       label: 'OK',
                       loading: _emailLoading,
-                      onPressed: _emailCtrl.text.contains('@') ? _subscribe : null,
+                      onPressed: _emailCtrl.text.contains('@')
+                          ? _subscribe
+                          : null,
                     ),
                   ),
                 ],
@@ -302,7 +323,10 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -320,7 +344,10 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
                   mode: LaunchMode.externalApplication,
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   child: Row(
                     children: [
                       Expanded(
@@ -329,7 +356,11 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
                           style: IosTokens.body.copyWith(color: IosTokens.blue),
                         ),
                       ),
-                      const Icon(Icons.chevron_right, size: 16, color: IosTokens.label3),
+                      const Icon(
+                        Icons.chevron_right,
+                        size: 16,
+                        color: IosTokens.label3,
+                      ),
                     ],
                   ),
                 ),
@@ -341,9 +372,9 @@ class _SettingsTabState extends ConsumerState<SettingsTab> {
         const SizedBox(height: 12),
         TextButton(
           onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const SettingsScreen()),
-            );
+            Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const SettingsScreen()));
           },
           child: Text(
             s.settingsAdvanced,
@@ -390,7 +421,10 @@ class _SettingsRow extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(child: Text(label, style: IosTokens.body)),
           if (value != null)
-            Text(value!, style: IosTokens.body.copyWith(color: IosTokens.label2)),
+            Text(
+              value!,
+              style: IosTokens.body.copyWith(color: IosTokens.label2),
+            ),
           if (trailing != null) trailing!,
           if (onTap != null && trailing == null)
             const Icon(Icons.chevron_right, size: 16, color: IosTokens.label3),

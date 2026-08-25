@@ -35,7 +35,9 @@ class IosSegment<T> extends StatelessWidget {
                   duration: const Duration(milliseconds: 200),
                   padding: const EdgeInsets.symmetric(vertical: 6),
                   decoration: BoxDecoration(
-                    color: active ? IosTokens.segmentActive : Colors.transparent,
+                    color: active
+                        ? IosTokens.segmentActive
+                        : Colors.transparent,
                     borderRadius: BorderRadius.circular(7),
                     boxShadow: active
                         ? [

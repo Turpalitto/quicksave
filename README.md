@@ -32,7 +32,7 @@ Privacy-first archiver for **public** Instagram media: Android app, Web PWA, Chr
 cd backend
 npm install
 npm start    # http://localhost:3000
-npm test     # 115 tests
+npm test     # 129 tests
 ```
 
 Production: [`backend/render.yaml`](backend/render.yaml), smoke check `npm run smoke:deploy`.
@@ -42,7 +42,7 @@ Production: [`backend/render.yaml`](backend/render.yaml), smoke check `npm run s
 ```bash
 flutter pub get
 flutter run
-flutter test      # 141 tests
+flutter test      # 161 tests
 flutter analyze
 ```
 
@@ -82,6 +82,7 @@ quicksave/
 ├── lib/                    # Flutter app + Web PWA
 ├── android/                # Kotlin: Gallery, Widget, QS tile, FG service
 ├── backend/                # Express resolver + Docker + staged Web PWA
+│   └── public/web/         # ⚠ generated artifact, refresh via scripts/stage-web-for-backend.mjs
 ├── extension/              # Chrome MV3 extension
 ├── store/                  # Play listing, billing, release checklist
 ├── scripts/                # stage-web-for-backend.mjs, smoke-deploy.mjs
@@ -101,8 +102,8 @@ node scripts/smoke-deploy.mjs https://quicksave-api.onrender.com
 
 | Suite | Count |
 | --- | --- |
-| Flutter | 141 |
-| Backend | 115 |
+| Flutter | 161 |
+| Backend | 129 |
 | Extension | 6 |
 
 ---

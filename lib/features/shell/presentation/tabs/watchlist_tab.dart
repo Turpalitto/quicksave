@@ -58,7 +58,9 @@ class _WatchlistTabState extends ConsumerState<WatchlistTab> {
       return;
     }
 
-    final ok = await ref.read(settingsProvider.notifier).addScheduledProfile(url);
+    final ok = await ref
+        .read(settingsProvider.notifier)
+        .addScheduledProfile(url);
     if (mounted) {
       setState(() {
         _adding = false;
@@ -72,7 +74,9 @@ class _WatchlistTabState extends ConsumerState<WatchlistTab> {
   }
 
   Future<void> _remove(ScheduledProfile profile) async {
-    await ref.read(settingsProvider.notifier).removeScheduledProfile(profile.username);
+    await ref
+        .read(settingsProvider.notifier)
+        .removeScheduledProfile(profile.username);
   }
 
   Future<void> _checkNow(ScheduledProfile profile) async {
@@ -96,15 +100,17 @@ class _WatchlistTabState extends ConsumerState<WatchlistTab> {
     setState(() => _checkingUsername = null);
 
     if (!result.ok) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(s.watchlistCheckFailed)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(s.watchlistCheckFailed)));
       return;
     }
 
     if (result.newItems.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(s.watchlistNoNewItems(result.alreadySavedCount))),
+        SnackBar(
+          content: Text(s.watchlistNoNewItems(result.alreadySavedCount)),
+        ),
       );
       return;
     }
@@ -115,7 +121,10 @@ class _WatchlistTabState extends ConsumerState<WatchlistTab> {
         backgroundColor: IosTokens.elevated,
         title: Text(s.watchlistNewItemsTitle, style: IosTokens.title3),
         content: Text(
-          s.watchlistNewItemsBody(result.newItems.length, result.alreadySavedCount),
+          s.watchlistNewItemsBody(
+            result.newItems.length,
+            result.alreadySavedCount,
+          ),
           style: IosTokens.subhead.copyWith(color: IosTokens.label2),
         ),
         actions: [
@@ -156,7 +165,10 @@ class _WatchlistTabState extends ConsumerState<WatchlistTab> {
                   children: [
                     const Padding(
                       padding: EdgeInsets.only(left: 16),
-                      child: Text('@', style: TextStyle(color: IosTokens.label3, fontSize: 17)),
+                      child: Text(
+                        '@',
+                        style: TextStyle(color: IosTokens.label3, fontSize: 17),
+                      ),
                     ),
                     Expanded(
                       child: TextField(
@@ -166,7 +178,10 @@ class _WatchlistTabState extends ConsumerState<WatchlistTab> {
                           hintText: s.watchlistAddPlaceholder,
                           border: InputBorder.none,
                           filled: false,
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 4,
+                            vertical: 12,
+                          ),
                         ),
                         onSubmitted: (_) => _add(),
                       ),
@@ -186,7 +201,9 @@ class _WatchlistTabState extends ConsumerState<WatchlistTab> {
                 borderRadius: BorderRadius.circular(12),
                 child: InkWell(
                   borderRadius: BorderRadius.circular(12),
-                  onTap: _adding || _usernameCtrl.text.trim().isEmpty ? null : _add,
+                  onTap: _adding || _usernameCtrl.text.trim().isEmpty
+                      ? null
+                      : _add,
                   child: Center(
                     child: _adding
                         ? const SizedBox(
@@ -207,7 +224,10 @@ class _WatchlistTabState extends ConsumerState<WatchlistTab> {
         if (_error != null)
           Padding(
             padding: const EdgeInsets.only(top: 8, left: 16),
-            child: Text(_error!, style: IosTokens.footnote.copyWith(color: IosTokens.red)),
+            child: Text(
+              _error!,
+              style: IosTokens.footnote.copyWith(color: IosTokens.red),
+            ),
           )
         else
           IosSectionFooter(s.watchlistDisclaimer),
@@ -224,7 +244,11 @@ class _WatchlistTabState extends ConsumerState<WatchlistTab> {
                     color: IosTokens.fill,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.visibility_outlined, color: IosTokens.label3, size: 26),
+                  child: const Icon(
+                    Icons.visibility_outlined,
+                    color: IosTokens.label3,
+                    size: 26,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Text(s.watchlistEmptyTitle, style: IosTokens.title3),
@@ -246,7 +270,8 @@ class _WatchlistTabState extends ConsumerState<WatchlistTab> {
                 for (var i = 0; i < profiles.length; i++)
                   _ProfileRow(
                     profile: profiles[i],
-                    color: IosTokens.avatarColors[i % IosTokens.avatarColors.length],
+                    color: IosTokens
+                        .avatarColors[i % IosTokens.avatarColors.length],
                     loading: _checkingUsername == profiles[i].username,
                     onRemove: () => _remove(profiles[i]),
                     onCheck: () => _checkNow(profiles[i]),
@@ -293,7 +318,10 @@ class _ProfileRow extends StatelessWidget {
           CircleAvatar(
             radius: 20,
             backgroundColor: color,
-            child: Text(initial, style: IosTokens.subhead.copyWith(color: Colors.white)),
+            child: Text(
+              initial,
+              style: IosTokens.subhead.copyWith(color: Colors.white),
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -302,7 +330,10 @@ class _ProfileRow extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('@${profile.username}', style: IosTokens.body.copyWith(fontWeight: FontWeight.w500)),
+                  Text(
+                    '@${profile.username}',
+                    style: IosTokens.body.copyWith(fontWeight: FontWeight.w500),
+                  ),
                   Text(subtitle, style: IosTokens.footnote),
                 ],
               ),

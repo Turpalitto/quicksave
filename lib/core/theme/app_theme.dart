@@ -80,7 +80,9 @@ class AppTheme {
           backgroundColor: IosTokens.blue,
           foregroundColor: Colors.white,
           minimumSize: const Size.fromHeight(52),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           textStyle: IosTokens.headline,
         ),
       ),
@@ -96,7 +98,10 @@ class AppTheme {
         hintStyle: IosTokens.body.copyWith(
           color: isDark ? IosTokens.label3 : IosTokens.label3Light,
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
       ),
       cardTheme: CardThemeData(
         elevation: isDark ? 0 : 0.5,

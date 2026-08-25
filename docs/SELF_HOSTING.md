@@ -36,6 +36,9 @@ See `backend/.env.example`. Key settings:
 - `RATE_LIMIT_MAX` — default 30/min (aligned with Render blueprint)
 - `METRICS_PUBLIC=false` — require `METRICS_TOKEN` or `Authorization: Bearer`
 - `SERVICE_VERSION` — reported in `/health`
+- `ALLOWED_ORIGINS` — comma-separated browser origins allowed by CORS.
+  **Required in production** for the Web PWA (browser API calls are blocked
+  without it). Mobile apps and curl are not affected by CORS.
 
 ## Security notes
 
@@ -43,6 +46,10 @@ See `backend/.env.example`. Key settings:
 - Do not expose metrics publicly without a token
 - Do not log full user URLs (backend sanitizes for logs)
 - No Instagram credentials — public content only
+- CORS denies unknown origins in production (`ALLOWED_ORIGINS` allowlist);
+  development mode (`NODE_ENV=development`) allows all origins
+- CSP is enforced for the served Web PWA
+- `BILLING_DEV_ACCEPT=1` is ignored when `NODE_ENV=production`
 
 ## Troubleshooting
 
@@ -57,4 +64,6 @@ See `backend/.env.example`. Key settings:
 
 Settings → Backend → Self-hosted → enter URL → Test connection.
 
-Pro demo key `QS-PRO-DEMO1` enables self-hosted mode in dev builds.
+Pro license keys are issued with `node scripts/generate-license-key.mjs`
+(`--selfhost` for the self-hosted tier). Public demo keys (`QS-PRO-DEMO1`)
+are for dev/review builds only.

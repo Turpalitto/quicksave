@@ -33,19 +33,21 @@ class PendingDownload {
     'id': id,
     'sourceUrl': sourceUrl,
     'createdAt': createdAt.toIso8601String(),
-    if (lastAttemptAt != null) 'lastAttemptAt': lastAttemptAt!.toIso8601String(),
+    if (lastAttemptAt != null)
+      'lastAttemptAt': lastAttemptAt!.toIso8601String(),
     'attempts': attempts,
     if (lastError != null) 'lastError': lastError,
   };
 
-  factory PendingDownload.fromJson(Map<String, dynamic> json) => PendingDownload(
-    id: json['id'] as String,
-    sourceUrl: json['sourceUrl'] as String,
-    createdAt: DateTime.parse(json['createdAt'] as String),
-    lastAttemptAt: json['lastAttemptAt'] != null
-        ? DateTime.tryParse(json['lastAttemptAt'] as String)
-        : null,
-    attempts: (json['attempts'] as num?)?.toInt() ?? 0,
-    lastError: json['lastError'] as String?,
-  );
+  factory PendingDownload.fromJson(Map<String, dynamic> json) =>
+      PendingDownload(
+        id: json['id'] as String,
+        sourceUrl: json['sourceUrl'] as String,
+        createdAt: DateTime.parse(json['createdAt'] as String),
+        lastAttemptAt: json['lastAttemptAt'] != null
+            ? DateTime.tryParse(json['lastAttemptAt'] as String)
+            : null,
+        attempts: (json['attempts'] as num?)?.toInt() ?? 0,
+        lastError: json['lastError'] as String?,
+      );
 }

@@ -41,7 +41,10 @@ class IosBlueButton extends StatelessWidget {
                 )
               else ...[
                 if (icon != null) ...[icon!, const SizedBox(width: 8)],
-                Text(label, style: IosTokens.headline.copyWith(color: Colors.white)),
+                Text(
+                  label,
+                  style: IosTokens.headline.copyWith(color: Colors.white),
+                ),
               ],
             ],
           ),
@@ -52,11 +55,7 @@ class IosBlueButton extends StatelessWidget {
 }
 
 class IosPressable extends StatefulWidget {
-  const IosPressable({
-    super.key,
-    required this.child,
-    required this.onTap,
-  });
+  const IosPressable({super.key, required this.child, required this.onTap});
 
   final Widget child;
   final VoidCallback onTap;

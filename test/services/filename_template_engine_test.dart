@@ -10,6 +10,23 @@ void main() {
       );
     });
 
+    test('sanitizeSegment neutralizes dot-only traversal segments', () {
+      expect(FilenameTemplateEngine.sanitizeSegment('..'), 'unknown');
+      expect(FilenameTemplateEngine.sanitizeSegment('.'), 'unknown');
+      expect(FilenameTemplateEngine.sanitizeSegment(' .. '), 'unknown');
+    });
+
+    test('folderStyle cannot escape via dot segments', () {
+      final name = FilenameTemplateEngine.apply(
+        template: '{username}/{type}/{shortcode}',
+        username: '..',
+        type: 'reel',
+        shortcode: 'ABC123',
+        date: DateTime(2026, 6, 21),
+      );
+      expect(name.split('/'), everyElement(isNot('..')));
+    });
+
     test('apply default template', () {
       final name = FilenameTemplateEngine.apply(
         template: '{username}_{type}_{shortcode}_{date}',

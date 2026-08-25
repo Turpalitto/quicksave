@@ -12,6 +12,8 @@ class FilenameTemplateEngine {
     if (s.isEmpty) return 'unknown';
     s = s.replaceAll(invalidChars, '_');
     s = s.replaceAll(RegExp(r'\s+'), '_');
+    // Dot-only segments ('.', '..') could escape the target folder.
+    if (RegExp(r'^\.+$').hasMatch(s)) return 'unknown';
     if (s.length > 64) s = s.substring(0, 64);
     return s;
   }

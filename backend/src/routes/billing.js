@@ -1,4 +1,5 @@
 const express = require('express');
+const config = require('../config');
 
 const router = express.Router();
 
@@ -29,7 +30,8 @@ router.post('/play/verify', (req, res) => {
     });
   }
 
-  if (process.env.BILLING_DEV_ACCEPT === '1') {
+  // Dev shortcut must never silently accept purchases in production.
+  if (process.env.BILLING_DEV_ACCEPT === '1' && config.nodeEnv !== 'production') {
     return res.json({ ok: true, valid: true, mode: 'dev_accept' });
   }
 

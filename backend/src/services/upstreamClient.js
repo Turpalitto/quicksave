@@ -1,4 +1,3 @@
-const axios = require('axios');
 const config = require('../config');
 const { findVideoUrlInJson, findThumbnailInJson } = require('./postExtractor');
 const { extractShortcode } = require('./urlNormalizer');
@@ -23,11 +22,17 @@ const USER_AGENTS = [
 const REQUEST_TIMEOUT = config.requestTimeoutMs;
 const MAX_REDIRECTS = 5;
 
+function isAbortError(err) {
+  return (
+    err?.name === 'CanceledError' || err?.name === 'AbortError' || err?.code === 'ERR_CANCELED'
+  );
+}
+
 function parseCookieJar(setCookieHeaders, jar = {}) {
   return parseSetCookieHeaders(setCookieHeaders, jar);
 }
 
-async function fetchSessionCookies(userAgent) {
+async function fetchSessionCookies(userAgent, signal) {
   const session = createSessionState();
   const jar = session.jar;
   try {
@@ -35,11 +40,11 @@ async function fetchSessionCookies(userAgent) {
       timeout: REQUEST_TIMEOUT,
       maxRedirects: MAX_REDIRECTS,
       validateStatus: (s) => s >= 200 && s < 400,
+      ...(signal ? { signal } : {}),
       headers: {
         'User-Agent': userAgent,
         'Accept-Language': 'en-US,en;q=0.9',
-        Accept:
-          'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         ...(cookieHeader(jar) ? { Cookie: cookieHeader(jar) } : {}),
       },
     });
@@ -51,7 +56,7 @@ async function fetchSessionCookies(userAgent) {
   return { jar, wwwClaim: session.wwwClaim };
 }
 
-async function fetchHtml(url, userAgent, maxAttempts = 2, cookies = {}) {
+async function fetchHtml(url, userAgent, maxAttempts = 2, cookies = {}, signal) {
   let lastError;
   const cookieStr = cookieHeader(cookies);
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -60,6 +65,7 @@ async function fetchHtml(url, userAgent, maxAttempts = 2, cookies = {}) {
         timeout: REQUEST_TIMEOUT,
         maxRedirects: MAX_REDIRECTS,
         validateStatus: (s) => s >= 200 && s < 400,
+        ...(signal ? { signal } : {}),
         headers: {
           'User-Agent': userAgent,
           'Accept-Language': 'en-US,en;q=0.9',
@@ -69,6 +75,7 @@ async function fetchHtml(url, userAgent, maxAttempts = 2, cookies = {}) {
         },
       });
     } catch (err) {
+      if (isAbortError(err)) throw err;
       lastError = err;
       const status = err.response && err.response.status;
       if (status && status >= 400 && status < 500 && status !== 429) {
@@ -83,8 +90,8 @@ async function fetchHtml(url, userAgent, maxAttempts = 2, cookies = {}) {
   throw lastError;
 }
 
-async function fetchHtmlSources(pageUrl, embedUrl) {
-  const { jar: sessionCookies } = await fetchSessionCookies(USER_AGENTS[0]);
+async function fetchHtmlSources(pageUrl, embedUrl, signal) {
+  const { jar: sessionCookies } = await fetchSessionCookies(USER_AGENTS[0], signal);
   const jobs = [];
   for (const ua of USER_AGENTS) {
     jobs.push({
@@ -93,8 +100,9 @@ async function fetchHtmlSources(pageUrl, embedUrl) {
       url: pageUrl,
       attempts: 2,
       cookies: sessionCookies,
+      signal,
     });
-    jobs.push({ source: 'embed', ua, url: embedUrl, attempts: 1, cookies: {} });
+    jobs.push({ source: 'embed', ua, url: embedUrl, attempts: 1, cookies: {}, signal });
   }
 
   const poolSize = Math.max(1, config.upstreamPoolSize);
@@ -106,7 +114,7 @@ async function fetchHtmlSources(pageUrl, embedUrl) {
       const idx = nextJob++;
       const job = jobs[idx];
       try {
-        const res = await fetchHtml(job.url, job.ua, job.attempts, job.cookies);
+        const res = await fetchHtml(job.url, job.ua, job.attempts, job.cookies, job.signal);
         results[idx] = { source: job.source, ua: job.ua, res };
       } catch (err) {
         results[idx] = { source: job.source, ua: job.ua, err };
@@ -118,9 +126,9 @@ async function fetchHtmlSources(pageUrl, embedUrl) {
   return results.filter(Boolean);
 }
 
-async function fetchGraphqlVideoUrl(pageUrl, userAgent) {
+async function fetchGraphqlVideoUrl(pageUrl, userAgent, signal) {
   const shortcode = extractShortcode(pageUrl);
-  const { jar, wwwClaim } = await fetchSessionCookies(userAgent);
+  const { jar, wwwClaim } = await fetchSessionCookies(userAgent, signal);
   const cookieStr = cookieHeader(jar);
   const apiHeaders = {
     'User-Agent': userAgent,
@@ -147,6 +155,7 @@ async function fetchGraphqlVideoUrl(pageUrl, userAgent) {
         timeout: REQUEST_TIMEOUT,
         maxRedirects: MAX_REDIRECTS,
         validateStatus: (s) => s >= 200 && s < 400,
+        ...(signal ? { signal } : {}),
         headers: apiHeaders,
       });
       const data = response.data;
@@ -170,6 +179,7 @@ async function fetchGraphqlVideoUrl(pageUrl, userAgent) {
         }
       }
     } catch (err) {
+      if (isAbortError(err)) throw err;
       const status = err && err.response && err.response.status;
       if (status === 404) {
         const e = new Error('not_found');
@@ -182,11 +192,12 @@ async function fetchGraphqlVideoUrl(pageUrl, userAgent) {
   return { videoUrl: null, thumbnailUrl: null, rawData: null };
 }
 
-async function fetchOembedFromEndpoint(baseUrl, pageUrl, userAgent) {
+async function fetchOembedFromEndpoint(baseUrl, pageUrl, userAgent, signal) {
   const response = await igHttp.get(baseUrl, {
     params: { url: pageUrl, omitscript: true },
     timeout: 8000,
     validateStatus: (s) => s >= 200 && s < 400,
+    ...(signal ? { signal } : {}),
     headers: {
       'User-Agent': userAgent,
       Accept: 'application/json',
@@ -201,15 +212,17 @@ async function fetchOembedFromEndpoint(baseUrl, pageUrl, userAgent) {
   };
 }
 
-async function fetchOembedMetadata(pageUrl, userAgent) {
+async function fetchOembedMetadata(pageUrl, userAgent, signal) {
   try {
     const fb = await fetchOembedFromEndpoint(
       'https://graph.facebook.com/v18.0/instagram_oembed',
       pageUrl,
       userAgent,
+      signal,
     );
     if (fb) return fb;
-  } catch (_) {
+  } catch (err) {
+    if (isAbortError(err)) throw err;
     // fallback below
   }
 
@@ -218,24 +231,27 @@ async function fetchOembedMetadata(pageUrl, userAgent) {
       'https://api.instagram.com/oembed',
       pageUrl,
       userAgent,
+      signal,
     );
-  } catch (_) {
+  } catch (err) {
+    if (isAbortError(err)) throw err;
     return null;
   }
 }
 
-async function fetchProfileWebInfo(username, userAgent) {
+async function fetchProfileWebInfo(username, userAgent, signal) {
   const url = `https://www.instagram.com/api/v1/users/web_profile_info/?username=${encodeURIComponent(username)}`;
   const referer = `https://www.instagram.com/${username}/`;
 
   for (let attempt = 1; attempt <= 2; attempt++) {
     try {
-      const { jar, wwwClaim } = await fetchSessionCookies(userAgent);
+      const { jar, wwwClaim } = await fetchSessionCookies(userAgent, signal);
       const csrf = jar.csrftoken || '';
       const response = await igHttp.get(url, {
         timeout: REQUEST_TIMEOUT,
         maxRedirects: MAX_REDIRECTS,
         validateStatus: (s) => s >= 200 && s < 500,
+        ...(signal ? { signal } : {}),
         headers: {
           'User-Agent': userAgent,
           Accept: 'application/json',
@@ -257,7 +273,8 @@ async function fetchProfileWebInfo(username, userAgent) {
         return response.data?.data?.user || null;
       }
       return null;
-    } catch (_) {
+    } catch (err) {
+      if (isAbortError(err)) throw err;
       if (attempt < 2) {
         await new Promise((r) => setTimeout(r, 1500));
       }
@@ -270,6 +287,7 @@ module.exports = {
   USER_AGENTS,
   REQUEST_TIMEOUT,
   MAX_REDIRECTS,
+  isAbortError,
   parseCookieJar,
   cookieHeader,
   fetchHtml,

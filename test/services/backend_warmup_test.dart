@@ -5,10 +5,7 @@ import 'package:quicksave/core/network/backend_warmup.dart';
 void main() {
   group('backendNeedsWarmUp', () {
     test('detects Render free tier host', () {
-      expect(
-        backendNeedsWarmUp('https://quicksave-api.onrender.com'),
-        isTrue,
-      );
+      expect(backendNeedsWarmUp('https://quicksave-api.onrender.com'), isTrue);
     });
 
     test('local and LAN hosts skip warm-up', () {

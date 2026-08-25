@@ -13,10 +13,7 @@ class HomeScreen extends ConsumerWidget {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
-          child: HomeTab(
-            onSaved: () {},
-            onGoToLibrary: () {},
-          ),
+          child: HomeTab(onSaved: () {}, onGoToLibrary: () {}),
         ),
       ),
     );

@@ -25,7 +25,8 @@ class _LibraryGroup {
   final List<DownloadItem> items;
 
   DownloadItem get representative {
-    final sorted = [...items]..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    final sorted = [...items]
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
     return sorted.first;
   }
 
@@ -70,8 +71,9 @@ class _LibraryTabState extends ConsumerState<LibraryTab> {
       ...singles.map((i) => _LibraryGroup(key: i.id, items: [i])),
       ...map.entries.map((e) => _LibraryGroup(key: e.key, items: e.value)),
     ]..sort(
-        (a, b) => b.representative.createdAt.compareTo(a.representative.createdAt),
-      );
+      (a, b) =>
+          b.representative.createdAt.compareTo(a.representative.createdAt),
+    );
   }
 
   bool _matchesFilter(_LibraryGroup group) {
@@ -80,8 +82,8 @@ class _LibraryTabState extends ConsumerState<LibraryTab> {
       _LibraryFilter.all => true,
       _LibraryFilter.post =>
         kind == MediaSourceKind.post ||
-        kind == MediaSourceKind.profile ||
-        kind == MediaSourceKind.carousel,
+            kind == MediaSourceKind.profile ||
+            kind == MediaSourceKind.carousel,
       _LibraryFilter.reel => kind == MediaSourceKind.reel,
       _LibraryFilter.story =>
         kind == MediaSourceKind.story || kind == MediaSourceKind.highlight,
@@ -157,7 +159,11 @@ class _LibraryTabState extends ConsumerState<LibraryTab> {
                     color: IosTokens.fill,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.grid_view, color: IosTokens.label3, size: 26),
+                  child: const Icon(
+                    Icons.grid_view,
+                    color: IosTokens.label3,
+                    size: 26,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Text(s.libraryEmptyTitle, style: IosTokens.title3),
@@ -196,9 +202,9 @@ class _LibraryTabState extends ConsumerState<LibraryTab> {
         const SizedBox(height: 8),
         TextButton(
           onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const HistoryScreen()),
-            );
+            Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const HistoryScreen()));
           },
           child: Text(
             s.libraryOpenHistory,
@@ -228,7 +234,8 @@ class _LibraryTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final item = group.representative;
-    final gradient = IosTokens.libraryGradients[index % IosTokens.libraryGradients.length];
+    final gradient =
+        IosTokens.libraryGradients[index % IosTokens.libraryGradients.length];
     final label = item.author != null ? '@${item.author}' : 'Instagram';
 
     return GestureDetector(
@@ -241,7 +248,9 @@ class _LibraryTile extends StatelessWidget {
               imageUrl: item.thumbnailUrl,
               width: double.infinity,
               height: double.infinity,
-              fallback: DecoratedBox(decoration: BoxDecoration(gradient: gradient)),
+              fallback: DecoratedBox(
+                decoration: BoxDecoration(gradient: gradient),
+              ),
             )
           else
             DecoratedBox(decoration: BoxDecoration(gradient: gradient)),
@@ -297,7 +306,11 @@ class _LibraryTile extends StatelessWidget {
                     color: IosTokens.red,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.remove, color: Colors.white, size: 16),
+                  child: const Icon(
+                    Icons.remove,
+                    color: Colors.white,
+                    size: 16,
+                  ),
                 ),
               ),
             ),

@@ -5,6 +5,47 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 этот проект следует [Semantic Versioning](https://semver.org/lang/ru/).
 
+## [1.5.1] - 2026-08-25
+
+### Security (полный аудит)
+- **Pro-bypass устранён**: клиент больше не трактует 501 от бэкенда как успешную
+  верификацию покупки (`RemoteVerification`: verified / notConfigured / invalid);
+  несконфигурированный бэкенд = fallback на локальное состояние Google Play, а не «валидно».
+- **Лицензионные ключи v2 с контрольной суммой**: `QS-PRO-PAYLOAD-CC`
+  (tier-salted checksum). Произвольные `QS-PRO-XXXX` больше не активируют Pro;
+  выдача — `node scripts/generate-license-key.mjs`. Активации legacy-ключей
+  на устройствах продолжают работать.
+- **Cleartext запрещён глобально** в production (`base-config cleartextTrafficPermitted="false"`,
+  HTTP только для dev-хостов 10.0.2.2/localhost); убран `usesCleartextTraffic` из манифеста.
+- **CORS deny-by-default в production** — при пустом `ALLOWED_ORIGINS` origin не отражается.
+- **CSP включён** для Web PWA, раздаваемой бэкендом.
+- **Rate-limit добавлен на `/billing/play/verify`**; `BILLING_DEV_ACCEPT=1` игнорируется в production.
+- **Дедлайн резолвера отменяет upstream-запросы** (AbortController через все стратегии) —
+  нет утечки работы после таймаута.
+- **timing-safe сравнение** metrics-токена.
+- Cursor в ключе resolve-кэша хэшируется; `'..'`-сегменты нейтрализуются в filename templates.
+- Обновлены `express` (^4.21.2) и `axios` (^1.8.4).
+
+### Docs
+- Синхронизированы счётчики тестов (Flutter 154 / Backend 116), форматы ключей,
+  security-заметки (README, ARCHITECTURE, AGENTS, ENTITLEMENTS, SELF_HOSTING).
+- Задокументирован статус `backend/public/web/` как генерируемого артефакта.
+
+### Tests
+- `pro_service_test.dart` переписан под формат v2 (генерация, tamper, legacy-reject).
+- Новые кейсы: dot-only сегменты в `FilenameTemplateEngine`.
+- Исправлены устаревшие тесты под текущее поведение: snackbar → inline error
+  (`home_screen_test`), канонический хост без `www.` для профилей
+  (`Validators.prepareUrl`), заменены `pumpAndSettle` на ограниченные pump'ы
+  (бесконечная анимация шелла вешала 3 widget-теста на Flutter 3.47).
+- Код нормализован под Prettier (backend) и `dart format`; устранены все
+  замечания `flutter analyze` на SDK 3.47 (0 issues).
+
+### Fixed
+- Локальный запуск `npm run lint` ломался при наличии `eslint.config.js`
+  выше по дереву (flat-config auto-detection в ESLint 8.57) — используйте
+  `ESLINT_USE_FLAT_CONFIG=false` вне CI.
+
 ## [1.3.1] - 2026-06-21
 
 ### Added

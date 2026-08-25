@@ -127,11 +127,14 @@ class PlayBillingService {
     if (token.isEmpty) return false;
 
     final backend = await RemoteBillingValidator.instance.effectiveBackendUrl();
-    return RemoteBillingValidator.instance.verifyPlayPurchase(
+    final verdict = await RemoteBillingValidator.instance.verifyPlayPurchase(
       productId: purchase.productID,
       purchaseToken: token,
       packageName: purchase.verificationData.source,
       backendUrl: backend,
     );
+    // Strict rejection only when the backend is configured and denies the
+    // purchase; an unconfigured backend falls back to the local Play state.
+    return verdict != RemoteVerification.invalid;
   }
 }

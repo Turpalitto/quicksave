@@ -83,7 +83,8 @@ describe('Integration: resolver extracts videoUrl from realistic HTML', () => {
   test('GraphQL fallback finds deeply nested video_url (shortcode_media)', async () => {
     const noVideoHtml = '<html><body>nothing</body></html>';
     axios.get.mockImplementation(async (url) => {
-      if (url.includes('/api/v1/media/shortcode/')) return jsonOk(JSON.parse(F.GRAPHQL_NESTED_JSON));
+      if (url.includes('/api/v1/media/shortcode/'))
+        return jsonOk(JSON.parse(F.GRAPHQL_NESTED_JSON));
       return htmlOk(noVideoHtml);
     });
     const r = await resolveInstagramUrl('https://www.instagram.com/p/Pqr678/');

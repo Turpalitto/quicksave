@@ -115,10 +115,7 @@ abstract final class IosTokens {
     color: label2,
   );
 
-  static TextStyle caption1 = const TextStyle(
-    fontSize: 12,
-    color: label2,
-  );
+  static TextStyle caption1 = const TextStyle(fontSize: 12, color: label2);
 
   static TextStyle caption2 = const TextStyle(
     fontSize: 11,
@@ -157,21 +154,23 @@ class IosPalette {
 
   Color get bg => isDark ? IosTokens.bg : IosTokens.bgLight;
   Color get elevated => isDark ? IosTokens.elevated : IosTokens.elevatedLight;
-  Color get elevated2 => isDark ? IosTokens.elevated2 : IosTokens.elevated2Light;
+  Color get elevated2 =>
+      isDark ? IosTokens.elevated2 : IosTokens.elevated2Light;
   Color get label => isDark ? IosTokens.label : IosTokens.labelLight;
   Color get label2 => isDark ? IosTokens.label2 : IosTokens.label2Light;
   Color get label3 => isDark ? IosTokens.label3 : IosTokens.label3Light;
   Color get fill => isDark ? IosTokens.fill : IosTokens.fillLight;
   Color get fill2 => isDark ? IosTokens.fill2 : IosTokens.fill2Light;
   Color get blurBar => isDark ? IosTokens.blurBar : IosTokens.blurBarLight;
-  Color get separator => isDark ? IosTokens.separator : IosTokens.separatorLight;
+  Color get separator =>
+      isDark ? IosTokens.separator : IosTokens.separatorLight;
 
-  TextStyle get largeTitle =>
-      IosTokens.largeTitle.copyWith(color: label);
+  TextStyle get largeTitle => IosTokens.largeTitle.copyWith(color: label);
   TextStyle get headline => IosTokens.headline.copyWith(color: label);
   TextStyle get body => IosTokens.body.copyWith(color: label);
   TextStyle get subhead => IosTokens.subhead.copyWith(color: label);
   TextStyle get footnote => IosTokens.footnote.copyWith(color: label2);
   TextStyle get caption1 => IosTokens.caption1.copyWith(color: label2);
-  TextStyle get sectionHeader => IosTokens.sectionHeader.copyWith(color: label2);
+  TextStyle get sectionHeader =>
+      IosTokens.sectionHeader.copyWith(color: label2);
 }

@@ -94,7 +94,9 @@ class InstagramResolver {
 
     final maxAttempts = backendResolveMaxAttempts(backendUrl);
     final perAttemptTimeout = backendResolveTimeout(backendUrl);
-    final deadline = DateTime.now().add(backendResolveOverallTimeout(backendUrl));
+    final deadline = DateTime.now().add(
+      backendResolveOverallTimeout(backendUrl),
+    );
     Response<dynamic>? response;
 
     for (var attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -106,9 +108,7 @@ class InstagramResolver {
         if (remaining <= Duration.zero) {
           throw const BackendUnreachableException();
         }
-        await Future<void>.delayed(
-          backoff < remaining ? backoff : remaining,
-        );
+        await Future<void>.delayed(backoff < remaining ? backoff : remaining);
       }
 
       final remaining = deadline.difference(DateTime.now());
@@ -145,7 +145,8 @@ class InstagramResolver {
         if (e.type == DioExceptionType.cancel) {
           throw const DownloadCancelledException();
         }
-        final retry = attempt < maxAttempts && shouldRetryBackendRequest(e.type);
+        final retry =
+            attempt < maxAttempts && shouldRetryBackendRequest(e.type);
         if (retry) continue;
         if (shouldRetryBackendRequest(e.type)) {
           throw const BackendUnreachableException();

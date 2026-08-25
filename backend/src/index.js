@@ -23,7 +23,20 @@ app.set('trust proxy', config.trustProxy);
 
 app.use(
   helmet({
-    contentSecurityPolicy: false,
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: {
+        'script-src': ["'self'", "'unsafe-inline'", "'wasm-unsafe-eval'", 'blob:'],
+        'style-src': ["'self'", "'unsafe-inline'"],
+        'img-src': ["'self'", 'data:', 'blob:', 'https:'],
+        'media-src': ["'self'", 'blob:', 'https:'],
+        'connect-src': ["'self'", 'https:'],
+        'worker-src': ["'self'", 'blob:'],
+        'font-src': ["'self'", 'data:'],
+        'frame-ancestors': ["'self'"],
+        'object-src': ["'none'"],
+      },
+    },
   }),
 );
 
@@ -37,7 +50,8 @@ const corsOptions = {
             .split(',')
             .map((s) => s.trim())
             .filter(Boolean);
-          return list.length === 0 ? true : list;
+          // Deny by default in production: never reflect an arbitrary Origin.
+          return list.length === 0 ? false : list;
         })(),
 };
 app.use(cors(corsOptions));
@@ -95,6 +109,7 @@ function createRateLimiter() {
 }
 
 app.use('/resolve', createRateLimiter());
+app.use('/billing', createRateLimiter());
 
 app.get('/health', (_req, res) => {
   res.json({

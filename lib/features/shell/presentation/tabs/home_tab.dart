@@ -186,17 +186,19 @@ class _HomeTabState extends ConsumerState<HomeTab> with WidgetsBindingObserver {
 
   Future<void> _download() async {
     final s = S.of(context);
-    await ref.read(downloadProvider.notifier).download(
-      strings: DownloadStrings(
-        completeTitle: s.notificationDownloadCompleteTitle,
-        completeBodyAuthorPrefix: s.notificationDownloadAuthorPrefix,
-        completeBodyFallback: s.notificationDownloadCompleteBodyFallback,
-        errorTitle: s.notificationDownloadErrorTitle,
-        batchCompleteBody: s.previewBatchSaved('{count}'),
-        channelName: s.notificationChannelDownloads,
-        channelDescription: s.notificationChannelDownloadsDesc,
-      ),
-    );
+    await ref
+        .read(downloadProvider.notifier)
+        .download(
+          strings: DownloadStrings(
+            completeTitle: s.notificationDownloadCompleteTitle,
+            completeBodyAuthorPrefix: s.notificationDownloadAuthorPrefix,
+            completeBodyFallback: s.notificationDownloadCompleteBodyFallback,
+            errorTitle: s.notificationDownloadErrorTitle,
+            batchCompleteBody: s.previewBatchSaved('{count}'),
+            channelName: s.notificationChannelDownloads,
+            channelDescription: s.notificationChannelDownloadsDesc,
+          ),
+        );
     if (ref.read(downloadProvider) is DownloadSuccess) {
       widget.onSaved();
     }
@@ -209,14 +211,16 @@ class _HomeTabState extends ConsumerState<HomeTab> with WidgetsBindingObserver {
   }
 
   void _openFullPreview(String url) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => PreviewScreen(
-          sourceUrl: url,
-          autoStart: ref.read(settingsProvider).autoDownload,
-        ),
-      ),
-    ).then((_) => widget.onSaved());
+    Navigator.of(context)
+        .push(
+          MaterialPageRoute(
+            builder: (_) => PreviewScreen(
+              sourceUrl: url,
+              autoStart: ref.read(settingsProvider).autoDownload,
+            ),
+          ),
+        )
+        .then((_) => widget.onSaved());
   }
 
   String _exampleLabel(String key, Strings s) => switch (key) {
@@ -230,9 +234,8 @@ class _HomeTabState extends ConsumerState<HomeTab> with WidgetsBindingObserver {
     ResolveType.story => s.previewTypeStory,
     ResolveType.highlight => s.previewTypeHighlight(result.items.length),
     ResolveType.profile => s.previewTypeProfile(result.items.length),
-    ResolveType.single => result.items.first.isVideo
-        ? s.libraryFilterReels
-        : s.previewTypeSingle,
+    ResolveType.single =>
+      result.items.first.isVideo ? s.libraryFilterReels : s.previewTypeSingle,
   };
 
   Color _kindColor(ResolveResult result) => switch (result.type) {
@@ -300,7 +303,7 @@ class _HomeTabState extends ConsumerState<HomeTab> with WidgetsBindingObserver {
         IosBlueButton(
           label: s.homeFindMedia,
           loading: resolving,
-          onPressed: hasInput && !resolving ? () => _submit() : null,
+          onPressed: hasInput && !resolving ? _submit : null,
         ),
         const SizedBox(height: 16),
         Wrap(
@@ -318,7 +321,10 @@ class _HomeTabState extends ConsumerState<HomeTab> with WidgetsBindingObserver {
                         _submit(ex.$2);
                       },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: p.fill,
                     borderRadius: BorderRadius.circular(999),
@@ -347,7 +353,11 @@ class _HomeTabState extends ConsumerState<HomeTab> with WidgetsBindingObserver {
                     color: IosTokens.red.withValues(alpha: 0.15),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.error_outline, color: IosTokens.red, size: 18),
+                  child: const Icon(
+                    Icons.error_outline,
+                    color: IosTokens.red,
+                    size: 18,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -391,7 +401,10 @@ class _HomeTabState extends ConsumerState<HomeTab> with WidgetsBindingObserver {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(_kindLabel(resolved.result, s), style: p.headline),
+                            Text(
+                              _kindLabel(resolved.result, s),
+                              style: p.headline,
+                            ),
                             Text(
                               [
                                 if (resolved.result.author != null)
@@ -406,7 +419,10 @@ class _HomeTabState extends ConsumerState<HomeTab> with WidgetsBindingObserver {
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: IosTokens.green.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(999),
@@ -438,15 +454,16 @@ class _HomeTabState extends ConsumerState<HomeTab> with WidgetsBindingObserver {
                       onPressed: () => _openFullPreview(resolved.sourceUrl),
                       child: Text(
                         s.previewTitle,
-                        style: IosTokens.subhead.copyWith(color: IosTokens.blue),
+                        style: IosTokens.subhead.copyWith(
+                          color: IosTokens.blue,
+                        ),
                       ),
                     ),
                   ),
               ],
             ),
           ),
-          if (success)
-            IosSectionFooter(s.homeHowFooter),
+          if (success) IosSectionFooter(s.homeHowFooter),
         ],
         const SizedBox(height: 28),
         IosSectionHeader(s.homeHowItWorks),
@@ -454,9 +471,21 @@ class _HomeTabState extends ConsumerState<HomeTab> with WidgetsBindingObserver {
           separated: true,
           child: Column(
             children: [
-              _HowStep(number: '1', title: s.homeHowStep1Title, subtitle: s.homeHowStep1Sub),
-              _HowStep(number: '2', title: s.homeHowStep2Title, subtitle: s.homeHowStep2Sub),
-              _HowStep(number: '3', title: s.homeHowStep3Title, subtitle: s.homeHowStep3Sub),
+              _HowStep(
+                number: '1',
+                title: s.homeHowStep1Title,
+                subtitle: s.homeHowStep1Sub,
+              ),
+              _HowStep(
+                number: '2',
+                title: s.homeHowStep2Title,
+                subtitle: s.homeHowStep2Sub,
+              ),
+              _HowStep(
+                number: '3',
+                title: s.homeHowStep3Title,
+                subtitle: s.homeHowStep3Sub,
+              ),
             ],
           ),
         ),
@@ -555,10 +584,7 @@ class _HowStep extends StatelessWidget {
             width: 28,
             height: 28,
             alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: p.fill,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: p.fill, shape: BoxShape.circle),
             child: Text(
               number,
               style: p.footnote.copyWith(fontWeight: FontWeight.w600),

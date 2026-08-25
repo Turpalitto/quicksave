@@ -1,6 +1,6 @@
 {
   "name": "quicksave-backend",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "QuickSave backend — resolves public Instagram post URLs.",
   "main": "src/index.js",
   "scripts": {
@@ -14,11 +14,11 @@
     "smoke:deploy": "node ../scripts/smoke-deploy.mjs"
   },
   "dependencies": {
-    "express": "^4.19.2",
+    "express": "^4.21.2",
     "cors": "^2.8.5",
     "helmet": "^7.1.0",
     "morgan": "^1.10.0",
-    "axios": "^1.6.8",
+    "axios": "^1.8.4",
     "express-rate-limit": "^7.2.0",
     "rate-limit-redis": "^4.2.0",
     "redis": "^4.7.0"

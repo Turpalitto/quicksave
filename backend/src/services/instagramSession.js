@@ -52,10 +52,7 @@ function parseSetCookieHeaders(setCookieHeaders, jar = {}) {
 /** Capture x-ig-set-www-claim from Instagram API responses (gallery-dl pattern). */
 function applyWwwClaimFromResponse(headers, state = {}) {
   if (!headers) return state.wwwClaim || '';
-  const claim =
-    headers['x-ig-set-www-claim'] ||
-    headers['X-IG-Set-WWW-Claim'] ||
-    null;
+  const claim = headers['x-ig-set-www-claim'] || headers['X-IG-Set-WWW-Claim'] || null;
   if (claim) state.wwwClaim = claim;
   return state.wwwClaim || '';
 }

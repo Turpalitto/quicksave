@@ -6,7 +6,8 @@ import '../domain/pending_download.dart';
 
 class PendingDownloadRepository {
   PendingDownloadRepository._();
-  static final PendingDownloadRepository instance = PendingDownloadRepository._();
+  static final PendingDownloadRepository instance =
+      PendingDownloadRepository._();
 
   Future<List<PendingDownload>> loadAll() async {
     final raw = StorageService.instance.prefs.getString(

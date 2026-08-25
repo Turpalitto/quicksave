@@ -56,10 +56,7 @@ class IosCard extends StatelessWidget {
 }
 
 class _IosSeparatorList extends StatelessWidget {
-  const _IosSeparatorList({
-    required this.child,
-    required this.separatorColor,
-  });
+  const _IosSeparatorList({required this.child, required this.separatorColor});
 
   final Widget child;
   final Color separatorColor;

@@ -13,7 +13,7 @@ void main() {
   test('localMediaPathExists accepts existing files', () async {
     final file = File('${Directory.systemTemp.path}/qs_exists_test.bin');
     await file.writeAsBytes([1]);
-    addTearDown(() => file.deleteSync());
+    addTearDown(file.deleteSync);
     expect(localMediaPathExists(file.path), isTrue);
   });
 }

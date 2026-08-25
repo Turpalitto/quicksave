@@ -12,9 +12,13 @@ const {
 } = require('./postExtractor');
 const { fetchGraphqlShortcodeMedia } = require('./graphqlShortcodeClient');
 const { fetchOembedMetadata, fetchHtml, USER_AGENTS } = require('./upstreamClient');
-const { buildSuccessResult, buildImageSuccessResult, enrichCollectionWithOembed } = require('./resultAssembler');
+const {
+  buildSuccessResult,
+  buildImageSuccessResult,
+  enrichCollectionWithOembed,
+} = require('./resultAssembler');
 
-async function tryVideoVersionsInHtml(bestHtml, shortcode, url, urlKind) {
+async function tryVideoVersionsInHtml(bestHtml, shortcode, url, urlKind, signal) {
   if (!bestHtml || urlKind === 'story' || urlKind === 'highlight') return null;
   const videoUrl = extractBestFromVideoVersions(bestHtml);
   if (!videoUrl) return null;
@@ -23,44 +27,43 @@ async function tryVideoVersionsInHtml(bestHtml, shortcode, url, urlKind) {
     bestHtml,
     shortcode,
   );
-  const oembed = await fetchOembedMetadata(url, USER_AGENTS[0]);
+  const oembed = await fetchOembedMetadata(url, USER_AGENTS[0], signal);
   return enrichCollectionWithOembed(result, oembed);
 }
 
-async function tryOgMetaInHtml(bestHtml, shortcode, url, urlKind) {
+async function tryOgMetaInHtml(bestHtml, shortcode, url, urlKind, signal) {
   if (!bestHtml || urlKind === 'story' || urlKind === 'highlight') return null;
   const meta = extractMetaTags(bestHtml);
   const videoUrl = meta.videoSecure || meta.video || meta.videoUrl;
   if (videoUrl) {
-    let result = buildSuccessResult(
-      { videoUrl, thumbnailUrl: meta.image },
-      bestHtml,
-      shortcode,
-      { author: extractAuthor(meta.title) },
-    );
-    const oembed = await fetchOembedMetadata(url, USER_AGENTS[0]);
+    let result = buildSuccessResult({ videoUrl, thumbnailUrl: meta.image }, bestHtml, shortcode, {
+      author: extractAuthor(meta.title),
+    });
+    const oembed = await fetchOembedMetadata(url, USER_AGENTS[0], signal);
     return enrichCollectionWithOembed(result, oembed);
   }
   const extracted = extractVideoFromHtml(bestHtml);
   if (extracted?.videoUrl) {
     let result = buildSuccessResult(extracted, bestHtml, shortcode);
-    const oembed = await fetchOembedMetadata(url, USER_AGENTS[0]);
+    const oembed = await fetchOembedMetadata(url, USER_AGENTS[0], signal);
     return enrichCollectionWithOembed(result, oembed);
   }
   return null;
 }
 
-async function tryEmbedPage(url, shortcode, embedUrl, urlKind) {
+async function tryEmbedPage(url, shortcode, embedUrl, urlKind, signal) {
   if (urlKind === 'story' || urlKind === 'highlight') return null;
   for (const ua of USER_AGENTS) {
     try {
-      const res = await fetchHtml(embedUrl, ua, 1);
+      const res = await fetchHtml(embedUrl, ua, 1, {}, signal);
       const html = typeof res.data === 'string' ? res.data : '';
       if (!html) continue;
-      const extracted = extractVideoFromHtml(html) || { videoUrl: extractBestFromVideoVersions(html) };
+      const extracted = extractVideoFromHtml(html) || {
+        videoUrl: extractBestFromVideoVersions(html),
+      };
       if (extracted?.videoUrl) {
         let result = buildSuccessResult(extracted, html, shortcode);
-        const oembed = await fetchOembedMetadata(url, ua);
+        const oembed = await fetchOembedMetadata(url, ua, signal);
         return enrichCollectionWithOembed(result, oembed);
       }
     } catch (_) {}
@@ -68,10 +71,10 @@ async function tryEmbedPage(url, shortcode, embedUrl, urlKind) {
   return null;
 }
 
-async function tryAllUserAgentsGraphql(pageUrl, shortcode, urlKind) {
+async function tryAllUserAgentsGraphql(pageUrl, shortcode, urlKind, signal) {
   if (!shortcode || urlKind === 'story' || urlKind === 'highlight') return null;
   for (const ua of USER_AGENTS) {
-    const gqlMedia = await fetchGraphqlShortcodeMedia(pageUrl, shortcode, ua);
+    const gqlMedia = await fetchGraphqlShortcodeMedia(pageUrl, shortcode, ua, signal);
     if (gqlMedia.videoUrl) {
       let result = buildSuccessResult(
         { videoUrl: gqlMedia.videoUrl, thumbnailUrl: gqlMedia.thumbnailUrl },
@@ -79,7 +82,7 @@ async function tryAllUserAgentsGraphql(pageUrl, shortcode, urlKind) {
         shortcode,
         { thumbnailUrl: gqlMedia.thumbnailUrl },
       );
-      const oembed = await fetchOembedMetadata(pageUrl, ua);
+      const oembed = await fetchOembedMetadata(pageUrl, ua, signal);
       return enrichCollectionWithOembed(result, oembed);
     }
     const mediaNode =
@@ -89,19 +92,19 @@ async function tryAllUserAgentsGraphql(pageUrl, shortcode, urlKind) {
       let result = buildImageSuccessResult(mediaNode.display_url, null, shortcode, {
         thumbnailUrl: mediaNode.thumbnail_src || mediaNode.display_url,
       });
-      const oembed = await fetchOembedMetadata(pageUrl, ua);
+      const oembed = await fetchOembedMetadata(pageUrl, ua, signal);
       return enrichCollectionWithOembed(result, oembed);
     }
   }
   return null;
 }
 
-async function tryImageFallback(bestHtml, shortcode, url, urlKind) {
+async function tryImageFallback(bestHtml, shortcode, url, urlKind, signal) {
   if (!bestHtml || urlKind === 'story' || urlKind === 'highlight') return null;
   const imageUrl = extractImageFromHtml(bestHtml);
   if (!imageUrl) return null;
   let result = buildImageSuccessResult(imageUrl, bestHtml, shortcode);
-  const oembed = await fetchOembedMetadata(url, USER_AGENTS[0]);
+  const oembed = await fetchOembedMetadata(url, USER_AGENTS[0], signal);
   return enrichCollectionWithOembed(result, oembed);
 }
 
@@ -109,13 +112,13 @@ async function tryImageFallback(bestHtml, shortcode, url, urlKind) {
  * Runs spare strategies in order until one succeeds.
  */
 async function runSpareResolveStrategies(ctx) {
-  const { url, shortcode, urlKind, bestHtml, embedUrl } = ctx;
+  const { url, shortcode, urlKind, bestHtml, embedUrl, signal } = ctx;
   const strategies = [
-    () => tryVideoVersionsInHtml(bestHtml, shortcode, url, urlKind),
-    () => tryOgMetaInHtml(bestHtml, shortcode, url, urlKind),
-    () => tryAllUserAgentsGraphql(url, shortcode, urlKind),
-    () => tryEmbedPage(url, shortcode, embedUrl, urlKind),
-    () => tryImageFallback(bestHtml, shortcode, url, urlKind),
+    () => tryVideoVersionsInHtml(bestHtml, shortcode, url, urlKind, signal),
+    () => tryOgMetaInHtml(bestHtml, shortcode, url, urlKind, signal),
+    () => tryAllUserAgentsGraphql(url, shortcode, urlKind, signal),
+    () => tryEmbedPage(url, shortcode, embedUrl, urlKind, signal),
+    () => tryImageFallback(bestHtml, shortcode, url, urlKind, signal),
   ];
 
   for (const strategy of strategies) {

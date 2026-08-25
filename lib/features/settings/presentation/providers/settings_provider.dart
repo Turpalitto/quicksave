@@ -70,12 +70,10 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
   Future<bool> addScheduledProfile(String raw) async {
     final url = Validators.prepareUrl(raw.trim());
     if (url == null) return false;
-    final username = Validators.profileUsername(url) ??
+    final username =
+        Validators.profileUsername(url) ??
         url.split('/').where((s) => s.isNotEmpty).last.replaceAll('@', '');
-    final profile = ScheduledProfile(
-      username: username,
-      profileUrl: url,
-    );
+    final profile = ScheduledProfile(username: username, profileUrl: url);
     final exists = state.scheduledProfiles.any(
       (p) => p.username.toLowerCase() == profile.username.toLowerCase(),
     );

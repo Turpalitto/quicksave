@@ -71,19 +71,18 @@ quicksave/
 ```bash
 cd backend
 npm install
-npm test              # 63 тестов, все зелёные
+npm test              # 129 тестов, все зелёные
 npm start             # http://localhost:3000
 ```
 
 ### Flutter (Android)
 ```bash
-# Flutter 3.44.2 уже установлен в C:\flutter и в PATH.
-# JAVA_HOME=C:\jdk21 (Junction → Eclipse Adoptium JDK 21)
-# ANDROID_HOME=C:\Android\Sdk
+# Требуется Flutter SDK >= 3.44 (см. pubspec). CI: flutter 3.44.2, JDK 17.
 flutter pub get
-flutter analyze      # 0 ошибок, 0 предупреждений, 2 info
-flutter test         # 73 теста, все зелёные
-flutter build apk --debug   # ✅ OK — app-debug.apk 157.7 МБ
+flutter gen-l10n
+flutter analyze
+flutter test          # 161 тест
+flutter build apk --debug
 flutter build apk --release # требует key.properties (подпись)
 ```
 
@@ -120,11 +119,16 @@ Share Intent → MainActivity (Kotlin) → MethodChannel → IntentService
 
 ## Тестирование
 
-### Backend: 63 тестов
+### Backend: 116 тестов
 - `instagramResolver.test.js` — unit tests с моком axios (strategy chain, UA rotation, login wall, 404, network error)
-- `instagramResolver.integration.test.js` — интеграционные тесты с реалистичными HTML-фикстурами Instagram (im的真实 ответы)
+- `instagramResolver.integration.test.js` — интеграционные тесты с реалистичными HTML-фикстурами Instagram
 - `routes/resolve.test.js` — HTTP-тесты маршрута (валидация, ошибки)
 - `index.test.js` — health endpoints, malformed JSON (400), payload too large (413)
+
+### Flutter
+Тесты в `test/`: utils, errors/failures, download/history/settings/web providers,
+services (billing, backup, queue, watchlist, scheduler), widgets (shell, home,
+queue panel), accessibility. Прогон: `flutter gen-l10n && flutter test`.
 
 ### E2E (live server)
 Прогонялся через curl against реального backend:
@@ -135,15 +139,14 @@ Share Intent → MainActivity (Kotlin) → MethodChannel → IntentService
 - Реальный запрос к Instagram → структурированный ответ (not_found/private/success)
 - instagr.am short URLs → редирект → корректный ответ
 
-### Flutter: тесты есть в test/
+### Flutter: тесты в test/
 Покрывают validators, formatters, exceptions/failures, download/history/
-settings providers, home screen widget. **`flutter analyze`** на SDK 3.44.2:
-0 ошибок, 0 предупреждений, 2 info (deprecated RadioListTile — без доступной
-замены). **`flutter test`** на SDK 3.44.2: **73 теста, все зелёные**.
+settings/web providers, services и widget-экраны. Прогон:
+`flutter gen-l10n && flutter analyze && flutter test` (SDK >= 3.44, см. pubspec).
 
-**Окружение:** Flutter 3.44.2 (Dart 3.12.2) установлен в `C:\flutter`,
-`C:\flutter\bin` добавлен в пользовательский PATH. Android SDK/Studio не
-установлены — поэтому `flutter build apk` пока недоступен (требует Android SDK).
+**Окружение:** CI использует Flutter 3.44.2 / JDK 17 (ubuntu-latest).
+Локальные пути из прежних заметок (`C:\flutter`) устарели — ориентируйтесь
+на pubspec-констрейнты.
 
 ## Что было сделано (сводка изменений)
 
@@ -254,9 +257,9 @@ settings providers, home screen widget. **`flutter analyze`** на SDK 3.44.2:
    Instagram борется с парсингом. Процент успеха зависит от поста/региона/
    времени — ограничение подхода, а не кода.
 
-6. **Полезные команды (Flutter на PATH: `C:\flutter\bin`):**
-   - `npm test` — backend тесты (63)
+6. **Полезные команды:**
+   - `npm test` — backend тесты (129)
    - `node --check src/**/*.js` — синтаксис JS
-   - `flutter analyze` — статический анализ Dart (требует SDK 3.44)
-   - `flutter test` — Dart тесты (73)
+   - `flutter analyze` — статический анализ Dart (требует SDK >= 3.44)
+   - `flutter test` — Dart тесты (161)
    - `flutter build apk --debug` — сборка APK (требует Android SDK)

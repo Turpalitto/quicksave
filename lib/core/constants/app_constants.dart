@@ -31,7 +31,8 @@ class AppConstants {
   static const String historyV2PrefsKey = 'quicksave.history.v2';
   static const String collectionsPrefsKey = 'quicksave.collections.v1';
   static const String settingsPrefsKey = 'quicksave.settings.v1';
-  static const String pendingDownloadsPrefsKey = 'quicksave.pending_downloads.v1';
+  static const String pendingDownloadsPrefsKey =
+      'quicksave.pending_downloads.v1';
   static const String pendingRetryTaskName = 'quicksavePendingRetry';
 
   /// Max single-file download size (500 MB).

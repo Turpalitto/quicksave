@@ -3,8 +3,7 @@
  * @see https://stackoverflow.com/questions/24437823/getting-instagram-post-url-from-media-id
  */
 
-const ENCODING_CHARS =
-  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+const ENCODING_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
 
 function shortcodeToPk(shortcode) {
   if (!shortcode || typeof shortcode !== 'string') return null;

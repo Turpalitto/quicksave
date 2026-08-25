@@ -43,7 +43,9 @@ class _AppShellScreenState extends State<AppShellScreen> {
     );
 
     return Scaffold(
-      backgroundColor: isDesktop ? (isDark ? IosTokens.desktopBg : shellBg) : shellBg,
+      backgroundColor: isDesktop
+          ? (isDark ? IosTokens.desktopBg : shellBg)
+          : shellBg,
       body: Stack(
         children: [
           if (isDesktop)
@@ -51,7 +53,7 @@ class _AppShellScreenState extends State<AppShellScreen> {
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   gradient: RadialGradient(
-                    center: const Alignment(0, -1),
+                    center: Alignment.topCenter,
                     radius: 1.2,
                     colors: [
                       IosTokens.blue.withValues(alpha: 0.08),
@@ -68,7 +70,9 @@ class _AppShellScreenState extends State<AppShellScreen> {
                 maxHeight: isDesktop ? 900 : double.infinity,
               ),
               child: Container(
-                margin: isDesktop ? const EdgeInsets.symmetric(vertical: 32) : null,
+                margin: isDesktop
+                    ? const EdgeInsets.symmetric(vertical: 32)
+                    : null,
                 decoration: isDesktop
                     ? BoxDecoration(
                         color: shellBg,
@@ -99,7 +103,12 @@ class _AppShellScreenState extends State<AppShellScreen> {
                             slivers: [
                               SliverToBoxAdapter(
                                 child: Padding(
-                                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                                  padding: const EdgeInsets.fromLTRB(
+                                    16,
+                                    16,
+                                    16,
+                                    0,
+                                  ),
                                   child: Row(
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
@@ -111,14 +120,18 @@ class _AppShellScreenState extends State<AppShellScreen> {
                                       ),
                                       if (_tab == AppTab.home)
                                         Padding(
-                                          padding: const EdgeInsets.only(bottom: 6),
+                                          padding: const EdgeInsets.only(
+                                            bottom: 6,
+                                          ),
                                           child: Row(
                                             children: [
                                               _PulsingDot(),
                                               const SizedBox(width: 6),
                                               Text(
                                                 S.of(context).homeOnline,
-                                                style: IosPalette.of(context).caption1,
+                                                style: IosPalette.of(
+                                                  context,
+                                                ).caption1,
                                               ),
                                             ],
                                           ),
@@ -128,15 +141,23 @@ class _AppShellScreenState extends State<AppShellScreen> {
                                 ),
                               ),
                               SliverPadding(
-                                padding: const EdgeInsets.fromLTRB(16, 20, 16, 112),
+                                padding: const EdgeInsets.fromLTRB(
+                                  16,
+                                  20,
+                                  16,
+                                  112,
+                                ),
                                 sliver: SliverToBoxAdapter(
                                   child: switch (_tab) {
                                     AppTab.home => HomeTab(
-                                      onSaved: () => setState(() => _libraryVersion++),
+                                      onSaved: () =>
+                                          setState(() => _libraryVersion++),
                                       onGoToLibrary: () =>
                                           setState(() => _tab = AppTab.library),
                                     ),
-                                    AppTab.library => LibraryTab(version: _libraryVersion),
+                                    AppTab.library => LibraryTab(
+                                      version: _libraryVersion,
+                                    ),
                                     AppTab.watchlist => const WatchlistTab(),
                                     AppTab.settings => const SettingsTab(),
                                   },
@@ -219,10 +240,30 @@ class _IosTabBar extends StatelessWidget {
     final s = S.of(context);
     final palette = IosPalette.of(context);
     final items = <(AppTab, String, IconData, IconData)>[
-      (AppTab.home, s.tabHome, Icons.arrow_downward_outlined, Icons.arrow_downward),
-      (AppTab.library, s.webNavLibrary, Icons.grid_view_outlined, Icons.grid_view),
-      (AppTab.watchlist, s.watchlistTitle, Icons.visibility_outlined, Icons.visibility),
-      (AppTab.settings, s.settingsTitle, Icons.settings_outlined, Icons.settings),
+      (
+        AppTab.home,
+        s.tabHome,
+        Icons.arrow_downward_outlined,
+        Icons.arrow_downward,
+      ),
+      (
+        AppTab.library,
+        s.webNavLibrary,
+        Icons.grid_view_outlined,
+        Icons.grid_view,
+      ),
+      (
+        AppTab.watchlist,
+        s.watchlistTitle,
+        Icons.visibility_outlined,
+        Icons.visibility,
+      ),
+      (
+        AppTab.settings,
+        s.settingsTitle,
+        Icons.settings_outlined,
+        Icons.settings,
+      ),
     ];
 
     return ClipRRect(
@@ -234,7 +275,9 @@ class _IosTabBar extends StatelessWidget {
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: palette.blurBar,
-            border: Border(top: BorderSide(color: palette.separator, width: 0.5)),
+            border: Border(
+              top: BorderSide(color: palette.separator, width: 0.5),
+            ),
           ),
           child: Padding(
             padding: EdgeInsets.only(

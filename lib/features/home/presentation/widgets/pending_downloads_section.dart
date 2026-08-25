@@ -36,7 +36,10 @@ class PendingDownloadsSection extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 4),
-          Text(s.pendingDownloadsSubtitle(pending.length), style: IosTokens.footnote),
+          Text(
+            s.pendingDownloadsSubtitle(pending.length),
+            style: IosTokens.footnote,
+          ),
           const SizedBox(height: 8),
           for (final item in pending.take(3)) ...[
             _PendingRow(
