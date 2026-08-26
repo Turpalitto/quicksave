@@ -41,10 +41,27 @@ jobs:
           tar -czf web-pwa.tar.gz web
           ls -lh web-pwa.tar.gz
 
-      - name: Upload web-pwa.tar.gz to release
+      - name: Setup Node (backend SBOM)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Generate backend SBOM
+        working-directory: backend
+        run: |
+          npx --yes @cyclonedx/cyclonedx-npm --output-format json \
+            --output-file ../sbom-backend.cdx.json --omit dev
+          ls -lh ../sbom-backend.cdx.json
+
+      - name: Upload web-pwa.tar.gz + SBOM to release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           name: ${{ github.ref_name }}
           generate_release_notes: true
-          files: backend/public/web-pwa.tar.gz
+          files: |
+            backend/public/web-pwa.tar.gz
+            sbom-backend.cdx.json
+

@@ -31,7 +31,7 @@ services:
       - key: METRICS_PUBLIC
         value: "false"
       - key: SERVICE_VERSION
-        value: "1.5.3"
+        value: "1.5.4"
       - key: RESOLVE_DEADLINE_MS
         value: "45000"
       # Set METRICS_TOKEN in Render dashboard (secret) for protected /health/metrics

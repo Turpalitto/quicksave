@@ -81,7 +81,7 @@ npm start             # http://localhost:3000
 flutter pub get
 flutter gen-l10n
 flutter analyze
-flutter test          # 161 тест
+flutter test          # 162 теста
 flutter build apk --debug
 flutter build apk --release # требует key.properties (подпись)
 ```
@@ -261,5 +261,5 @@ settings/web providers, services и widget-экраны. Прогон:
    - `npm test` — backend тесты (129)
    - `node --check src/**/*.js` — синтаксис JS
    - `flutter analyze` — статический анализ Dart (требует SDK >= 3.44)
-   - `flutter test` — Dart тесты (161)
+   - `flutter test` — Dart тесты (162)
    - `flutter build apk --debug` — сборка APK (требует Android SDK)

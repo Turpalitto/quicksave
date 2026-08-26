@@ -1,6 +1,6 @@
 {
   "name": "quicksave-backend",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "description": "QuickSave backend — resolves public Instagram post URLs.",
   "main": "src/index.js",
   "scripts": {

@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "QuickSave for Instagram",
   "short_name": "QuickSave",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "description": "Save public Instagram media to QuickSave — only links you explicitly choose. Privacy-first, no login.",
   "icons": {
     "16": "icons/icon16.png",

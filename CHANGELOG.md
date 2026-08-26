@@ -5,6 +5,22 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.1.0/),
 этот проект следует [Semantic Versioning](https://semver.org/lang/ru/).
 
+## [1.5.4] - 2026-08-26
+
+### Tooling / Release infrastructure
+- **Dependabot config** (`.github/dependabot.yml`): группировка PR по
+  экосистемам (pub, npm backend, npm extension, github-actions, gradle),
+  графики weekly/monthly, лимиты. Устраняет бесконечную кучу отдельных PR.
+- **SBOM в релизе** (`.github/workflows/release.yml`): на push тега `v*`
+  дополнительно генерирует `sbom-backend.cdx.json` (CycloneDX,
+  `@cyclonedx/cyclonedx-npm` v6, `--omit dev`) и прикладывает к GitHub
+  Release вместе с `web-pwa.tar.gz`.
+- **Golden-тест** `test/widgets/golden_download_queue_panel_test.dart` +
+  базовый снимок `test/widgets/goldens/download_queue_panel.png`. Фиксирует
+  дизайн панели очереди загрузок (тест сверяется с базой, ловит regressions).
+  Итог тестов: **162**.
+- Версия **1.5.4+22** (pubspec) / **1.5.4** (backend/extension/render.yaml).
+
 ## [Unreleased] - 2026-08-26
 
 ### Release infrastructure

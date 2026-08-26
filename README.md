@@ -42,7 +42,7 @@ Production: [`backend/render.yaml`](backend/render.yaml), smoke check `npm run s
 ```bash
 flutter pub get
 flutter run
-flutter test      # 161 tests
+flutter test      # 162 tests
 flutter analyze
 ```
 
@@ -85,7 +85,7 @@ quicksave/
 ├── extension/              # Chrome MV3 extension
 ├── store/                  # Play listing, billing, release checklist
 ├── scripts/                # stage-web-for-backend.mjs, smoke-deploy.mjs
-└── .github/workflows/      # CI (Flutter, Backend, Extension, Release)
+└── .github/                 # workflows (Flutter, Backend, Extension, Release) + dependabot.yml
 ```
 
 ---
@@ -101,7 +101,7 @@ node scripts/smoke-deploy.mjs https://quicksave-api.onrender.com
 
 | Suite | Count |
 | --- | --- |
-| Flutter | 161 |
+| Flutter | 162 |
 | Backend | 129 |
 | Extension | 6 |
 

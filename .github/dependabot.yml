@@ -1,27 +1,74 @@
+# Dependabot configuration — groups dependency PRs to avoid noise.
+# Flutter / Dart, backend (npm) and the Chrome extension are tracked separately.
 version: 2
 updates:
-  - package-ecosystem: "pub"
-    directory: "/"
+  # Flutter (pubspec.yaml + package.json for tooling)
+  - package-ecosystem: pub
+    directory: /
     schedule:
-      interval: "weekly"
+      interval: weekly
+      day: monday
     open-pull-requests-limit: 5
-    labels:
-      - "dependencies"
-      - "flutter"
+    groups:
+      flutter-core:
+        patterns:
+          - 'flutter_riverpod'
+          - 'riverpod'
+          - 'dio'
+          - 'share_plus'
+          - 'flutter_local_notifications'
+          - 'path_provider'
+          - 'package_info_plus'
+          - 'video_player'
+          - 'connectivity_plus'
+          - 'permission_handler'
+          - 'uuid'
+          - 'archive'
+          - 'workmanager'
+          - 'move_*'
 
-  - package-ecosystem: "npm"
-    directory: "/backend"
+  # Backend (Express / Node)
+  - package-ecosystem: npm
+    directory: /backend
     schedule:
-      interval: "weekly"
+      interval: weekly
+      day: tuesday
     open-pull-requests-limit: 5
-    labels:
-      - "dependencies"
-      - "backend"
+    groups:
+      backend-minor:
+        patterns:
+          - 'express'
+          - 'helmet'
+          - 'express-rate-limit'
+          - 'axios'
+          - 'redis'
+          - 'rate-limit-redis'
 
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  # Chrome extension (small, manual)
+  - package-ecosystem: npm
+    directory: /extension
     schedule:
-      interval: "monthly"
-    labels:
-      - "dependencies"
-      - "ci"
+      interval: monthly
+    open-pull-requests-limit: 4
+
+  # GitHub Actions
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: wednesday
+    open-pull-requests-limit: 3
+    groups:
+      ci:
+        patterns:
+          - 'actions/*'
+          - 'subosito/*'
+          - 'softprops/*'
+
+  # Gradle dependencies (Android toolchain)
+  - package-ecosystem: gradle
+    directory: /android
+    schedule:
+      interval: weekly
+      day: wednesday
+    open-pull-requests-limit: 3
