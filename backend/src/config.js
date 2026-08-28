@@ -26,9 +26,36 @@ const config = {
   serviceVersion: process.env.SERVICE_VERSION || pkg.version,
   /** Optional browser cookies: "sessionid=...; csrftoken=..." for higher resolve rate */
   instagramCookies: process.env.INSTAGRAM_COOKIES || '',
+  /**
+   * Pool of cookie jars for rotation ("||"-separated). Each entry uses the same
+   * format as INSTAGRAM_COOKIES. Rotating spreads per-session rate limits.
+   */
+  instagramCookiesPool: (process.env.INSTAGRAM_COOKIES_POOL || '')
+    .split('||')
+    .map((s) => s.trim())
+    .filter(Boolean),
   /** Use Google/Cloudflare DNS for Instagram (fixes router DNS blocks). Set to 0 to disable. */
   usePublicDnsForInstagram: process.env.USE_PUBLIC_DNS !== '0',
   instagramDnsServers: process.env.INSTAGRAM_DNS_SERVERS || '8.8.8.8,1.1.1.1,8.8.4.4',
+  /**
+   * Stale-while-revalidate: on resolver failure serve an expired cache entry
+   * (flagged stale:true) instead of an error. Set to 0 to disable.
+   */
+  staleWhileRevalidate: process.env.STALE_WHILE_REVALIDATE !== '0',
+  /** Optional paid fallback provider: POST {url} -> {mediaUrl, ...}. Disabled unless both set. */
+  fallbackApiUrl: process.env.FALLBACK_API_URL || '',
+  fallbackApiKey: process.env.FALLBACK_API_KEY || '',
+  fallbackApiTimeoutMs: parseInt(process.env.FALLBACK_API_TIMEOUT_MS || '15000', 10),
+  /** Remote config for clients. minVersion forces app update when below it. */
+  remoteMinClientVersion: process.env.REMOTE_MIN_CLIENT_VERSION || '',
+  remoteFlags: (() => {
+    try {
+      const parsed = JSON.parse(process.env.REMOTE_FLAGS || '{}');
+      return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+    } catch (_) {
+      return {};
+    }
+  })(),
 };
 
 module.exports = config;

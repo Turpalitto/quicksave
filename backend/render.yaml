@@ -1,4 +1,7 @@
 # One-click deploy on Render: https://render.com/docs/infrastructure-as-code
+# NOTE: the `free` plan sleeps after ~15 min idle -> cold starts on first request.
+# For production stability use Fly.io (fly.toml, min_machines_running = 1)
+# or a paid Render plan.
 services:
   - type: web
     name: quicksave-api
@@ -36,6 +39,17 @@ services:
         value: "45000"
       # Set METRICS_TOKEN in Render dashboard (secret) for protected /health/metrics
       # Set GITHUB_RELEASE_TOKEN in Render dashboard (secret, repo scope) to fetch web PWA
+      # Optional stability tiers (secrets set in dashboard, all disabled when unset):
+      - key: INSTAGRAM_COOKIES_POOL   # "||"-separated session cookie jars, round-robin rotation
+        sync: false
+      - key: INSTAGRAM_COOKIES        # single session cookie jar (used when pool is empty)
+        sync: false
+      - key: FALLBACK_API_URL         # paid last-resort resolve tier
+        sync: false
+      - key: FALLBACK_API_KEY
+        sync: false
+      - key: REMOTE_MIN_CLIENT_VERSION # /remote-config: force app update below this version
+        sync: false
       - key: REDIS_URL
         fromService:
           type: redis

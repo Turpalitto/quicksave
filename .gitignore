@@ -50,3 +50,6 @@ coverage/
 # by render.yaml buildCommand). See .github/workflows/release.yml.
 backend/public/web/
 backend/public/web-pwa.tar.gz
+
+# Serena MCP tool state
+.serena/

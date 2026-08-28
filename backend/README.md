@@ -39,6 +39,41 @@ docker run -p 3000:3000 quicksave-backend
 
 Resolver success rate and failure breakdown (alert when successRate &lt; 70% after 20+ requests).
 
+### `GET /health/stats`
+
+Same auth as `/health/metrics`. Stability dashboard payload: strategy-level
+success rates (`stats.strategies`), cache hit rate, stale-served count and
+cache size — makes it obvious which resolve strategy is degrading.
+
+### `GET /remote-config`
+
+Public, env-driven client config (no upstream calls):
+
+```json
+{
+  "ok": true,
+  "version": "1.5.4",
+  "config": {
+    "minClientVersion": null,
+    "flags": {},
+    "rateLimit": { "windowMs": 60000, "max": 30 },
+    "cacheTtlMs": 600000
+  }
+}
+```
+
+Clients can poll it to force updates (`minClientVersion`) and toggle
+features (`flags`) without an app release. Cached 5 min.
+
+## Deploy (Fly.io, no cold starts)
+
+```bash
+cd backend
+fly launch --no-deploy          # uses fly.toml (min_machines_running = 1)
+fly secrets set INSTAGRAM_COOKIES_POOL='...||...'
+fly deploy
+```
+
 ## Deploy (Render)
 
 1. Push repo to GitHub.
@@ -146,12 +181,18 @@ See [`.env.example`](.env.example):
 - `CACHE_TTL_MS`, `CACHE_MAX_ENTRIES`, `UPSTREAM_POOL_SIZE`
 - `CACHE_REDIS` — set to `0` to disable Redis resolve cache while keeping rate limiting
 - `REDIS_URL` — optional Redis for shared rate limiting and resolve cache (multi-instance)
+- `STALE_WHILE_REVALIDATE` — set to `0` to disable serving expired cache entries (`stale: true`) when the resolver fails transiently
+- `INSTAGRAM_COOKIES_POOL` — `"||"`-separated session cookie jars (JSON or `k=v; k=v`), round-robin rotation across requests; overrides `INSTAGRAM_COOKIES` when set
+- `FALLBACK_API_URL`, `FALLBACK_API_KEY`, `FALLBACK_API_TIMEOUT_MS` — optional paid last-resort tier: `POST {url} -> {mediaUrl}`; only used when free strategies fail on network/hard errors (never for private/deleted posts)
+- `REMOTE_MIN_CLIENT_VERSION`, `REMOTE_FLAGS` — served by `GET /remote-config`
 - `LOG_LEVEL`
 
 ## Architecture
 
 - `src/routes/resolve.js` — HTTP layer
 - `src/services/instagramResolver.js` — multi-strategy resolver with cache + deadline
+- `src/services/fallbackProvider.js` — optional paid last-resort resolve tier
+- `src/services/instagramSession.js` — session cookies + pool rotation
 - `src/services/mediaCollection.js` — carousel / story / highlight extraction
 - `src/services/profileExtractor.js` — profile grid + feed pagination
 - `src/services/resolveCache.js` — L1 in-memory LRU + optional L2 Redis cache

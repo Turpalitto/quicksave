@@ -1,0 +1,12 @@
+node_modules
+npm-debug.log
+.env
+.env.*
+test
+*.test.js
+__fixtures__
+README.md
+fly.toml
+render.yaml
+Dockerfile
+.dockerignore

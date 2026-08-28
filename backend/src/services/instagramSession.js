@@ -58,14 +58,53 @@ function applyWwwClaimFromResponse(headers, state = {}) {
 }
 
 function createSessionState() {
+  // When a cookie pool is configured, each session takes the next jar
+  // (round-robin) instead of the single INSTAGRAM_COOKIES jar — rotating
+  // identities spreads per-session rate limits across requests.
+  const pooled = nextPooledCookieJar();
   return {
-    jar: mergeCookieJars(loadEnvCookieJar()),
+    jar: pooled || mergeCookieJars(loadEnvCookieJar()),
     wwwClaim: '',
   };
 }
 
+/** Module-level round-robin counter over the cookie pool. */
+let poolCounter = 0;
+
+/**
+ * Pick the next cookie jar from the INSTAGRAM_COOKIES_POOL (round-robin).
+ * Returns null when the pool is empty (single-jar mode via INSTAGRAM_COOKIES).
+ */
+function nextPooledCookieJar() {
+  const pool = config.instagramCookiesPool || [];
+  if (!Array.isArray(pool) || pool.length === 0) return null;
+  const idx = Math.abs(poolCounter) % pool.length;
+  poolCounter += 1;
+  return loadCookieJarFromRaw(pool[idx]);
+}
+
+/** Parse one pool entry using the same rules as INSTAGRAM_COOKIES (JSON or k=v;...). */
+function loadCookieJarFromRaw(raw) {
+  const trimmed = (raw || '').trim();
+  if (!trimmed) return {};
+  if (trimmed.startsWith('{')) {
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (parsed && typeof parsed === 'object') return { ...parsed };
+    } catch (_) {}
+  }
+  return parseCookieString(trimmed);
+}
+
+function resetPoolCounter() {
+  poolCounter = 0;
+}
+
 module.exports = {
   loadEnvCookieJar,
+  loadCookieJarFromRaw,
+  nextPooledCookieJar,
+  resetPoolCounter,
   mergeCookieJars,
   cookieHeader,
   parseSetCookieHeaders,

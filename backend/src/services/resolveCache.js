@@ -28,6 +28,15 @@ class ResolveCache {
     return entry.value;
   }
 
+  /**
+   * Stale lookup: return the value even when expired. Does not delete or touch
+   * ordering — used for stale-while-revalidate graceful degradation.
+   */
+  getStale(url) {
+    const entry = this.store.get(this._key(url));
+    return entry ? entry.value : null;
+  }
+
   set(url, value) {
     if (!value || value.ok !== true) return;
     const key = this._key(url);
@@ -85,6 +94,13 @@ class CompositeResolveCache {
     } catch {
       return null;
     }
+  }
+
+  async getStale(url) {
+    const mem = this.memory.getStale(url);
+    if (mem) return mem;
+    // Redis entries expire server-side, so no stale tier there.
+    return null;
   }
 
   set(url, value) {

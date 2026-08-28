@@ -1,0 +1,35 @@
+# Fly.io deploy: `fly launch --no-deploy && fly secrets set INSTAGRAM_COOKIES=... && fly deploy`
+# min_machines_running = 1 eliminates free-tier cold starts (the #1 stability killer).
+app = 'quicksave-api'
+primary_region = 'fra'
+
+[build]
+  dockerfile = 'Dockerfile'
+
+[env]
+  NODE_ENV = 'production'
+  PORT = '3000'
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = 'suspend'
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ['app']
+
+  [http_service.concurrency]
+    type = 'requests'
+    soft_limit = 200
+    hard_limit = 250
+
+  [[http_service.checks]]
+    interval = '30s'
+    timeout = '5s'
+    grace_period = '10s'
+    method = 'GET'
+    path = '/health/live'
+
+[[vm]]
+  size = 'shared-cpu-1x'
+  memory = '512mb'

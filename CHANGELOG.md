@@ -21,6 +21,42 @@
   Итог тестов: **162**.
 - Версия **1.5.4+22** (pubspec) / **1.5.4** (backend/extension/render.yaml).
 
+## [Unreleased] - 2026-08-27
+
+### Backend: стабильность (устойчивость к блокировкам и сбоям)
+- **Stale-while-revalidate**: при transient-сбое резолвера
+  (`resolver_failed` / `upstream_timeout`) отдаётся устаревшая запись кэша
+  с флагом `stale: true` вместо ошибки (`STALE_WHILE_REVALIDATE=0` — выключить).
+  Пользователь не видит отказ, если URL недавно резолвился.
+- **Session-cookie пул** `INSTAGRAM_COOKIES_POOL` — `"||"`-разделённые
+  cookie-джары (JSON или `k=v; ...`), round-robin ротация в
+  `instagramSession.js` (паттерн gallery-dl: размазывает per-session
+  rate limits Instagram).
+- **Fallback API tier** (`fallbackProvider.js`) — опциональный платный
+  последний эшелон (`FALLBACK_API_URL`/`FALLBACK_API_KEY`): POST {url} →
+  {mediaUrl}. Вызывается только при сетевых/жёстких сбоях бесплатных
+  стратегий; приватные/удалённые посты (404/private) мимо него не проходят.
+- **Fly.io деплой** (`fly.toml`) — `min_machines_running = 1` убирает
+  cold starts free-tier'а Render; render.yaml дополнен новыми опциональными
+  env; Dockerfile не тронут; добавлен `.dockerignore`.
+
+### Backend: наблюдаемость и remote config
+- **`GET /health/stats`** (та же auth, что `/health/metrics`) — дашборд
+  стабильности: success-rate по стратегиям (`stats.strategies`), cache
+  hit rate, счётчик `staleServed`, размер кэша. Деградация конкретной
+  стратегии видна сразу, а не по отзывам 1★.
+- **`GET /remote-config`** (публичный) — env-driven конфиг для клиента:
+  `minClientVersion` (форс-апдейт), `flags` (фича-тумблеры без релиза),
+  rateLimit, cacheTtlMs. Кэш 5 мин.
+- Метрики: `recordStrategy()` / `recordStaleServed()` в `resolveMetrics.js`.
+
+### Тесты
+- +17 тестов: stale-lookups кэша (SWR), ротация cookie-пула, fallback
+  provider (env-gating, медиа-извлечение, обработка ошибок), метрики
+  стратегий, `/remote-config` + `/health/stats`. `npm test`: 146 passed
+  (1 преждний сетевой DNS-тест нестабилен в песочнице без DNS до 8.8.8.8,
+  в CI проходит).
+
 ## [Unreleased] - 2026-08-26
 
 ### Release infrastructure

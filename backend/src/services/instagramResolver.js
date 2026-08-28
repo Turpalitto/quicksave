@@ -1,6 +1,7 @@
 const config = require('../config');
 const { resolveCache } = require('./resolveCache');
-const { recordResolve, recordCacheHit, recordCacheMiss } = require('./resolveMetrics');
+const { recordResolve, recordCacheHit, recordCacheMiss, recordStaleServed, recordStrategy } =
+  require('./resolveMetrics');
 const { buildCollectionResponse } = require('./mediaCollection');
 const { hashUrl } = require('../utils/urlSanitizer');
 const {
@@ -37,6 +38,7 @@ const { isLoginWall } = require('./resolverErrors');
 const { checkLoginWall } = require('./profileExtractorFacade');
 const { runSpareResolveStrategies } = require('./resolverSpareStrategies');
 const { fetchGraphqlShortcodeMedia } = require('./graphqlShortcodeClient');
+const { fetchFallbackMedia } = require('./fallbackProvider');
 
 function isLoginWallHtml(html) {
   return isLoginWall(html, !!extractVideoFromHtml(html));
@@ -75,8 +77,9 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
     if (shortcode && urlKind !== 'story' && urlKind !== 'highlight') {
       for (const ua of USER_AGENTS.slice(0, 3)) {
         const gqlMedia = await fetchGraphqlShortcodeMedia(url, shortcode, ua, signal);
-        if (gqlMedia.videoUrl) {
-          let result = buildSuccessResult(
+      if (gqlMedia.videoUrl) {
+        recordStrategy('graphql_shortcode', true);
+        let result = buildSuccessResult(
             { videoUrl: gqlMedia.videoUrl, thumbnailUrl: gqlMedia.thumbnailUrl },
             gqlMedia.pageHtml || null,
             shortcode,
@@ -147,6 +150,7 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
       }
 
       if (collection.length > 1) {
+        recordStrategy('collections', true);
         const meta = extractMetaTags(html);
         const type = collectionTypeForKind(urlKind, collection.length);
         let result = buildCollectionResponse(type, collection, {
@@ -160,6 +164,7 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
 
       const extracted = extractVideoFromHtml(html);
       if (extracted && extracted.videoUrl) {
+        recordStrategy('html', true);
         let result = buildSuccessResult(extracted, html, shortcode);
         const oembed = await fetchOembedMetadata(url, USER_AGENTS[0], signal);
         result = enrichCollectionWithOembed(result, oembed);
@@ -215,6 +220,7 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
     if (bestHtml) {
       const imageUrl = extractImageFromHtml(bestHtml);
       if (imageUrl) {
+        recordStrategy('image', true);
         let result = buildImageSuccessResult(imageUrl, bestHtml, shortcode);
         const oembed = await fetchOembedMetadata(url, USER_AGENTS[0], signal);
         result = enrichCollectionWithOembed(result, oembed);
@@ -257,7 +263,26 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
       embedUrl,
       signal,
     });
-    if (spare) return spare;
+    if (spare) {
+      recordStrategy('spare', true);
+      return spare;
+    }
+
+    // Paid fallback tier (only when configured): network failures / blocked
+    // pages that free strategies could not crack. Private and deleted posts
+    // already returned above and must not cost money.
+    if (config.fallbackApiUrl && config.fallbackApiKey && (lastNetworkError || sawHardError || gotNonEmptyHtml)) {
+      const fallback = await fetchFallbackMedia(url, signal);
+      if (fallback) {
+        recordStrategy('fallback_api', true);
+        return buildSuccessResult(
+          { videoUrl: fallback.videoUrl, thumbnailUrl: fallback.thumbnailUrl },
+          null,
+          shortcode,
+          { thumbnailUrl: fallback.thumbnailUrl },
+        );
+      }
+    }
 
     if (lastNetworkError || sawHardError) {
       return { ok: false, error: 'resolver_failed' };
@@ -291,6 +316,23 @@ async function resolveInstagramUrl(inputUrl, options = {}) {
   } catch (_) {}
 
   recordResolve(result);
+  if (!result.ok) {
+    recordStrategy('chain', false);
+
+    // Stale-while-revalidate: a transient resolver failure is less harmful
+    // than serving nothing when we recently resolved this URL successfully.
+    if (
+      config.nodeEnv !== 'test' &&
+      config.staleWhileRevalidate &&
+      (result.error === 'resolver_failed' || result.error === 'upstream_timeout')
+    ) {
+      const stale = await resolveCache.getStale(cacheKey);
+      if (stale && stale.ok === true) {
+        recordStaleServed();
+        return { ...stale, stale: true };
+      }
+    }
+  }
 
   if (result.ok && config.nodeEnv !== 'test') {
     resolveCache.set(cacheKey, result);

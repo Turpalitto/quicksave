@@ -8,6 +8,9 @@ const metrics = {
   cacheMisses: 0,
   upstreamTimeouts: 0,
   rateLimitHits: 0,
+  staleServed: 0,
+  /** strategy name -> { attempts, successes } */
+  strategies: {},
   startedAt: Date.now(),
 };
 
@@ -35,6 +38,19 @@ function recordCacheMiss() {
   metrics.cacheMisses += 1;
 }
 
+function recordStaleServed() {
+  if (config.nodeEnv === 'test') return;
+  metrics.staleServed += 1;
+}
+
+function recordStrategy(name, ok) {
+  if (config.nodeEnv === 'test') return;
+  if (!name || typeof name !== 'string') return;
+  const bucket = metrics.strategies[name] || (metrics.strategies[name] = { attempts: 0, successes: 0 });
+  bucket.attempts += 1;
+  if (ok === true) bucket.successes += 1;
+}
+
 function recordRateLimitHit() {
   if (config.nodeEnv === 'test') return;
   metrics.rateLimitHits += 1;
@@ -47,6 +63,14 @@ function getMetrics() {
   const cacheTotal = metrics.cacheHits + metrics.cacheMisses;
   const cacheHitRate =
     cacheTotal > 0 ? Math.round((metrics.cacheHits / cacheTotal) * 1000) / 10 : 0;
+  const strategies = {};
+  for (const [name, bucket] of Object.entries(metrics.strategies)) {
+    strategies[name] = {
+      ...bucket,
+      successRate:
+        bucket.attempts > 0 ? Math.round((bucket.successes / bucket.attempts) * 1000) / 10 : 0,
+    };
+  }
   return {
     total: metrics.total,
     success: metrics.success,
@@ -58,6 +82,8 @@ function getMetrics() {
     cacheHitRate,
     upstreamTimeouts: metrics.upstreamTimeouts,
     rateLimitHits: metrics.rateLimitHits,
+    staleServed: metrics.staleServed,
+    strategies,
     uptimeSec: Math.round((Date.now() - metrics.startedAt) / 1000),
     alert: metrics.total >= 20 && successRate < 70,
   };
@@ -71,6 +97,8 @@ function resetMetrics() {
   metrics.cacheMisses = 0;
   metrics.upstreamTimeouts = 0;
   metrics.rateLimitHits = 0;
+  metrics.staleServed = 0;
+  metrics.strategies = {};
   metrics.startedAt = Date.now();
 }
 
@@ -79,6 +107,8 @@ module.exports = {
   recordCacheHit,
   recordCacheMiss,
   recordRateLimitHit,
+  recordStaleServed,
+  recordStrategy,
   getMetrics,
   resetMetrics,
 };

@@ -150,6 +150,46 @@ app.get('/health/metrics', metricsAuthMiddleware, (_req, res) => {
   res.json({ ok: true, metrics: m, alert: m.alert });
 });
 
+// Stability dashboard endpoint (same auth as /health/metrics): strategy-level
+// success rates make it obvious which resolve strategy is degrading.
+app.get('/health/stats', metricsAuthMiddleware, (_req, res) => {
+  const m = getMetrics();
+  res.set('Cache-Control', 'no-store');
+  res.json({
+    ok: true,
+    service: 'quicksave-backend',
+    version: config.serviceVersion,
+    cache: resolveCache.stats,
+    stats: {
+      total: m.total,
+      successRate: m.successRate,
+      failureTotal: m.failureTotal,
+      failures: m.failures,
+      cacheHitRate: m.cacheHitRate,
+      staleServed: m.staleServed,
+      strategies: m.strategies,
+      alert: m.alert,
+    },
+  });
+});
+
+// Public remote config so clients can adapt (force update, toggle features)
+// without an app release. Cheap: no upstream calls, env-driven only.
+app.get('/remote-config', (_req, res) => {
+  res.set('Cache-Control', 'public, max-age=300');
+  res.json({
+    ok: true,
+    service: 'quicksave-backend',
+    version: config.serviceVersion,
+    config: {
+      minClientVersion: config.remoteMinClientVersion || null,
+      flags: config.remoteFlags,
+      rateLimit: { windowMs: config.rateLimitWindowMs, max: config.rateLimitMax },
+      cacheTtlMs: config.cacheTtlMs,
+    },
+  });
+});
+
 app.use('/resolve', resolveRouter);
 app.use('/billing', billingRouter);
 
