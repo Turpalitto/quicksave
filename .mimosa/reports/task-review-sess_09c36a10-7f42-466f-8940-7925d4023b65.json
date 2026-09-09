@@ -1,0 +1,1726 @@
+{
+  "schema_version": "mimosa-task-review/v2",
+  "run_id": "20260903T181448393Z-51502-28f25fe77e3f",
+  "run_status": "completed",
+  "errors": [],
+  "coverage": {
+    "schema_version": "mimosa-hook-coverage/v1",
+    "status": "complete",
+    "scope": "hook_observed_diff",
+    "baseline": {
+      "complete": true,
+      "captured_files": 88,
+      "candidate_limit": 5000,
+      "truncated": false,
+      "enumeration_error_count": 0,
+      "snapshot_error_count": 0,
+      "compensated_target_count": 6
+    },
+    "change_tracking": {
+      "touched_observed": 5,
+      "touched_retained": 5,
+      "truncated": false,
+      "bash_mutation": true,
+      "bash_discovered": 6,
+      "bash_discovery_limit": 80,
+      "bash_discovery_truncated": false
+    },
+    "candidates": {
+      "eligible_files": 6,
+      "selected_files": 6,
+      "limit": 20,
+      "truncated": false
+    },
+    "scanning": {
+      "required_files": 4,
+      "scanned_files": 4,
+      "skipped_files": 0,
+      "failed_files": 0,
+      "project_checks_required": 1,
+      "project_checks_completed": 1
+    },
+    "notification": {
+      "eligible_findings": 8,
+      "detailed_findings": 0,
+      "detail_limit": 3,
+      "truncated": true
+    },
+    "reason_counts": {},
+    "reasons": [],
+    "reasons_truncated": false
+  },
+  "generated_at": "2026-09-03T18:14:48.393Z",
+  "session_id": "sess_09c36a10-7f42-466f-8940-7925d4023b65",
+  "target": ".",
+  "revision": "595c33f865e12bde8e0e722d63b2dd46a3ea1c7a",
+  "rules_version": "unavailable",
+  "diff_hash": "9d8de8330d2a550d5a27d5bd2c1514eb98c0c4519655d7b9d19cb06205dc94fe",
+  "diff": {
+    "algorithm": "sha256",
+    "changed_file_count": 6,
+    "changed_files": [
+      {
+        "file": "backend/package-lock.json",
+        "ranges": [
+          {
+            "start": 3,
+            "end": 3
+          },
+          {
+            "start": 9,
+            "end": 9
+          },
+          {
+            "start": 14,
+            "end": 17
+          },
+          {
+            "start": 23,
+            "end": 26
+          },
+          {
+            "start": 114,
+            "end": 116
+          },
+          {
+            "start": 120,
+            "end": 121
+          },
+          {
+            "start": 244,
+            "end": 246
+          },
+          {
+            "start": 250,
+            "end": 250
+          },
+          {
+            "start": 514,
+            "end": 516
+          },
+          {
+            "start": 521,
+            "end": 521
+          },
+          {
+            "start": 523,
+            "end": 523
+          },
+          {
+            "start": 525,
+            "end": 525
+          },
+          {
+            "start": 558,
+            "end": 560
+          },
+          {
+            "start": 578,
+            "end": 611
+          },
+          {
+            "start": 831,
+            "end": 933
+          },
+          {
+            "start": 962,
+            "end": 964
+          },
+          {
+            "start": 968,
+            "end": 968
+          },
+          {
+            "start": 970,
+            "end": 972
+          },
+          {
+            "start": 976,
+            "end": 976
+          },
+          {
+            "start": 980,
+            "end": 982
+          },
+          {
+            "start": 986,
+            "end": 991
+          },
+          {
+            "start": 993,
+            "end": 1013
+          },
+          {
+            "start": 1016,
+            "end": 1016
+          },
+          {
+            "start": 1027,
+            "end": 1036
+          },
+          {
+            "start": 1038,
+            "end": 1040
+          },
+          {
+            "start": 1044,
+            "end": 1045
+          },
+          {
+            "start": 1047,
+            "end": 1047
+          },
+          {
+            "start": 1050,
+            "end": 1050
+          },
+          {
+            "start": 1054,
+            "end": 1056
+          },
+          {
+            "start": 1060,
+            "end": 1061
+          },
+          {
+            "start": 1064,
+            "end": 1064
+          },
+          {
+            "start": 1068,
+            "end": 1070
+          },
+          {
+            "start": 1074,
+            "end": 1074
+          },
+          {
+            "start": 1077,
+            "end": 1077
+          },
+          {
+            "start": 1081,
+            "end": 1083
+          },
+          {
+            "start": 1087,
+            "end": 1088
+          },
+          {
+            "start": 1090,
+            "end": 1092
+          },
+          {
+            "start": 1095,
+            "end": 1105
+          },
+          {
+            "start": 1109,
+            "end": 1127
+          },
+          {
+            "start": 1131,
+            "end": 1132
+          },
+          {
+            "start": 1135,
+            "end": 1135
+          },
+          {
+            "start": 1138,
+            "end": 1153
+          },
+          {
+            "start": 1155,
+            "end": 1157
+          },
+          {
+            "start": 1162,
+            "end": 1166
+          },
+          {
+            "start": 1168,
+            "end": 1172
+          },
+          {
+            "start": 1176,
+            "end": 1176
+          },
+          {
+            "start": 1178,
+            "end": 1180
+          },
+          {
+            "start": 1182,
+            "end": 1182
+          },
+          {
+            "start": 1186,
+            "end": 1186
+          },
+          {
+            "start": 1198,
+            "end": 1213
+          },
+          {
+            "start": 1217,
+            "end": 1220
+          },
+          {
+            "start": 1223,
+            "end": 1223
+          },
+          {
+            "start": 1227,
+            "end": 1229
+          },
+          {
+            "start": 1233,
+            "end": 1236
+          },
+          {
+            "start": 1239,
+            "end": 1239
+          },
+          {
+            "start": 1243,
+            "end": 1245
+          },
+          {
+            "start": 1249,
+            "end": 1252
+          },
+          {
+            "start": 1255,
+            "end": 1255
+          },
+          {
+            "start": 1259,
+            "end": 1261
+          },
+          {
+            "start": 1265,
+            "end": 1267
+          },
+          {
+            "start": 1271,
+            "end": 1271
+          },
+          {
+            "start": 1275,
+            "end": 1277
+          },
+          {
+            "start": 1281,
+            "end": 1285
+          },
+          {
+            "start": 1288,
+            "end": 1292
+          },
+          {
+            "start": 1294,
+            "end": 1294
+          },
+          {
+            "start": 1297,
+            "end": 1297
+          },
+          {
+            "start": 1301,
+            "end": 1303
+          },
+          {
+            "start": 1307,
+            "end": 1310
+          },
+          {
+            "start": 1312,
+            "end": 1313
+          },
+          {
+            "start": 1316,
+            "end": 1316
+          },
+          {
+            "start": 1352,
+            "end": 1354
+          },
+          {
+            "start": 1369,
+            "end": 1390
+          },
+          {
+            "start": 1414,
+            "end": 1419
+          },
+          {
+            "start": 1422,
+            "end": 1425
+          },
+          {
+            "start": 1428,
+            "end": 1456
+          },
+          {
+            "start": 1458,
+            "end": 1467
+          },
+          {
+            "start": 1470,
+            "end": 1477
+          },
+          {
+            "start": 1479,
+            "end": 1488
+          },
+          {
+            "start": 1491,
+            "end": 1498
+          },
+          {
+            "start": 1500,
+            "end": 1795
+          },
+          {
+            "start": 1809,
+            "end": 1811
+          },
+          {
+            "start": 1826,
+            "end": 1828
+          },
+          {
+            "start": 1832,
+            "end": 1843
+          },
+          {
+            "start": 1940,
+            "end": 1942
+          },
+          {
+            "start": 1946,
+            "end": 1946
+          },
+          {
+            "start": 1973,
+            "end": 2322
+          },
+          {
+            "start": 2467,
+            "end": 2479
+          },
+          {
+            "start": 2522,
+            "end": 2524
+          },
+          {
+            "start": 2528,
+            "end": 2533
+          },
+          {
+            "start": 2537,
+            "end": 2537
+          },
+          {
+            "start": 2540,
+            "end": 2540
+          },
+          {
+            "start": 2544,
+            "end": 2546
+          },
+          {
+            "start": 2549,
+            "end": 2551
+          },
+          {
+            "start": 2555,
+            "end": 2557
+          },
+          {
+            "start": 2560,
+            "end": 2560
+          },
+          {
+            "start": 2564,
+            "end": 2566
+          },
+          {
+            "start": 2570,
+            "end": 2570
+          },
+          {
+            "start": 2573,
+            "end": 2573
+          },
+          {
+            "start": 2604,
+            "end": 2606
+          },
+          {
+            "start": 2610,
+            "end": 2611
+          },
+          {
+            "start": 2614,
+            "end": 2614
+          },
+          {
+            "start": 2617,
+            "end": 2617
+          },
+          {
+            "start": 2621,
+            "end": 2623
+          },
+          {
+            "start": 2625,
+            "end": 2628
+          },
+          {
+            "start": 2631,
+            "end": 2633
+          },
+          {
+            "start": 2686,
+            "end": 2688
+          },
+          {
+            "start": 2692,
+            "end": 2692
+          },
+          {
+            "start": 2695,
+            "end": 2695
+          },
+          {
+            "start": 2699,
+            "end": 2701
+          },
+          {
+            "start": 2719,
+            "end": 2723
+          },
+          {
+            "start": 2739,
+            "end": 2740
+          },
+          {
+            "start": 2801,
+            "end": 2803
+          },
+          {
+            "start": 2849,
+            "end": 2851
+          },
+          {
+            "start": 2865,
+            "end": 2867
+          },
+          {
+            "start": 3106,
+            "end": 3115
+          },
+          {
+            "start": 3151,
+            "end": 3157
+          },
+          {
+            "start": 3165,
+            "end": 3167
+          },
+          {
+            "start": 3228,
+            "end": 3234
+          },
+          {
+            "start": 3577,
+            "end": 3580
+          },
+          {
+            "start": 3582,
+            "end": 3582
+          },
+          {
+            "start": 3588,
+            "end": 3590
+          },
+          {
+            "start": 3594,
+            "end": 3599
+          },
+          {
+            "start": 3602,
+            "end": 3602
+          },
+          {
+            "start": 3652,
+            "end": 3654
+          },
+          {
+            "start": 3656,
+            "end": 3659
+          },
+          {
+            "start": 3670,
+            "end": 3692
+          },
+          {
+            "start": 3731,
+            "end": 3748
+          },
+          {
+            "start": 3835,
+            "end": 3864
+          },
+          {
+            "start": 3882,
+            "end": 3884
+          },
+          {
+            "start": 3890,
+            "end": 3893
+          },
+          {
+            "start": 4016,
+            "end": 4018
+          },
+          {
+            "start": 4020,
+            "end": 4020
+          },
+          {
+            "start": 4022,
+            "end": 4024
+          },
+          {
+            "start": 4027,
+            "end": 4027
+          },
+          {
+            "start": 4047,
+            "end": 4049
+          },
+          {
+            "start": 4128,
+            "end": 4130
+          },
+          {
+            "start": 4133,
+            "end": 4136
+          },
+          {
+            "start": 4270,
+            "end": 4278
+          },
+          {
+            "start": 4386,
+            "end": 4388
+          },
+          {
+            "start": 4414,
+            "end": 4416
+          },
+          {
+            "start": 4420,
+            "end": 4420
+          },
+          {
+            "start": 4422,
+            "end": 4422
+          },
+          {
+            "start": 4467,
+            "end": 4482
+          },
+          {
+            "start": 4484,
+            "end": 4486
+          },
+          {
+            "start": 4490,
+            "end": 4493
+          },
+          {
+            "start": 4499,
+            "end": 4499
+          },
+          {
+            "start": 4511,
+            "end": 4513
+          },
+          {
+            "start": 4517,
+            "end": 4518
+          },
+          {
+            "start": 4522,
+            "end": 4522
+          },
+          {
+            "start": 4526,
+            "end": 4528
+          },
+          {
+            "start": 4532,
+            "end": 4535
+          },
+          {
+            "start": 4537,
+            "end": 4537
+          },
+          {
+            "start": 4539,
+            "end": 4546
+          },
+          {
+            "start": 4548,
+            "end": 4549
+          },
+          {
+            "start": 4551,
+            "end": 4551
+          },
+          {
+            "start": 4554,
+            "end": 4554
+          },
+          {
+            "start": 4558,
+            "end": 4560
+          },
+          {
+            "start": 4564,
+            "end": 4573
+          },
+          {
+            "start": 4579,
+            "end": 4579
+          },
+          {
+            "start": 4591,
+            "end": 4615
+          },
+          {
+            "start": 4617,
+            "end": 4617
+          },
+          {
+            "start": 4622,
+            "end": 4622
+          },
+          {
+            "start": 4626,
+            "end": 4626
+          },
+          {
+            "start": 4633,
+            "end": 4635
+          },
+          {
+            "start": 4642,
+            "end": 4644
+          },
+          {
+            "start": 4648,
+            "end": 4651
+          },
+          {
+            "start": 4654,
+            "end": 4654
+          },
+          {
+            "start": 4658,
+            "end": 4660
+          },
+          {
+            "start": 4664,
+            "end": 4664
+          },
+          {
+            "start": 4667,
+            "end": 4667
+          },
+          {
+            "start": 4671,
+            "end": 4673
+          },
+          {
+            "start": 4677,
+            "end": 4681
+          },
+          {
+            "start": 4684,
+            "end": 4684
+          },
+          {
+            "start": 4688,
+            "end": 4690
+          },
+          {
+            "start": 4694,
+            "end": 4696
+          },
+          {
+            "start": 4698,
+            "end": 4700
+          },
+          {
+            "start": 4703,
+            "end": 4703
+          },
+          {
+            "start": 4707,
+            "end": 4709
+          },
+          {
+            "start": 4713,
+            "end": 4714
+          },
+          {
+            "start": 4716,
+            "end": 4723
+          },
+          {
+            "start": 4726,
+            "end": 4726
+          },
+          {
+            "start": 4730,
+            "end": 4732
+          },
+          {
+            "start": 4736,
+            "end": 4737
+          },
+          {
+            "start": 4740,
+            "end": 4740
+          },
+          {
+            "start": 4744,
+            "end": 4746
+          },
+          {
+            "start": 4750,
+            "end": 4753
+          },
+          {
+            "start": 4756,
+            "end": 4756
+          },
+          {
+            "start": 4760,
+            "end": 4762
+          },
+          {
+            "start": 4766,
+            "end": 4773
+          },
+          {
+            "start": 4775,
+            "end": 4775
+          },
+          {
+            "start": 4778,
+            "end": 4778
+          },
+          {
+            "start": 4782,
+            "end": 4784
+          },
+          {
+            "start": 4788,
+            "end": 4789
+          },
+          {
+            "start": 4791,
+            "end": 4791
+          },
+          {
+            "start": 4794,
+            "end": 4794
+          },
+          {
+            "start": 4798,
+            "end": 4800
+          },
+          {
+            "start": 4804,
+            "end": 4804
+          },
+          {
+            "start": 4808,
+            "end": 4810
+          },
+          {
+            "start": 4814,
+            "end": 4820
+          },
+          {
+            "start": 4823,
+            "end": 4823
+          },
+          {
+            "start": 4827,
+            "end": 4829
+          },
+          {
+            "start": 4833,
+            "end": 4834
+          },
+          {
+            "start": 4837,
+            "end": 4837
+          },
+          {
+            "start": 4841,
+            "end": 4843
+          },
+          {
+            "start": 4847,
+            "end": 4852
+          },
+          {
+            "start": 4854,
+            "end": 4854
+          },
+          {
+            "start": 4856,
+            "end": 4868
+          },
+          {
+            "start": 4871,
+            "end": 4871
+          },
+          {
+            "start": 4875,
+            "end": 4877
+          },
+          {
+            "start": 4881,
+            "end": 4887
+          },
+          {
+            "start": 4889,
+            "end": 4901
+          },
+          {
+            "start": 4906,
+            "end": 4906
+          },
+          {
+            "start": 4910,
+            "end": 4939
+          },
+          {
+            "start": 4943,
+            "end": 4945
+          },
+          {
+            "start": 4956,
+            "end": 4958
+          },
+          {
+            "start": 4962,
+            "end": 4962
+          },
+          {
+            "start": 4964,
+            "end": 4967
+          },
+          {
+            "start": 4970,
+            "end": 4970
+          },
+          {
+            "start": 4974,
+            "end": 4976
+          },
+          {
+            "start": 4980,
+            "end": 4983
+          },
+          {
+            "start": 4985,
+            "end": 4985
+          },
+          {
+            "start": 4988,
+            "end": 4988
+          },
+          {
+            "start": 5005,
+            "end": 5007
+          },
+          {
+            "start": 5011,
+            "end": 5012
+          },
+          {
+            "start": 5014,
+            "end": 5015
+          },
+          {
+            "start": 5017,
+            "end": 5018
+          },
+          {
+            "start": 5021,
+            "end": 5021
+          },
+          {
+            "start": 5025,
+            "end": 5027
+          },
+          {
+            "start": 5032,
+            "end": 5033
+          },
+          {
+            "start": 5035,
+            "end": 5035
+          },
+          {
+            "start": 5038,
+            "end": 5038
+          },
+          {
+            "start": 5065,
+            "end": 5067
+          },
+          {
+            "start": 5213,
+            "end": 5215
+          },
+          {
+            "start": 5263,
+            "end": 5263
+          },
+          {
+            "start": 5265,
+            "end": 5265
+          },
+          {
+            "start": 5312,
+            "end": 5314
+          },
+          {
+            "start": 5316,
+            "end": 5316
+          },
+          {
+            "start": 5318,
+            "end": 5321
+          },
+          {
+            "start": 5323,
+            "end": 5332
+          },
+          {
+            "start": 5334,
+            "end": 5334
+          },
+          {
+            "start": 5338,
+            "end": 5340
+          },
+          {
+            "start": 5363,
+            "end": 5378
+          },
+          {
+            "start": 5395,
+            "end": 5401
+          },
+          {
+            "start": 5410,
+            "end": 5412
+          },
+          {
+            "start": 5583,
+            "end": 5589
+          },
+          {
+            "start": 5638,
+            "end": 5641
+          },
+          {
+            "start": 5643,
+            "end": 5663
+          },
+          {
+            "start": 5679,
+            "end": 5681
+          },
+          {
+            "start": 5685,
+            "end": 5685
+          },
+          {
+            "start": 5725,
+            "end": 5727
+          },
+          {
+            "start": 5741,
+            "end": 5743
+          },
+          {
+            "start": 5747,
+            "end": 5750
+          },
+          {
+            "start": 5753,
+            "end": 5753
+          },
+          {
+            "start": 5802,
+            "end": 5804
+          },
+          {
+            "start": 5819,
+            "end": 5821
+          },
+          {
+            "start": 5824,
+            "end": 5825
+          },
+          {
+            "start": 5844,
+            "end": 5846
+          },
+          {
+            "start": 5852,
+            "end": 5852
+          },
+          {
+            "start": 6177,
+            "end": 6192
+          },
+          {
+            "start": 6206,
+            "end": 6219
+          },
+          {
+            "start": 6254,
+            "end": 6256
+          },
+          {
+            "start": 6260,
+            "end": 6260
+          },
+          {
+            "start": 6262,
+            "end": 6262
+          },
+          {
+            "start": 6264,
+            "end": 6265
+          },
+          {
+            "start": 6268,
+            "end": 6268
+          },
+          {
+            "start": 6271,
+            "end": 6271
+          },
+          {
+            "start": 6312,
+            "end": 6315
+          },
+          {
+            "start": 6317,
+            "end": 6321
+          },
+          {
+            "start": 6324,
+            "end": 6324
+          },
+          {
+            "start": 6327,
+            "end": 6330
+          },
+          {
+            "start": 6334,
+            "end": 6334
+          },
+          {
+            "start": 6350,
+            "end": 6353
+          },
+          {
+            "start": 6356,
+            "end": 6358
+          },
+          {
+            "start": 6360,
+            "end": 6360
+          },
+          {
+            "start": 6363,
+            "end": 6363
+          },
+          {
+            "start": 6367,
+            "end": 6369
+          },
+          {
+            "start": 6374,
+            "end": 6375
+          },
+          {
+            "start": 6378,
+            "end": 6378
+          },
+          {
+            "start": 6381,
+            "end": 6384
+          },
+          {
+            "start": 6386,
+            "end": 6386
+          },
+          {
+            "start": 6388,
+            "end": 6391
+          },
+          {
+            "start": 6395,
+            "end": 6451
+          },
+          {
+            "start": 6454,
+            "end": 6457
+          },
+          {
+            "start": 6469,
+            "end": 6476
+          },
+          {
+            "start": 6527,
+            "end": 6529
+          },
+          {
+            "start": 6542,
+            "end": 6579
+          },
+          {
+            "start": 6581,
+            "end": 6583
+          },
+          {
+            "start": 6698,
+            "end": 6716
+          },
+          {
+            "start": 6725,
+            "end": 6727
+          },
+          {
+            "start": 6732,
+            "end": 6732
+          },
+          {
+            "start": 6735,
+            "end": 6748
+          },
+          {
+            "start": 6769,
+            "end": 6771
+          }
+        ],
+        "before_hash": "731e47567d62626c0c034f6d564c4b2217f6712228210d3b0441d28ce3c79d93",
+        "after_hash": "7ff3e48c00c77e83a0660b96c807b094dac893c14b3bf3a38f45c40627b441e8"
+      },
+      {
+        "file": "backend/package.json",
+        "ranges": [
+          {
+            "start": 19,
+            "end": 20
+          },
+          {
+            "start": 22,
+            "end": 23
+          },
+          {
+            "start": 28,
+            "end": 30
+          },
+          {
+            "start": 32,
+            "end": 32
+          }
+        ],
+        "before_hash": "dea66783384dd9adb25cf8d255fbb56f392ded94851a0478918b8ff68579f56b",
+        "after_hash": "b2ba86d27516c66bcf08c93ad25364eb6a1a3a779d5ccee49a61d9e46684adeb"
+      },
+      {
+        "file": "backend/src/index.js",
+        "ranges": [
+          {
+            "start": 251,
+            "end": 252
+          }
+        ],
+        "before_hash": "54dcb718ae546e447a369c23eb78fb9aa83b5b04d70fa06e9f37b6a893658f10",
+        "after_hash": "fa88184cd90ab5ed7753bde98239ef721449755cda84fd76f984d1eb1be63435"
+      },
+      {
+        "file": "backend/src/services/graphqlShortcodeClient.js",
+        "ranges": [
+          {
+            "start": 29,
+            "end": 29
+          }
+        ],
+        "before_hash": "065f6ac37bbc2548b95b3dbc6c0b118f76595926b77a7ec121817b25b572b777",
+        "after_hash": "9dc52ac4369dfd8926e6d9996498525ff3cde1b25e33cab4912eb571b7900530"
+      },
+      {
+        "file": "backend/src/services/profileExtractor.js",
+        "ranges": [
+          {
+            "start": 262,
+            "end": 262
+          }
+        ],
+        "before_hash": "ea195cc58869e6578b08eca25da87231a5a3a23d5cd1a74a6df298ceed2fa593",
+        "after_hash": "48bb4baa2916703cc13cbd44ef7f1e833001238dbc70de0b31d33ab5dd3db205"
+      },
+      {
+        "file": "backend/src/services/upstreamClient.js",
+        "ranges": [
+          {
+            "start": 259,
+            "end": 259
+          }
+        ],
+        "before_hash": "36902ad62ad2753bd4b8c8e88f955e09bab5c75d1b7506ee7ec086edc7620c0d",
+        "after_hash": "8e8c9daa7fd1f063074ce30d59f29c320faee7308f3f428f63fca240e1f60111"
+      }
+    ]
+  },
+  "timing": {
+    "started_at": "2026-09-03T18:14:46.392Z",
+    "completed_at": "2026-09-03T18:14:48.393Z",
+    "duration_ms": 2001,
+    "measurement": "hook_wall_clock"
+  },
+  "tokens": {
+    "input": 0,
+    "output": 0,
+    "total": 0,
+    "model_calls": 0,
+    "measurement": "known-zero"
+  },
+  "telemetry": {
+    "schemaVersion": "mimosa-gate-telemetry/v1",
+    "profile": "gate",
+    "operation": "Stop",
+    "outcome": "complete",
+    "latencyMs": 2001,
+    "peakMemoryBytes": 211189760,
+    "memoryMeasurement": "max-observed-process-rss",
+    "scannedFiles": 4,
+    "cache": {
+      "hits": 0,
+      "misses": 0,
+      "measurement": "not-applicable"
+    },
+    "denyCount": 0,
+    "tokens": {
+      "input": 0,
+      "output": 0,
+      "total": 0,
+      "modelCalls": 0,
+      "measurement": "known-zero"
+    }
+  },
+  "finding_count": 8,
+  "rewake_finding_count": 0,
+  "evidence_boundary": {
+    "scan": "candidate",
+    "static_fix_verification": "observed_static_only",
+    "runtime_verification": "not_performed"
+  },
+  "finding_events": [
+    {
+      "finding_id": "mimosa-4c8c0ac6ca391cd417dfd0cb",
+      "file": "backend/package.json",
+      "line": 19,
+      "rule_id": "mimosa.supply.version-range",
+      "severity": "low",
+      "category": "manifest",
+      "status": "candidate",
+      "decision": "observe",
+      "at": "2026-09-03T18:14:48.393Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "e4d43e03b920d54598f43ab57367c9626b9bcfdb93826692a48b4c15e04fc018",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-ad00f1fcb1748c8d90bb1e23",
+      "file": "backend/package.json",
+      "line": 20,
+      "rule_id": "mimosa.supply.version-range",
+      "severity": "low",
+      "category": "manifest",
+      "status": "candidate",
+      "decision": "observe",
+      "at": "2026-09-03T18:14:48.393Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "3830b65d406c0098b16d5ecd3b1fef69ee1879ab2cb7804fd81ad6045737fa3b",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-07a37ba5877aac95803732a6",
+      "file": "backend/package.json",
+      "line": 22,
+      "rule_id": "mimosa.supply.version-range",
+      "severity": "low",
+      "category": "manifest",
+      "status": "candidate",
+      "decision": "observe",
+      "at": "2026-09-03T18:14:48.393Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "c544fda94f495461c979d451d11296339ec4aa2752d4d47ccec6fe3221d2ee0d",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-b29ce1f99fa8abfdef8ebdbd",
+      "file": "backend/package.json",
+      "line": 23,
+      "rule_id": "mimosa.supply.version-range",
+      "severity": "low",
+      "category": "manifest",
+      "status": "candidate",
+      "decision": "observe",
+      "at": "2026-09-03T18:14:48.393Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "413ec29fd689a08f5fbe8b87c0c56dce172dee488b86327fdf2d2e10f9b88e6d",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-1a52bf4bd499029c8b6dcf41",
+      "file": "backend/package.json",
+      "line": 28,
+      "rule_id": "mimosa.supply.version-range",
+      "severity": "low",
+      "category": "manifest",
+      "status": "candidate",
+      "decision": "observe",
+      "at": "2026-09-03T18:14:48.393Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "27d652b5636f7a1114d35bb363b2bbebfe63ad4154bd64e512feb3fd3a4c205d",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-270cfadc202dd24b26bfab76",
+      "file": "backend/package.json",
+      "line": 29,
+      "rule_id": "mimosa.supply.version-range",
+      "severity": "low",
+      "category": "manifest",
+      "status": "candidate",
+      "decision": "observe",
+      "at": "2026-09-03T18:14:48.393Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "a895b468782b929ca25b77506159555145e161c595a38b92a40e25e77b0f2487",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-79272ec95c1e5a57b4a13672",
+      "file": "backend/package.json",
+      "line": 30,
+      "rule_id": "mimosa.supply.version-range",
+      "severity": "low",
+      "category": "manifest",
+      "status": "candidate",
+      "decision": "observe",
+      "at": "2026-09-03T18:14:48.393Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "a84d4029d104b7edba2cc8940754542d085ad25feda57c2ffe29cd4262e017d4",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-ce2aa315599f2ac26286afb8",
+      "file": "backend/package.json",
+      "line": 32,
+      "rule_id": "mimosa.supply.version-range",
+      "severity": "low",
+      "category": "manifest",
+      "status": "candidate",
+      "decision": "observe",
+      "at": "2026-09-03T18:14:48.393Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "716eca82914015006c037af5075db7f72a891dfdfaf4c4ba65a515dbf14b710c",
+        "runtime_oracle": false
+      }
+    }
+  ],
+  "findings": [
+    {
+      "finding_id": "mimosa-4c8c0ac6ca391cd417dfd0cb",
+      "file": "backend/package.json",
+      "line": 19,
+      "end_line": 19,
+      "rule_id": "mimosa.supply.version-range",
+      "severity": "low",
+      "category": "manifest",
+      "kind": "semgrep",
+      "advisory": false,
+      "status": "candidate",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "backend/package.json",
+          "line": 19,
+          "evidence_hash": "e4d43e03b920d54598f43ab57367c9626b9bcfdb93826692a48b4c15e04fc018",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": false
+    },
+    {
+      "finding_id": "mimosa-ad00f1fcb1748c8d90bb1e23",
+      "file": "backend/package.json",
+      "line": 20,
+      "end_line": 20,
+      "rule_id": "mimosa.supply.version-range",
+      "severity": "low",
+      "category": "manifest",
+      "kind": "semgrep",
+      "advisory": false,
+      "status": "candidate",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "backend/package.json",
+          "line": 20,
+          "evidence_hash": "3830b65d406c0098b16d5ecd3b1fef69ee1879ab2cb7804fd81ad6045737fa3b",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": false
+    },
+    {
+      "finding_id": "mimosa-07a37ba5877aac95803732a6",
+      "file": "backend/package.json",
+      "line": 22,
+      "end_line": 22,
+      "rule_id": "mimosa.supply.version-range",
+      "severity": "low",
+      "category": "manifest",
+      "kind": "semgrep",
+      "advisory": false,
+      "status": "candidate",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "backend/package.json",
+          "line": 22,
+          "evidence_hash": "c544fda94f495461c979d451d11296339ec4aa2752d4d47ccec6fe3221d2ee0d",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": false
+    },
+    {
+      "finding_id": "mimosa-b29ce1f99fa8abfdef8ebdbd",
+      "file": "backend/package.json",
+      "line": 23,
+      "end_line": 23,
+      "rule_id": "mimosa.supply.version-range",
+      "severity": "low",
+      "category": "manifest",
+      "kind": "semgrep",
+      "advisory": false,
+      "status": "candidate",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "backend/package.json",
+          "line": 23,
+          "evidence_hash": "413ec29fd689a08f5fbe8b87c0c56dce172dee488b86327fdf2d2e10f9b88e6d",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": false
+    },
+    {
+      "finding_id": "mimosa-1a52bf4bd499029c8b6dcf41",
+      "file": "backend/package.json",
+      "line": 28,
+      "end_line": 28,
+      "rule_id": "mimosa.supply.version-range",
+      "severity": "low",
+      "category": "manifest",
+      "kind": "semgrep",
+      "advisory": false,
+      "status": "candidate",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "backend/package.json",
+          "line": 28,
+          "evidence_hash": "27d652b5636f7a1114d35bb363b2bbebfe63ad4154bd64e512feb3fd3a4c205d",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": false
+    },
+    {
+      "finding_id": "mimosa-270cfadc202dd24b26bfab76",
+      "file": "backend/package.json",
+      "line": 29,
+      "end_line": 29,
+      "rule_id": "mimosa.supply.version-range",
+      "severity": "low",
+      "category": "manifest",
+      "kind": "semgrep",
+      "advisory": false,
+      "status": "candidate",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "backend/package.json",
+          "line": 29,
+          "evidence_hash": "a895b468782b929ca25b77506159555145e161c595a38b92a40e25e77b0f2487",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": false
+    },
+    {
+      "finding_id": "mimosa-79272ec95c1e5a57b4a13672",
+      "file": "backend/package.json",
+      "line": 30,
+      "end_line": 30,
+      "rule_id": "mimosa.supply.version-range",
+      "severity": "low",
+      "category": "manifest",
+      "kind": "semgrep",
+      "advisory": false,
+      "status": "candidate",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "backend/package.json",
+          "line": 30,
+          "evidence_hash": "a84d4029d104b7edba2cc8940754542d085ad25feda57c2ffe29cd4262e017d4",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": false
+    },
+    {
+      "finding_id": "mimosa-ce2aa315599f2ac26286afb8",
+      "file": "backend/package.json",
+      "line": 32,
+      "end_line": 32,
+      "rule_id": "mimosa.supply.version-range",
+      "severity": "low",
+      "category": "manifest",
+      "kind": "semgrep",
+      "advisory": false,
+      "status": "candidate",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "backend/package.json",
+          "line": 32,
+          "evidence_hash": "716eca82914015006c037af5075db7f72a891dfdfaf4c4ba65a515dbf14b710c",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": false
+    }
+  ],
+  "artifacts": {
+    "immutable_report": ".mimosa/reports/task-review-sess_09c36a10-7f42-466f-8940-7925d4023b65-20260903T181448393Z-51502-28f25fe77e3f.json",
+    "latest_report": ".mimosa/reports/task-review-sess_09c36a10-7f42-466f-8940-7925d4023b65.json",
+    "history_summary": ".mimosa/history/run-20260903T181448393Z-51502-28f25fe77e3f.json"
+  }
+}
